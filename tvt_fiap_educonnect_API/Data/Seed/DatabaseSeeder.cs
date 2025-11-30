@@ -65,7 +65,8 @@ namespace EduConnect_API.Data.Seed
             _context.Add(admin);
             await _context.SaveChangesAsync();
 
-            Console.WriteLine("🔥 Admin criado via seed com sucesso!");
+            Console.WriteLine($"🔥 Admin criado via seed com sucesso! ID: {admin.Id}");
+
         }
     }
 }

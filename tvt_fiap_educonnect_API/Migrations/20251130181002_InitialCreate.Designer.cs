@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace tvt_fiap_educonnect_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251129235942_InitialCreate")]
+    [Migration("20251130181002_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -27,11 +27,9 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Usuario", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CriadoEm")
                         .HasColumnType("datetime2");

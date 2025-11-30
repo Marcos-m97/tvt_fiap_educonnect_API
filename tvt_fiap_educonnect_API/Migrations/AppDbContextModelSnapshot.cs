@@ -24,11 +24,9 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Usuario", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CriadoEm")
                         .HasColumnType("datetime2");
