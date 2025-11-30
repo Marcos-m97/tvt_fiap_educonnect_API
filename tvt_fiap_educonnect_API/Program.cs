@@ -1,10 +1,15 @@
 using EduConnect_API.Data;
 using EduConnect_API.Data.Seed;
+using EduConnect_API.Middlewares;
 using EduConnect_API.Repositories;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services;
 using EduConnect_API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +31,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // ======================================================
 // 3. INJETAR SERVICES E REPOSITORIES
 // ======================================================
+builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
+
 
 // Registrar Seeder
 builder.Services.AddScoped<DatabaseSeeder>();
@@ -42,6 +50,34 @@ builder.Services.AddControllers();
 // ======================================================
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// ======================================================
+// 5. CONFIGURAR JWT AUTENTICAÇÃO
+// ======================================================
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSettings["Key"];
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+    };
+});
+
 
 var app = builder.Build();
 
@@ -61,10 +97,15 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
 }
 
-app.UseHttpsRedirection();
+// MIDDLEWARE GLOBAL DE ERROS
+app.UseMiddleware<ErrorMiddleware>();
 
+app.UseHttpsRedirection();
+app.UseAuthentication();
+// app.UseAuthorization();
 app.MapControllers();
 
 // ======================================================
