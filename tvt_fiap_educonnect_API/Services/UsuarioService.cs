@@ -14,6 +14,9 @@ namespace EduConnect_API.Services
             _repo = repo;
         }
 
+        // ============================================================
+        // 1. LOGIN (USADO NO CONTROLLER)
+        // ============================================================
         public async Task<Usuario?> Login(LoginDTO dto)
         {
             var user = await _repo.ObterPorEmail(dto.Email);
@@ -26,6 +29,14 @@ namespace EduConnect_API.Services
                 return null;
 
             return user;
+        }
+
+        // ============================================================
+        // 2. OBTER POR ID (USADO NO /ME)
+        // ============================================================
+        public async Task<Usuario?> ObterPorId(Guid id)
+        {
+            return await _repo.ObterPorId(id);
         }
     }
 }
