@@ -1,6 +1,10 @@
-@tvt_fiap_educonnect_API_HostAddress = http://localhost:5286
-
-GET {{tvt_fiap_educonnect_API_HostAddress}}/weatherforecast/
-Accept: application/json
+@tvt_fiap_educonnect_API_HostAddress = https://localhost:7286
 
 ###
+POST {{tvt_fiap_educonnect_API_HostAddress}}/api/usuario/login
+Content-Type: application/json
+
+{
+  "email": "admin@educonnect.com",
+  "senha": "123456"
+}

@@ -1,4 +1,5 @@
 using EduConnect_API.Data;
+using EduConnect_API.Data.Seed;
 using EduConnect_API.Repositories;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services;
@@ -7,34 +8,55 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// -----------------------------------
-// 1. CONFIGURAR DB (SQL SERVER)
-// -----------------------------------
+// ======================================================
+// 1. FORÇAR CARREGAMENTO DOS ARQUIVOS DE CONFIGURAÇÃO
+// ======================================================
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+// ======================================================
+// 2. CONFIGURAR SQL SERVER (CONNECTION STRING)
+// ======================================================
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// -----------------------------------
-// 2. INJETAR SERVICES E REPOSITORIES
-// -----------------------------------
+// ======================================================
+// 3. INJETAR SERVICES E REPOSITORIES
+// ======================================================
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
-// -----------------------------------
-// 3. ADD CONTROLLERS (obrigatório para sua arquitetura)
-// -----------------------------------
+// Registrar Seeder
+builder.Services.AddScoped<DatabaseSeeder>();
+
+// ======================================================
+// 4. ADICIONAR CONTROLLERS
+// ======================================================
 builder.Services.AddControllers();
 
-// -----------------------------------
-// 4. Configurar Swagger/OpenAPI
-// -----------------------------------
+// ======================================================
+// 5. CONFIGURAR SWAGGER
+// ======================================================
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// -----------------------------------
-// 5. PIPELINE
-// -----------------------------------
+// ======================================================
+// 6. EXECUTAR SEED AO INICIAR
+// ======================================================
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+    await seeder.SeedAsync();
+}
+
+// ======================================================
+// 7. PIPELINE HTTP
+// ======================================================
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -43,13 +65,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// -----------------------------------
-// 6. MAPEAR CONTROLLERS
-// -----------------------------------
 app.MapControllers();
 
-
-// -----------------------------------
-// 7. RODAR A API
-// -----------------------------------
+// ======================================================
+// 8. RODAR A API
+// ======================================================
 app.Run();
