@@ -1,34 +1,24 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tvt_fiap_educonnect_API", "tvt_fiap_educonnect_API\tvt_fiap_educonnect_API.csproj", "{D9184FA7-2050-4D16-A0A4-A4FC284D907B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tvt_fiap_educonnect_API", "tvt_fiap_educonnect_API\tvt_fiap_educonnect_API.csproj", "{A6DF704E-52FA-2873-76F6-27C2ED569958}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Debug|x64.Build.0 = Debug|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Debug|x86.Build.0 = Debug|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Release|x64.ActiveCfg = Release|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Release|x64.Build.0 = Release|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Release|x86.ActiveCfg = Release|Any CPU
-		{D9184FA7-2050-4D16-A0A4-A4FC284D907B}.Release|x86.Build.0 = Release|Any CPU
+		{A6DF704E-52FA-2873-76F6-27C2ED569958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6DF704E-52FA-2873-76F6-27C2ED569958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6DF704E-52FA-2873-76F6-27C2ED569958}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6DF704E-52FA-2873-76F6-27C2ED569958}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {679ED9FA-062B-4A15-B843-CC1ED253A08C}
 	EndGlobalSection
 EndGlobal

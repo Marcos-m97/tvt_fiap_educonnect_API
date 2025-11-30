@@ -1,0 +1,31 @@
+using EduConnect_API.Models;
+using EduConnect_API.Models.DTOs;
+using EduConnect_API.Repositories.Interfaces;
+using EduConnect_API.Services.Interfaces;
+
+namespace EduConnect_API.Services
+{
+    public class UsuarioService : IUsuarioService
+    {
+        private readonly IUsuarioRepository _repo;
+
+        public UsuarioService(IUsuarioRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public async Task<Usuario?> Login(LoginDTO dto)
+        {
+            var user = await _repo.ObterPorEmail(dto.Email);
+
+            if (user == null)
+                return null;
+
+            bool senhaValida = BCrypt.Net.BCrypt.Verify(dto.Senha, user.SenhaHash);
+            if (!senhaValida)
+                return null;
+
+            return user;
+        }
+    }
+}

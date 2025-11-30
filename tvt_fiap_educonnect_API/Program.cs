@@ -1,41 +1,55 @@
+using EduConnect_API.Data;
+using EduConnect_API.Repositories;
+using EduConnect_API.Repositories.Interfaces;
+using EduConnect_API.Services;
+using EduConnect_API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// -----------------------------------
+// 1. CONFIGURAR DB (SQL SERVER)
+// -----------------------------------
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// -----------------------------------
+// 2. INJETAR SERVICES E REPOSITORIES
+// -----------------------------------
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
+// -----------------------------------
+// 3. ADD CONTROLLERS (obrigatório para sua arquitetura)
+// -----------------------------------
+builder.Services.AddControllers();
+
+// -----------------------------------
+// 4. Configurar Swagger/OpenAPI
+// -----------------------------------
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// -----------------------------------
+// 5. PIPELINE
+// -----------------------------------
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// -----------------------------------
+// 6. MAPEAR CONTROLLERS
+// -----------------------------------
+app.MapControllers();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
 
+// -----------------------------------
+// 7. RODAR A API
+// -----------------------------------
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
