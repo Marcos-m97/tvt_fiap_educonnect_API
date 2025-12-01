@@ -12,6 +12,9 @@ namespace EduConnect_API.Services.Interfaces
         Task<Usuario?> Atualizar(Guid id, AtualizarUsuarioDTO dto);  
         Task<bool> SoftDelete(Guid id);
         Task<bool> Reativar(Guid id);
+        Task SolicitarResetSenha(string email);
+        Task<bool> ResetarSenha(string email, string codigo, string novaSenha);
+
 
     }
 }

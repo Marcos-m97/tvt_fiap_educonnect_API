@@ -1,10 +1,11 @@
+using System.Security.Claims;
 using EduConnect_API.Exceptions;
 using EduConnect_API.Models.DTOs;
 using EduConnect_API.Services;
 using EduConnect_API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using tvt_fiap_educonnect_API.Models.DTOs;
 
 namespace EduConnect_API.Controllers
 {
@@ -174,7 +175,10 @@ namespace EduConnect_API.Controllers
 
             return NoContent();
         }
-
+ 
+        // ============================================================
+        // 8. REATIVAR USUARIOS (SUPERADMIN = 0 | ADMIN = 1)
+        // ============================================================
         [Authorize(Roles = "0,1")] // SuperAdmin(0) ou Admin(1)
         [HttpPut("{id}/reativar")]
         public async Task<IActionResult> Reativar(Guid id)
@@ -185,6 +189,30 @@ namespace EduConnect_API.Controllers
                 throw new AppException("Usuário não encontrado", 404);
 
             return Ok(new { mensagem = "Usuário reativado com sucesso!" });
+        }
+
+        // ============================================================
+        // 9. SOLICITAR REDEFINIÇÃO DE SENHA
+        // ============================================================
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO dto)
+        {
+            await _service.SolicitarResetSenha(dto.Email);
+            return Ok(new { message = "Se o usuário existir, um e-mail foi enviado." });
+        }
+
+        // ============================================================
+        // 10. REDEFINIR DE SENHA
+        // ============================================================
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO dto)
+        {
+            var result = await _service.ResetarSenha(dto.Email, dto.Codigo, dto.NovaSenha);
+
+            if (!result)
+                return BadRequest(new { message = "Código inválido ou expirado." });
+
+            return Ok(new { message = "Senha redefinida com sucesso!" });
         }
 
     }
