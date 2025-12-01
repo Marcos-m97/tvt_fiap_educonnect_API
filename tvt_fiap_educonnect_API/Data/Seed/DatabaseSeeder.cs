@@ -59,7 +59,8 @@ namespace EduConnect_API.Data.Seed
                 Email = email,
                 SenhaHash = hashedPassword,
                 Tipo = tipo,
-                CriadoEm = DateTime.Now
+                CriadoEm = DateTime.Now,
+                Ativo = true
             };
 
             _context.Add(admin);

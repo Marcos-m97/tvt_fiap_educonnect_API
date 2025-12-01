@@ -1,5 +1,6 @@
 using EduConnect_API.Models;
 using EduConnect_API.Models.DTOs;
+using EduConnect_API.Repositories;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
 
@@ -56,5 +57,33 @@ namespace EduConnect_API.Services
 
             return await _repo.Criar(novo);
         }
+
+        // listar get all
+        public async Task<IEnumerable<Usuario>> ListarTodos()
+        {
+            return await _repo.ListarTodos();
+        }
+
+        public async Task<Usuario?> Atualizar(Guid id, AtualizarUsuarioDTO dto)
+        {
+            var usuario = await _repo.ObterPorId(id);
+
+            if (usuario == null || !usuario.Ativo)
+                return null;
+
+            usuario.Nome = dto.Nome;
+            usuario.Email = dto.Email;
+            usuario.Tipo = dto.Tipo;
+
+            return await _repo.Atualizar(usuario);
+        }
+
+        public async Task<bool> SoftDelete(Guid id)
+        {
+            return await _repo.SoftDelete(id);
+        }
+
+
+
     }
 }

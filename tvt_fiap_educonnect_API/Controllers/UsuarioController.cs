@@ -21,9 +21,9 @@ namespace EduConnect_API.Controllers
             _jwtService = jwtService;
         }
 
-        // ============================================
+        // ============================================================
         // 1. LOGIN (PÚBLICO)
-        // ============================================
+        // ============================================================
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         {
@@ -32,7 +32,6 @@ namespace EduConnect_API.Controllers
             if (user == null)
                 throw new AppException("Credenciais inválidas", 401);
 
-            // Gerar JWT
             var token = _jwtService.GenerateToken(user.Id, user.Nome, user.Tipo);
 
             return Ok(new
@@ -47,9 +46,9 @@ namespace EduConnect_API.Controllers
             });
         }
 
-        // ============================================
-        // 2. /ME (USUÁRIO AUTENTICADO)
-        // ============================================
+        // ============================================================
+        // 2. /ME  (QUALQUER USUÁRIO LOGADO)
+        // ============================================================
         [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> Me()
@@ -75,9 +74,9 @@ namespace EduConnect_API.Controllers
             });
         }
 
-        // ============================================
-        // 3. CRIAR USUÁRIO  (SUPERADMIN: 0 | ADMIN: 1)
-        // ============================================
+        // ============================================================
+        // 3. CRIAR USUÁRIO (SUPERADMIN = 0 | ADMIN = 1)
+        // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpPost]
         public async Task<IActionResult> Criar([FromBody] CriarUsuarioDTO dto)
@@ -89,6 +88,7 @@ namespace EduConnect_API.Controllers
 
             int tipoLogado = int.Parse(tipoLogadoClaim);
 
+            // ADMIN (1) não pode criar SUPERADMIN (0) e nem ADMIN (1)
             if (tipoLogado == 1 && (dto.Tipo == 0 || dto.Tipo == 1))
                 throw new AppException("Admins só podem criar professores (2) e alunos (3).", 403);
 
@@ -106,6 +106,73 @@ namespace EduConnect_API.Controllers
                     novo.CriadoEm
                 }
             });
+        }
+
+        // ============================================================
+        // 4. LISTAR TODOS (SUPERADMIN = 0 | ADMIN = 1)
+        // ============================================================
+        [Authorize(Roles = "0,1")]
+        [HttpGet]
+        public async Task<IActionResult> Listar()
+        {
+            var lista = await _service.ListarTodos();
+            return Ok(lista);
+        }
+
+        // ============================================================
+        // 5. OBTER POR ID (SUPERADMIN = 0 | ADMIN = 1)
+        // ============================================================
+        [Authorize(Roles = "0,1")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var usuario = await _service.ObterPorId(id);
+
+            if (usuario == null)
+                throw new AppException("Usuário não encontrado", 404);
+
+            return Ok(usuario);
+        }
+
+        // ============================================================
+        // 6. ATUALIZAR (SUPERADMIN = 0 | ADMIN = 1)
+        // ============================================================
+        [Authorize(Roles = "0,1")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Atualizar(Guid id, [FromBody] AtualizarUsuarioDTO dto)
+        {
+            var tipoLogadoClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (tipoLogadoClaim == null)
+                throw new AppException("Token inválido", 401);
+
+            int tipoLogado = int.Parse(tipoLogadoClaim);
+
+            // Admin não pode promover usuários acima dele
+            if (tipoLogado == 1 && (dto.Tipo == 0 || dto.Tipo == 1))
+                throw new AppException("Admins só podem editar professores (2) e alunos (3).", 403);
+
+            var atualizado = await _service.Atualizar(id, dto);
+
+            if (atualizado == null)
+                throw new AppException("Usuário não encontrado", 404);
+
+            return Ok(atualizado);
+        }
+
+        // ============================================================
+        // 7. SOFT DELETE (SUPERADMIN = 0 | ADMIN = 1)
+        // ============================================================
+        [Authorize(Roles = "0,1")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> SoftDelete(Guid id)
+        {
+            var sucesso = await _service.SoftDelete(id);
+
+            if (!sucesso)
+                throw new AppException("Usuário não encontrado", 404);
+
+            return NoContent();
         }
     }
 }

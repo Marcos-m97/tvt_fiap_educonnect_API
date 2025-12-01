@@ -41,5 +41,38 @@ namespace EduConnect_API.Repositories
             await _context.SaveChangesAsync();
             return usuario;
         }
+
+        // GET ALL USUARIOS
+        public async Task<IEnumerable<Usuario>> ListarTodos()
+        {
+            return await _context.Usuarios
+                .Where(u => u.Ativo)
+                .ToListAsync();
+        }
+
+        // ATUALIZAR USUARIOS
+        public async Task<Usuario> Atualizar(Usuario usuario)
+        {
+            _context.Usuarios.Update(usuario);
+            await _context.SaveChangesAsync();
+            return usuario;
+        }
+
+        // SOFT DELETE
+        public async Task<bool> SoftDelete(Guid id)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+
+            if (usuario == null)
+                return false;
+
+            usuario.Ativo = false;
+
+            _context.Usuarios.Update(usuario);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
     }
 }

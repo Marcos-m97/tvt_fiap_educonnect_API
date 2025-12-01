@@ -97,10 +97,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
 }
-
 // MIDDLEWARE GLOBAL DE ERROS
 app.UseMiddleware<ErrorMiddleware>();
-
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
