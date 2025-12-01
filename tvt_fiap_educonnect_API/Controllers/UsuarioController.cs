@@ -174,5 +174,18 @@ namespace EduConnect_API.Controllers
 
             return NoContent();
         }
+
+        [Authorize(Roles = "0,1")] // SuperAdmin(0) ou Admin(1)
+        [HttpPut("{id}/reativar")]
+        public async Task<IActionResult> Reativar(Guid id)
+        {
+            var sucesso = await _service.Reativar(id);
+
+            if (!sucesso)
+                throw new AppException("Usuário não encontrado", 404);
+
+            return Ok(new { mensagem = "Usuário reativado com sucesso!" });
+        }
+
     }
 }

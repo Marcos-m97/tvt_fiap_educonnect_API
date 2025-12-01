@@ -83,6 +83,11 @@ namespace EduConnect_API.Services
             return await _repo.SoftDelete(id);
         }
 
+        public async Task<bool> Reativar(Guid id)
+        {
+            return await _repo.Reativar(id);
+        }
+
 
 
     }

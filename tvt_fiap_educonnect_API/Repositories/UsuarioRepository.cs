@@ -73,6 +73,22 @@ namespace EduConnect_API.Repositories
 
             return true;
         }
+        // reativar usuario
+        public async Task<bool> Reativar(Guid id)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+
+            if (usuario == null)
+                return false;
+
+            usuario.Ativo = true;
+
+            _context.Usuarios.Update(usuario);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
 
     }
 }

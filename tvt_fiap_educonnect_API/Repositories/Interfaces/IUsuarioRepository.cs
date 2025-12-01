@@ -10,6 +10,8 @@ namespace EduConnect_API.Repositories.Interfaces
         Task<IEnumerable<Usuario>> ListarTodos();
         Task<Usuario> Atualizar(Usuario usuario);
         Task<bool> SoftDelete(Guid id);
+        Task<bool> Reativar(Guid id);
+
 
     }
 }
