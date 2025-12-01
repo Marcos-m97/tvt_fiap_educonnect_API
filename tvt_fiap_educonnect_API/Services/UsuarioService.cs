@@ -38,5 +38,23 @@ namespace EduConnect_API.Services
         {
             return await _repo.ObterPorId(id);
         }
+
+        // ============================================================
+        // 3. CRIAR USUÁRIO (USADO NO POST /usuarios)
+        // ============================================================
+        public async Task<Usuario> Criar(CriarUsuarioDTO dto)
+        {
+            var novo = new Usuario
+            {
+                Id = Guid.NewGuid(),
+                Nome = dto.Nome,
+                Email = dto.Email,
+                Tipo = dto.Tipo,
+                CriadoEm = DateTime.UtcNow,
+                SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha)
+            };
+
+            return await _repo.Criar(novo);
+        }
     }
 }

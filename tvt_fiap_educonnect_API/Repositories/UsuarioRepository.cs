@@ -33,7 +33,7 @@ namespace EduConnect_API.Repositories
         }
 
         // ============================================================
-        // 3. CRIAR USUÁRIO (FUTURAS ROTAS DE ADMIN)
+        // 3. CRIAR USUÁRIO 
         // ============================================================
         public async Task<Usuario> Criar(Usuario usuario)
         {

@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using System.Text;
 using EduConnect_API.Data;
 using EduConnect_API.Data.Seed;
 using EduConnect_API.Middlewares;
@@ -5,11 +7,9 @@ using EduConnect_API.Repositories;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services;
 using EduConnect_API.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,8 +34,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
-
-
 
 // Registrar Seeder
 builder.Services.AddScoped<DatabaseSeeder>();
@@ -75,11 +73,9 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-        RoleClaimType = "tipo" 
+        RoleClaimType = ClaimTypes.Role
     };
 });
-
-
 
 var app = builder.Build();
 

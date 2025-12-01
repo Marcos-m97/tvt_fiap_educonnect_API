@@ -54,15 +54,12 @@ namespace EduConnect_API.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> Me()
         {
-            // Obtém o ID do usuário via Claim do JWT
             var idClaim = User.FindFirst("id")?.Value;
 
             if (idClaim == null)
                 throw new AppException("Token inválido", 401);
 
             var id = Guid.Parse(idClaim);
-
-            // Buscar usuário no banco
             var user = await _service.ObterPorId(id);
 
             if (user == null)
@@ -75,6 +72,39 @@ namespace EduConnect_API.Controllers
                 user.Email,
                 user.Tipo,
                 user.CriadoEm
+            });
+        }
+
+        // ============================================
+        // 3. CRIAR USUÁRIO  (SUPERADMIN: 0 | ADMIN: 1)
+        // ============================================
+        [Authorize(Roles = "0,1")]
+        [HttpPost]
+        public async Task<IActionResult> Criar([FromBody] CriarUsuarioDTO dto)
+        {
+            var tipoLogadoClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (tipoLogadoClaim == null)
+                throw new AppException("Token inválido", 401);
+
+            int tipoLogado = int.Parse(tipoLogadoClaim);
+
+            if (tipoLogado == 1 && (dto.Tipo == 0 || dto.Tipo == 1))
+                throw new AppException("Admins só podem criar professores (2) e alunos (3).", 403);
+
+            var novo = await _service.Criar(dto);
+
+            return Ok(new
+            {
+                mensagem = "Usuário criado com sucesso!",
+                usuario = new
+                {
+                    novo.Id,
+                    novo.Nome,
+                    novo.Email,
+                    novo.Tipo,
+                    novo.CriadoEm
+                }
             });
         }
     }

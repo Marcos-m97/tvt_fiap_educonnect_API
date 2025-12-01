@@ -26,7 +26,8 @@ namespace EduConnect_API.Services
             {
                 new Claim("id", id.ToString()),
                 new Claim("nome", nome),
-                new Claim("tipo", tipo.ToString())
+                new Claim("tipo", tipo.ToString()),
+                new Claim(ClaimTypes.Role, tipo.ToString())
             };
 
             var token = new JwtSecurityToken(
