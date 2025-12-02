@@ -10,11 +10,12 @@ using EduConnect_API.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ======================================================
-// 1. FORÇAR CARREGAMENTO DOS ARQUIVOS DE CONFIGURAÇÃO
+// 1. CARREGAMENTO DOS ARQUIVOS DE CONFIGURAÇÃO
 // ======================================================
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -23,7 +24,7 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 // ======================================================
-// 2. CONFIGURAR SQL SERVER (CONNECTION STRING)
+// 2. CONFIGURAR SQL SERVER
 // ======================================================
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -37,22 +38,63 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IPasswordResetRepository, PasswordResetRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-// Registrar Seeder
+// Seeder
 builder.Services.AddScoped<DatabaseSeeder>();
 
 // ======================================================
-// 4. ADICIONAR CONTROLLERS
+// 4. CONFIGURAR CONTROLLERS
 // ======================================================
 builder.Services.AddControllers();
 
 // ======================================================
-// 5. CONFIGURAR SWAGGER
+// 5. CONFIGURAR CORS (para o front consumir a API)
 // ======================================================
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 // ======================================================
-// 5. CONFIGURAR JWT AUTENTICAÇÃO
+// 6. CONFIGURAR SWAGGER + JWT AUTH
+// ======================================================
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "EduConnect API",
+        Version = "v1"
+    });
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Insira: Bearer {token}",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",   // ← ← ← IMPORTANTE: minúsculo
+        BearerFormat = "JWT"
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+
+    var securityRequirement = new OpenApiSecurityRequirement
+    {
+        {
+            securityScheme, Array.Empty<string>()
+        }
+    };
+
+    c.AddSecurityRequirement(securityRequirement);
+});
+
+
+// ======================================================
+// 7. CONFIGURAR AUTENTICAÇÃO JWT
 // ======================================================
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSettings["Key"];
@@ -66,6 +108,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -82,7 +125,7 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 // ======================================================
-// 6. EXECUTAR SEED AO INICIAR
+// 8. EXECUTAR SEED NA INICIALIZAÇÃO
 // ======================================================
 await using (var scope = app.Services.CreateAsyncScope())
 {
@@ -91,22 +134,27 @@ await using (var scope = app.Services.CreateAsyncScope())
 }
 
 // ======================================================
-// 7. PIPELINE HTTP
+// 9. PIPELINE HTTP
 // ======================================================
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-
 }
-// MIDDLEWARE GLOBAL DE ERROS
+
+// Middleware global de erros
 app.UseMiddleware<ErrorMiddleware>();
+
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 // ======================================================
-// 8. RODAR A API
+// 10. RODAR API
 // ======================================================
 app.Run();

@@ -1,4 +1,4 @@
-﻿namespace tvt_fiap_educonnect_API.Models.DTOs
+﻿namespace EduConnect_API.Models.DTOs
 {
     public class ResetPasswordDTO
     {

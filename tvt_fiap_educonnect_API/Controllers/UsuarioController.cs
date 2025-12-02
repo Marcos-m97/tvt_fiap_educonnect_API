@@ -5,7 +5,7 @@ using EduConnect_API.Services;
 using EduConnect_API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using tvt_fiap_educonnect_API.Models.DTOs;
+//using tvt_fiap_educonnect_API.Models.DTOs;
 
 namespace EduConnect_API.Controllers
 {
@@ -110,7 +110,37 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // 4. LISTAR TODOS (SUPERADMIN = 0 | ADMIN = 1)
+        // 4. REGISTRAR USUÁRIO (PÚBLICO)
+        // ============================================================
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> Registrar([FromBody] RegistrarAlunoDTO dto)
+        {
+            var novo = new CriarUsuarioDTO
+            {
+                Nome = dto.Nome,
+                Email = dto.Email,
+                Senha = dto.Senha,
+                Tipo = 3 // aluno
+            };
+
+            var usuario = await _service.Criar(novo);
+
+            return Ok(new
+            {
+                mensagem = "Conta criada com sucesso!",
+                usuario = new
+                {
+                    usuario.Id,
+                    usuario.Nome,
+                    usuario.Email,
+                    usuario.Tipo
+                }
+            });
+        }
+
+        // ============================================================
+        // 5. LISTAR TODOS (SUPERADMIN = 0 | ADMIN = 1)
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpGet]
@@ -121,7 +151,7 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // 5. OBTER POR ID (SUPERADMIN = 0 | ADMIN = 1)
+        // 6. OBTER POR ID (SUPERADMIN = 0 | ADMIN = 1)
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpGet("{id}")]
@@ -136,7 +166,7 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // 6. ATUALIZAR (SUPERADMIN = 0 | ADMIN = 1)
+        // 7. ATUALIZAR (SUPERADMIN = 0 | ADMIN = 1)
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpPut("{id}")]
@@ -162,7 +192,7 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // 7. SOFT DELETE (SUPERADMIN = 0 | ADMIN = 1)
+        // 8. SOFT DELETE (SUPERADMIN = 0 | ADMIN = 1)
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpDelete("{id}")]
@@ -177,7 +207,7 @@ namespace EduConnect_API.Controllers
         }
  
         // ============================================================
-        // 8. REATIVAR USUARIOS (SUPERADMIN = 0 | ADMIN = 1)
+        // 9. REATIVAR USUARIOS (SUPERADMIN = 0 | ADMIN = 1)
         // ============================================================
         [Authorize(Roles = "0,1")] // SuperAdmin(0) ou Admin(1)
         [HttpPut("{id}/reativar")]
@@ -192,7 +222,7 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // 9. SOLICITAR REDEFINIÇÃO DE SENHA
+        // 10. SOLICITAR REDEFINIÇÃO DE SENHA
         // ============================================================
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO dto)
@@ -202,7 +232,7 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // 10. REDEFINIR DE SENHA
+        // 11. REDEFINIR DE SENHA
         // ============================================================
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDTO dto)

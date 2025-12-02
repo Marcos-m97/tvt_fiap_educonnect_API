@@ -1,6 +1,5 @@
 using EduConnect_API.Models;
 using Microsoft.EntityFrameworkCore;
-using tvt_fiap_educonnect_API.Models;
 
 namespace EduConnect_API.Data
 {
