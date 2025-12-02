@@ -2,32 +2,35 @@
 using EduConnect_API.Models;
 using Microsoft.EntityFrameworkCore;
 
-public class PasswordResetRepository : IPasswordResetRepository
+namespace EduConnect_API.Repositories.Interfaces
 {
-    private readonly AppDbContext _context;
-
-    public PasswordResetRepository(AppDbContext context)
+    public class PasswordResetRepository : IPasswordResetRepository
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public async Task Salvar(PasswordResetCode code)
-    {
-        _context.PasswordResetCodes.Add(code);
-        await _context.SaveChangesAsync();
-    }
+        public PasswordResetRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    public async Task<PasswordResetCode?> Obter(string email, string codigo)
-    {
-        return await _context.PasswordResetCodes
-            .Where(x => x.Email == email && x.Codigo == codigo)
-            .OrderByDescending(x => x.ExpiraEm)
-            .FirstOrDefaultAsync();
-    }
+        public async Task Salvar(PasswordResetCode code)
+        {
+            _context.PasswordResetCodes.Add(code);
+            await _context.SaveChangesAsync();
+        }
 
-    public async Task Atualizar(PasswordResetCode code)
-    {
-        _context.PasswordResetCodes.Update(code);
-        await _context.SaveChangesAsync();
+        public async Task<PasswordResetCode?> Obter(string email, string codigo)
+        {
+            return await _context.PasswordResetCodes
+                .Where(x => x.Email == email && x.Codigo == codigo)
+                .OrderByDescending(x => x.ExpiraEm)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task Atualizar(PasswordResetCode code)
+        {
+            _context.PasswordResetCodes.Update(code);
+            await _context.SaveChangesAsync();
+        }
     }
 }

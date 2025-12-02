@@ -1,6 +1,7 @@
-namespace EduConnect_API.Repositories.Interfaces
-{
+
+
     using EduConnect_API.Models;
+    namespace EduConnect_API.Repositories.Interfaces {
 
     public interface IUsuarioRepository
     {
@@ -12,6 +13,6 @@ namespace EduConnect_API.Repositories.Interfaces
         Task<bool> SoftDelete(Guid id);
         Task<bool> Reativar(Guid id);
 
-
+    
     }
 }

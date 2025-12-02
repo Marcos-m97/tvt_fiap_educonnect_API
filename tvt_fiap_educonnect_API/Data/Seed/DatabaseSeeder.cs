@@ -18,21 +18,17 @@ namespace EduConnect_API.Data.Seed
         public async Task SeedAsync()
         {
             Console.WriteLine(">>> SEED INICIADA <<<");
-            await CreateAdminUser();
+            await CreateAdminUserAndProfile();
         }
 
-        private async Task CreateAdminUser()
+        private async Task CreateAdminUserAndProfile()
         {
-            Console.WriteLine(">>> Entrou no CreateAdminUser()");
+            Console.WriteLine(">>> Entrou no CreateAdminUserAndProfile()");
 
             var email = _config["Seed:DefaultEmail"];
             var name = _config["Seed:DefaultName"];
             var password = _config["Seed:DefaultPassword"];
-            var tipoStr = _config["Seed:DefaultTipo"];
-
-            Console.WriteLine($"Email -> {email}");
-            Console.WriteLine($"Password -> {password}");
-            Console.WriteLine($"Tipo -> {tipoStr}");
+            var tipoStr = _config["Seed:DefaultTipo"]; // deve ser "1" para Admin
 
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
@@ -40,34 +36,62 @@ namespace EduConnect_API.Data.Seed
                 return;
             }
 
-            int tipo = int.Parse(tipoStr ?? "0");
+            int tipo = int.Parse(tipoStr ?? "1");
 
+            // 1) Verifica se o USUÁRIO já existe
             var existingUser = await _context.Usuarios
                 .FirstOrDefaultAsync(u => u.Email == email);
 
+            Usuario usuario;
+
             if (existingUser != null)
             {
-                Console.WriteLine("✔ Admin já existe. Seed ignorada.");
+                Console.WriteLine("✔ Usuário já existe.");
+                usuario = existingUser;
+            }
+            else
+            {
+                // cria usuário novo
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
+                usuario = new Usuario
+                {
+                    Nome = name,
+                    Email = email,
+                    SenhaHash = hashedPassword,
+                    Tipo = tipo,   // deve ser 1 (Admin)
+                    CriadoEm = DateTime.Now,
+                    Ativo = true
+                };
+
+                _context.Usuarios.Add(usuario);
+                await _context.SaveChangesAsync();
+
+                Console.WriteLine($"🔥 Usuário ADMIN criado via seed! ID: {usuario.Id}");
+            }
+
+            // 2) Criar PERFIL ADMIN caso não exista
+            var existingAdminProfile = await _context.Admins
+                .FirstOrDefaultAsync(a => a.UsuarioId == usuario.Id);
+
+            if (existingAdminProfile != null)
+            {
+                Console.WriteLine("✔ Perfil Admin já existe.");
                 return;
             }
 
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-
-            var admin = new Usuario
+            var admin = new Admin
             {
-                Nome = name,
-                Email = email,
-                SenhaHash = hashedPassword,
-                Tipo = tipo,
-                CriadoEm = DateTime.Now,
-                Ativo = true
+                Id = Guid.NewGuid(),
+                UsuarioId = usuario.Id,
+                Departamento = "Diretoria Acadêmica",
+                Cargo = "Administrador do Sistema"
             };
 
-            _context.Add(admin);
+            _context.Admins.Add(admin);
             await _context.SaveChangesAsync();
 
-            Console.WriteLine($"🔥 Admin criado via seed com sucesso! ID: {admin.Id}");
-
+            Console.WriteLine($"🏆 Perfil ADMIN criado com sucesso! AdminId: {admin.Id}");
         }
     }
 }
