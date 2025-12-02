@@ -1,14 +1,15 @@
-﻿using EduConnect_API.Models;
-using EduConnect_API.Models.DTOs;
+﻿using EduConnect_API.Models.DTOs;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EduConnect_API.Services.Interfaces
 {
     public interface IAdminService
     {
-        Task<Admin> Criar(CriarAdminDTO dto);
-        Task<Admin?> ObterPorUsuario(Guid usuarioId);
-        Task<IEnumerable<Admin>> Listar();
-        Task<Admin?> Atualizar(Guid id, CriarAdminDTO dto);
+        Task<AdminDTO> Criar(CriarAdminDTO dto);
+        Task<AdminDTO?> ObterPorUsuario(Guid usuarioId);
+        Task<IEnumerable<AdminDTO>> Listar();
+        Task<AdminDTO?> Atualizar(Guid id, CriarAdminDTO dto);
     }
-
 }

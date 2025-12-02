@@ -2,6 +2,7 @@
 using EduConnect_API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 namespace EduConnect_API.Controllers
 {
     [ApiController]
@@ -15,7 +16,7 @@ namespace EduConnect_API.Controllers
             _service = service;
         }
 
-        [Authorize(Roles = "0")] // superadmin
+        [Authorize(Roles = "0")]
         [HttpPost]
         public async Task<IActionResult> Criar(CriarAdminDTO dto)
         {
@@ -35,6 +36,7 @@ namespace EduConnect_API.Controllers
         public async Task<IActionResult> Obter(Guid usuarioId)
         {
             var admin = await _service.ObterPorUsuario(usuarioId);
+
             if (admin == null) return NotFound();
 
             return Ok(admin);
@@ -45,6 +47,7 @@ namespace EduConnect_API.Controllers
         public async Task<IActionResult> Atualizar(Guid id, CriarAdminDTO dto)
         {
             var admin = await _service.Atualizar(id, dto);
+
             if (admin == null) return NotFound();
 
             return Ok(admin);

@@ -1,6 +1,5 @@
 ﻿using EduConnect_API.Models;
 using EduConnect_API.Models.DTOs;
-using EduConnect_API.Repositories;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
 
@@ -17,9 +16,10 @@ namespace EduConnect_API.Services
             _usuarios = usuarios;
         }
 
-        public async Task<Admin> Criar(CriarAdminDTO dto)
+        public async Task<AdminDTO> Criar(CriarAdminDTO dto)
         {
             var usuario = await _usuarios.ObterPorId(dto.UsuarioId);
+
             if (usuario == null || usuario.Tipo != 1)
                 throw new Exception("Usuário não é um administrador.");
 
@@ -30,16 +30,25 @@ namespace EduConnect_API.Services
                 Cargo = dto.Cargo
             };
 
-            return await _repo.Criar(admin);
+            admin = await _repo.Criar(admin);
+
+            return MapToDTO(admin);
         }
 
-        public Task<Admin?> ObterPorUsuario(Guid usuarioId)
-            => _repo.ObterPorUsuarioId(usuarioId);
+        public async Task<AdminDTO?> ObterPorUsuario(Guid usuarioId)
+        {
+            var admin = await _repo.ObterPorUsuarioId(usuarioId);
 
-        public Task<IEnumerable<Admin>> Listar()
-            => _repo.Listar();
+            return admin == null ? null : MapToDTO(admin);
+        }
 
-        public async Task<Admin?> Atualizar(Guid id, CriarAdminDTO dto)
+        public async Task<IEnumerable<AdminDTO>> Listar()
+        {
+            var admins = await _repo.Listar();
+            return admins.Select(a => MapToDTO(a));
+        }
+
+        public async Task<AdminDTO?> Atualizar(Guid id, CriarAdminDTO dto)
         {
             var admin = await _repo.ObterPorId(id);
 
@@ -49,7 +58,22 @@ namespace EduConnect_API.Services
             admin.Departamento = dto.Departamento;
             admin.Cargo = dto.Cargo;
 
-            return await _repo.Atualizar(admin);
+            admin = await _repo.Atualizar(admin);
+
+            return MapToDTO(admin);
+        }
+
+        private AdminDTO MapToDTO(Admin admin)
+        {
+            return new AdminDTO
+            {
+                Id = admin.Id,
+                UsuarioId = admin.UsuarioId,
+                Nome = admin.Usuario.Nome,
+                Email = admin.Usuario.Email,
+                Departamento = admin.Departamento,
+                Cargo = admin.Cargo
+            };
         }
     }
 }
