@@ -47,6 +47,9 @@ builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 builder.Services.AddScoped<ICursoService, CursoService>();
 builder.Services.AddScoped<IDisciplinaRepository, DisciplinaRepository>();
 builder.Services.AddScoped<IDisciplinaService, DisciplinaService>();
+builder.Services.AddScoped<ITurmaRepository, TurmaRepository>();
+builder.Services.AddScoped<ITurmaService, TurmaService>();
+
 
 // Seeder
 builder.Services.AddScoped<DatabaseSeeder>();
