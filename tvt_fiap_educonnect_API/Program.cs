@@ -45,8 +45,8 @@ builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IAlunoService, AlunoService>();
 builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 builder.Services.AddScoped<ICursoService, CursoService>();
-
-
+builder.Services.AddScoped<IDisciplinaRepository, DisciplinaRepository>();
+builder.Services.AddScoped<IDisciplinaService, DisciplinaService>();
 
 // Seeder
 builder.Services.AddScoped<DatabaseSeeder>();
