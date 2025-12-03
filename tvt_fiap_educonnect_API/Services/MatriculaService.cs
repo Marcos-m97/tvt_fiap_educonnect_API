@@ -24,9 +24,10 @@ namespace EduConnect_API.Services
             _storage = storage;
         }
 
-        public async Task<MatriculaDTO> Criar(Guid alunoId, CriarMatriculaDTO dto)
+        public async Task<MatriculaDTO> Criar(Guid usuarioId, CriarMatriculaDTO dto)
         {
-            var aluno = await _alunoRepo.ObterPorId(alunoId)
+            // aluno agora é buscado pelo UsuarioId (via token)
+            var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
                 ?? throw new Exception("Aluno não encontrado.");
 
             var turma = await _turmaRepo.ObterPorId(dto.TurmaId)
@@ -34,7 +35,7 @@ namespace EduConnect_API.Services
 
             var matricula = new Matricula
             {
-                AlunoId = alunoId,
+                AlunoId = aluno.Id,    // ainda usa o aluno.Id como FK
                 TurmaId = dto.TurmaId,
                 Status = MatriculaStatus.Inscricao
             };
@@ -43,6 +44,7 @@ namespace EduConnect_API.Services
 
             return MapToDTO(matricula, aluno.Usuario.Nome, turma.Nome);
         }
+
 
         public async Task<MatriculaDTO?> UploadComprovantePagamento(Guid id, IFormFile arquivo)
         {

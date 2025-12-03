@@ -51,6 +51,10 @@ builder.Services.AddScoped<ITurmaRepository, TurmaRepository>();
 builder.Services.AddScoped<ITurmaService, TurmaService>();
 builder.Services.AddScoped<ITurmaDisciplinaRepository, TurmaDisciplinaRepository>();
 builder.Services.AddScoped<ITurmaDisciplinaService, TurmaDisciplinaService>();
+builder.Services.AddScoped<IMatriculaService, MatriculaService>();
+builder.Services.AddScoped<IMatriculaRepository, MatriculaRepository>();
+builder.Services.AddScoped<IArquivoStorageService, LocalStorageService>();
+
 
 
 
@@ -166,6 +170,8 @@ app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles();
 
 app.MapControllers();
 
