@@ -47,37 +47,6 @@ namespace EduConnect_API.Controllers
             });
         }
 
-        // ============================================================
-        // 2. /ME  (QUALQUER USUÁRIO LOGADO)
-        // ============================================================
-        [Authorize]
-        [HttpGet("me")]
-        public async Task<IActionResult> Me()
-        {
-            var idClaim = User.FindFirst("id")?.Value;
-
-            if (idClaim == null)
-                throw new AppException("Token inválido", 401);
-
-            var id = Guid.Parse(idClaim);
-            var user = await _service.ObterPorId(id);
-
-            if (user == null)
-                throw new AppException("Usuário não encontrado", 404);
-
-            return Ok(new
-            {
-                user.Id,
-                user.Nome,
-                user.Email,
-                user.Tipo,
-                user.CriadoEm
-            });
-        }
-
-        // ============================================================
-        // 3. CRIAR USUÁRIO (SUPERADMIN = 0 | ADMIN = 1)
-        // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpPost]
         public async Task<IActionResult> Criar([FromBody] CriarUsuarioDTO dto)
