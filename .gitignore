@@ -79,3 +79,8 @@ project.fragment.lock.json
 *.nupkg
 *.snupkg
 .nuget/
+
+# Ignorar arquivos de upload
+wwwroot/uploads/
+wwwroot/uploads/*
+wwwroot/**

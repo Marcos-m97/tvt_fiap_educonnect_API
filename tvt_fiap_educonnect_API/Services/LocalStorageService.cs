@@ -42,5 +42,24 @@ namespace EduConnect_API.Services
 
             return await File.ReadAllBytesAsync(caminhoFisico);
         }
+        // ENTREGAS DE ATIVIDADES
+        public async Task<string> SalvarEntrega(Guid atividadeId, Guid alunoId, IFormFile arquivo)
+        {
+            var pasta = Path.Combine("wwwroot", "uploads", "entregas",
+                atividadeId.ToString(),
+                alunoId.ToString());
+
+            Directory.CreateDirectory(pasta);
+
+            var caminho = Path.Combine(pasta, arquivo.FileName);
+
+            using var stream = new FileStream(caminho, FileMode.Create);
+            await arquivo.CopyToAsync(stream);
+
+            // retorna caminho relativo
+            return caminho.Replace("wwwroot", "").Replace("\\", "/");
+        }
+
+
     }
 }

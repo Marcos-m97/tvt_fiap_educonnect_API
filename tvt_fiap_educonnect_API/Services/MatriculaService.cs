@@ -45,7 +45,6 @@ namespace EduConnect_API.Services
             return MapToDTO(matricula, aluno.Usuario.Nome, turma.Nome);
         }
 
-
         public async Task<MatriculaDTO?> UploadComprovantePagamento(Guid id, IFormFile arquivo)
         {
             var m = await _repo.ObterPorId(id);
