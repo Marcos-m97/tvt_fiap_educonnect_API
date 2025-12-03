@@ -49,6 +49,9 @@ builder.Services.AddScoped<IDisciplinaRepository, DisciplinaRepository>();
 builder.Services.AddScoped<IDisciplinaService, DisciplinaService>();
 builder.Services.AddScoped<ITurmaRepository, TurmaRepository>();
 builder.Services.AddScoped<ITurmaService, TurmaService>();
+builder.Services.AddScoped<ITurmaDisciplinaRepository, TurmaDisciplinaRepository>();
+builder.Services.AddScoped<ITurmaDisciplinaService, TurmaDisciplinaService>();
+
 
 
 // Seeder
