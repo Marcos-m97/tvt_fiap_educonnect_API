@@ -60,6 +60,9 @@ builder.Services.AddScoped<IAtividadeService, AtividadeService>();
 builder.Services.AddScoped<IEntregaService, EntregaService>();
 builder.Services.AddScoped<IEventoRepository, EventoRepository>();
 builder.Services.AddScoped<IEventoService, EventoService>();
+builder.Services.AddScoped<IBoletimRepository, BoletimRepository>();
+builder.Services.AddScoped<IBoletimService, BoletimService>();
+
 
 
 

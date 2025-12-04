@@ -10,6 +10,7 @@
     <!-- BCrypt -->
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageReference Include="QuestPDF" Version="2024.2.3" />
 
     <!-- Swagger (compatível com net8.0) -->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />

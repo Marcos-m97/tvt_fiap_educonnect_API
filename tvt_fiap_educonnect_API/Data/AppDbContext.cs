@@ -1,6 +1,5 @@
 using EduConnect_API.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EduConnect_API.Data
 {
@@ -8,12 +7,18 @@ namespace EduConnect_API.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        // ============================
+        // Usuários
+        // ============================
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<PasswordResetCode> PasswordResetCodes { get; set; }
         public DbSet<Aluno> Alunos { get; set; }
         public DbSet<Professor> Professores { get; set; }
         public DbSet<Admin> Admins { get; set; }
 
+        // ============================
+        // Acadêmico
+        // ============================
         public DbSet<Curso> Cursos { get; set; }
         public DbSet<Disciplina> Disciplinas { get; set; }
         public DbSet<Turma> Turmas { get; set; }
@@ -23,13 +28,32 @@ namespace EduConnect_API.Data
         public DbSet<EntregaAtividade> EntregasAtividades { get; set; }
         public DbSet<Evento> Eventos { get; set; }
 
+        // ============================
+        // Boletins (NOVO)
+        // ============================
+        public DbSet<Boletim> Boletins { get; set; }
+        public DbSet<BoletimDisciplina> BoletinsDisciplinas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // ?? IMPORTANTE: Remover CASCADE DELETE globalmente
-            // Isso resolve o erro de múltiplos caminhos em cascata (SQL Error 1785)
+            // ===============================================
+            // RELACIONAMENTOS DO BOLETIM
+            // (Necessário antes de remover cascades)
+            // ===============================================
+            modelBuilder.Entity<Boletim>()
+                .HasMany(b => b.Disciplinas)
+                .WithOne(d => d.Boletim)
+                .HasForeignKey(d => d.BoletimId)
+                .OnDelete(DeleteBehavior.Cascade);
+            // ? CASCADE localmente aqui É SEGURO
+            // pois o seu código global abaixo sobrescreve tudo para Restrict
+
+            // ===============================================
+            // IMPORTANTE:
+            // Remover CASCADE DELETE GLOBALMENTE
+            // ===============================================
             foreach (var relationship in modelBuilder.Model.GetEntityTypes()
                 .SelectMany(e => e.GetForeignKeys()))
             {
