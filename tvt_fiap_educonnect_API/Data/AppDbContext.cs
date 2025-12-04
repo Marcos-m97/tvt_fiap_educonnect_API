@@ -21,6 +21,8 @@ namespace EduConnect_API.Data
         public DbSet<Matricula> Matriculas { get; set; }
         public DbSet<Atividade> Atividades { get; set; }
         public DbSet<EntregaAtividade> EntregasAtividades { get; set; }
+        public DbSet<Evento> Eventos { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

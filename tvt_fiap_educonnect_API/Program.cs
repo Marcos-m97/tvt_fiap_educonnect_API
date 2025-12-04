@@ -58,6 +58,9 @@ builder.Services.AddScoped<IAtividadeRepository, AtividadeRepository>();
 builder.Services.AddScoped<IEntregaRepository, EntregaRepository>();
 builder.Services.AddScoped<IAtividadeService, AtividadeService>();
 builder.Services.AddScoped<IEntregaService, EntregaService>();
+builder.Services.AddScoped<IEventoRepository, EventoRepository>();
+builder.Services.AddScoped<IEventoService, EventoService>();
+
 
 
 

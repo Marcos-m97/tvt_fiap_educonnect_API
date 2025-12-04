@@ -1,0 +1,37 @@
+﻿using System;
+
+namespace EduConnect_API.Models
+{
+    public class Evento
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        public string Titulo { get; set; } = string.Empty;
+        public string? Descricao { get; set; }
+
+        public DateTime Inicio { get; set; }
+        public DateTime? Fim { get; set; }
+
+        public TipoEvento Tipo { get; set; }
+
+        // Relacionamentos opcionais:
+        public Guid? TurmaId { get; set; }
+        public Turma? Turma { get; set; }
+
+        public Guid? TurmaDisciplinaId { get; set; }
+        public TurmaDisciplina? TurmaDisciplina { get; set; }
+
+        public Guid CriadoPorId { get; set; }
+        public Usuario CriadoPor { get; set; }
+    }
+
+    public enum TipoEvento
+    {
+        Geral = 1,
+        Prova = 2,
+        Atividade = 3,
+        AulaExtra = 4,
+        Reuniao = 5
+    }
+}
+
