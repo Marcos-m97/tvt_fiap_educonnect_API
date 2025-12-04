@@ -21,7 +21,7 @@ namespace EduConnect_API.Services
 
         public async Task<BoletimDTO> Gerar(CreateBoletimDTO dto)
         {
-            // 1) Buscar disciplinas REAIS usando TurmaDisciplina
+            // Buscar disciplinas vinculadas à turma
             var turmaDisciplinas = await _context.TurmaDisciplinas
                 .Where(td => td.TurmaId == dto.TurmaId)
                 .Include(td => td.Disciplina)
@@ -30,7 +30,6 @@ namespace EduConnect_API.Services
             if (!turmaDisciplinas.Any())
                 throw new Exception("Nenhuma disciplina vinculada a esta turma.");
 
-            // 2) Criar boletim
             var boletim = new Boletim
             {
                 Id = Guid.NewGuid(),
@@ -39,20 +38,63 @@ namespace EduConnect_API.Services
                 GeradoEm = DateTime.Now
             };
 
-            // 3) Criar BoletimDisciplina para cada disciplina vinculada
             foreach (var td in turmaDisciplinas)
             {
+                // Buscar todas as atividades da disciplina
+                var atividades = await _context.Atividades
+                    .Where(a => a.TurmaDisciplinaId == td.Id)
+                    .ToListAsync();
+
+                double somaNotas = 0;
+                int totalAtividades = atividades.Count;
+                int atividadesComEntrega = 0;
+
+                foreach (var atv in atividades)
+                {
+                    // Buscar entrega do aluno
+                    var entrega = await _context.EntregasAtividades
+                        .Where(e => e.AtividadeId == atv.Id && e.AlunoId == dto.AlunoId)
+                        .FirstOrDefaultAsync();
+
+                    if (entrega != null)
+                    {
+                        somaNotas += (double)(entrega.Nota ?? 0);
+                        atividadesComEntrega++;
+                    }
+                }
+
+                double media = 0;
+                string situacao = "Cursando";
+
+                if (totalAtividades == 0)
+                {
+                    media = 0;
+                    situacao = "Sem Avaliação";
+                }
+                else
+                {
+                    media = somaNotas / totalAtividades;
+
+                    if (atividadesComEntrega == 0)
+                        situacao = "Cursando";
+                    else if (media >= 6)
+                        situacao = "Aprovado";
+                    else
+                        situacao = "Reprovado";
+                }
+
                 boletim.Disciplinas.Add(new BoletimDisciplina
                 {
                     Id = Guid.NewGuid(),
                     NomeDisciplina = td.Disciplina.Nome,
-                    Nota = 0,
-                    Media = 0,
-                    Situacao = "Cursando"
+                    Nota = somaNotas,  // Somatório das notas
+                    Media = media,
+                    Situacao = situacao,
+                    TotalAtividades = totalAtividades
+
                 });
             }
 
-            // 4) Persistir no banco
             await _repo.Criar(boletim);
 
             return MapToDTO(boletim);
@@ -60,43 +102,39 @@ namespace EduConnect_API.Services
 
         public async Task<BoletimDTO?> Obter(Guid boletimId)
         {
-            var boletim = await _repo.Obter(boletimId);
-            return boletim == null ? null : MapToDTO(boletim);
+            var entity = await _repo.Obter(boletimId);
+            return entity == null ? null : MapToDTO(entity);
         }
 
         public async Task<IEnumerable<BoletimDTO>> ListarPorAluno(Guid alunoId)
         {
-            var boletins = await _repo.ListarPorAluno(alunoId);
-            return boletins.Select(b => MapToDTO(b));
+            var lista = await _repo.ListarPorAluno(alunoId);
+            return lista.Select(MapToDTO);
         }
 
         public async Task<byte[]> GerarPdf(Guid boletimId)
         {
-            var boletim = await _repo.Obter(boletimId);
-
-            if (boletim == null)
-                throw new Exception("Boletim não encontrado.");
+            var boletim = await _repo.Obter(boletimId)
+                ?? throw new Exception("Boletim não encontrado.");
 
             return BoletimPdfGenerator.GerarPdf(boletim);
         }
 
-        // ===========================================
-        // MAPEAR PARA DTO
-        // ===========================================
-        private BoletimDTO MapToDTO(Boletim boletim)
+        private BoletimDTO MapToDTO(Boletim entity)
         {
             return new BoletimDTO
             {
-                Id = boletim.Id,
-                AlunoId = boletim.AlunoId,
-                TurmaId = boletim.TurmaId,
-                GeradoEm = boletim.GeradoEm,
-                Disciplinas = boletim.Disciplinas.Select(d => new BoletimDisciplinaDTO
+                Id = entity.Id,
+                AlunoId = entity.AlunoId,
+                TurmaId = entity.TurmaId,
+                GeradoEm = entity.GeradoEm,
+                Disciplinas = entity.Disciplinas.Select(d => new BoletimDisciplinaDTO
                 {
                     NomeDisciplina = d.NomeDisciplina,
                     Nota = d.Nota,
                     Media = d.Media,
-                    Situacao = d.Situacao
+                    Situacao = d.Situacao,
+                    TotalAtividades = d.TotalAtividades
                 }).ToList()
             };
         }

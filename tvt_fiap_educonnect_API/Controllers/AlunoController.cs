@@ -16,7 +16,7 @@ namespace EduConnect_API.Controllers
             _service = service;
         }
 
-        [Authorize(Roles = "0,1")]
+        [Authorize(Roles = "0,1,3")]
         [HttpPost]
         public async Task<IActionResult> Criar(CriarAlunoDTO dto)
         {
@@ -31,7 +31,7 @@ namespace EduConnect_API.Controllers
             return Ok(await _service.Listar());
         }
 
-        [Authorize(Roles = "0,1,2,3")]
+        [Authorize(Roles = "0,1,2")]
         [HttpGet("{usuarioId}")]
         public async Task<IActionResult> Obter(Guid usuarioId)
         {
