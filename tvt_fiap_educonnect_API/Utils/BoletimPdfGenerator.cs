@@ -7,7 +7,7 @@ namespace EduConnect_API.Utils
 {
     public static class BoletimPdfGenerator
     {
-        public static byte[] GerarPdf(Boletim b)
+        public static byte[] GerarPdf(Boletim b, string nomeAluno, string nomeTurma)
         {
             var doc = Document.Create(container =>
             {
@@ -23,8 +23,8 @@ namespace EduConnect_API.Utils
 
                     page.Content().Column(col =>
                     {
-                        col.Item().Text($"Aluno: {b.AlunoId}");
-                        col.Item().Text($"Turma: {b.TurmaId}");
+                        col.Item().Text($"Aluno: {nomeAluno}");
+                        col.Item().Text($"Turma: {nomeTurma}");
                         col.Item().Text($"Gerado em: {b.GeradoEm:dd/MM/yyyy}");
                         col.Item().PaddingVertical(10);
 
