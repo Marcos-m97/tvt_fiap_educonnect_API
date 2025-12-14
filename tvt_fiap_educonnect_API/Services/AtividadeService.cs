@@ -7,16 +7,23 @@ namespace EduConnect_API.Services
 {
     public class AtividadeService : IAtividadeService
     {
-        private readonly IAtividadeRepository _repo;
+        private readonly IAtividadeRepository _atividadeRepo;
         private readonly ITurmaDisciplinaRepository _tdRepo;
+        private readonly IAlunoRepository _alunoRepo;
+        private readonly IMatriculaRepository _matriculaRepo;
 
         public AtividadeService(
-            IAtividadeRepository repo,
-            ITurmaDisciplinaRepository tdRepo)
+            IAtividadeRepository atividadeRepo,
+            ITurmaDisciplinaRepository tdRepo,
+            IAlunoRepository alunoRepo,
+            IMatriculaRepository matriculaRepo)
         {
-            _repo = repo;
+            _atividadeRepo = atividadeRepo;
             _tdRepo = tdRepo;
+            _alunoRepo = alunoRepo;
+            _matriculaRepo = matriculaRepo;
         }
+
 
         public async Task<AtividadeDTO> Criar(CriarAtividadeDTO dto)
         {
@@ -32,7 +39,7 @@ namespace EduConnect_API.Services
                 TurmaDisciplinaId = dto.TurmaDisciplinaId
             };
 
-            atividade = await _repo.Criar(atividade);
+            atividade = await _atividadeRepo.Criar(atividade);
 
             return new AtividadeDTO
             {
@@ -50,7 +57,7 @@ namespace EduConnect_API.Services
 
         public async Task<IEnumerable<AtividadeDTO>> ListarPorTurmaDisciplina(Guid turmaDisciplinaId)
         {
-            var lista = await _repo.ListarPorTurmaDisciplina(turmaDisciplinaId);
+            var lista = await _atividadeRepo.ListarPorTurmaDisciplina(turmaDisciplinaId);
 
             return lista.Select(a => new AtividadeDTO
             {
@@ -65,5 +72,38 @@ namespace EduConnect_API.Services
                 ProfessorNome = a.TurmaDisciplina.Professor.Usuario.Nome
             });
         }
+        public async Task<IEnumerable<AtividadeAlunoDTO>> ListarMinhasAtividades(Guid usuarioId)
+        {
+            var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
+                ?? throw new Exception("Aluno não encontrado.");
+
+            // matrícula ativa do aluno
+            var matricula = await _matriculaRepo.ObterAtivaPorAlunoId(aluno.Id)
+                ?? throw new Exception("Aluno não possui matrícula ativa.");
+
+            // buscar atividades da turma do aluno
+            var atividades = await _atividadeRepo.ListarPorTurma(matricula.TurmaId);
+
+            return atividades.Select(a =>
+            {
+                var entrega = a.Entregas
+                    .FirstOrDefault(e => e.AlunoId == aluno.Id);
+
+                return new AtividadeAlunoDTO
+                {
+                    AtividadeId = a.Id,
+                    Titulo = a.Titulo,
+
+                    DisciplinaId = a.TurmaDisciplina.DisciplinaId,
+                    NomeDisciplina = a.TurmaDisciplina.Disciplina.Nome,
+
+                    DataEntrega = a.DataEntrega,
+
+                    JaEntregue = entrega != null,
+                    Nota = entrega?.Nota
+                };
+            });
+        }
+
     }
 }

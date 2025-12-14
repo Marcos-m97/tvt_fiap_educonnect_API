@@ -29,6 +29,14 @@ namespace EduConnect_API.Controllers
         {
             return Ok(await _service.ListarPorTurmaDisciplina(id));
         }
+        [Authorize(Roles = "3")] // aluno
+        [HttpGet("minhas")]
+        public async Task<IActionResult> ListarMinhasAtividades()
+        {
+            var usuarioId = Guid.Parse(User.FindFirst("id")!.Value);
+            return Ok(await _service.ListarMinhasAtividades(usuarioId));
+        }
+
     }
 }
 

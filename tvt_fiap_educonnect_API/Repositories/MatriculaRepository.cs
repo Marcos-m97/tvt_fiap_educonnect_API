@@ -64,5 +64,13 @@ namespace EduConnect_API.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+        public async Task<Matricula?> ObterAtivaPorAlunoId(Guid alunoId)
+        {
+            return await _context.Matriculas
+                .FirstOrDefaultAsync(m =>
+                    m.AlunoId == alunoId &&
+                    m.Status == MatriculaStatus.Efetivada);
+        }
+
     }
 }

@@ -11,5 +11,7 @@ namespace EduConnect_API.Repositories.Interfaces
         Task<IEnumerable<Matricula>> ListarPorTurma(Guid turmaId);
         Task<Matricula> Atualizar(Matricula matricula);
         Task<bool> Deletar(Guid id);
+        Task<Matricula?> ObterAtivaPorAlunoId(Guid alunoId);
+
     }
 }

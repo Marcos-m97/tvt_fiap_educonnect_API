@@ -47,5 +47,15 @@ namespace EduConnect_API.Repositories
                         .ThenInclude(p => p.Usuario)
                 .ToListAsync();
         }
+        public async Task<IEnumerable<Atividade>> ListarPorTurma(Guid turmaId)
+        {
+            return await _context.Atividades
+                .Where(a => a.TurmaDisciplina.TurmaId == turmaId)
+                .Include(a => a.TurmaDisciplina)
+                    .ThenInclude(td => td.Disciplina)
+                .Include(a => a.Entregas)
+                .ToListAsync();
+        }
+
     }
 }
