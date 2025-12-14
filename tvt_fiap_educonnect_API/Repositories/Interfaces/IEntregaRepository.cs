@@ -7,5 +7,6 @@ namespace EduConnect_API.Repositories.Interfaces
         Task<EntregaAtividade?> ObterPorId(Guid id);
         Task<IEnumerable<EntregaAtividade>> ListarPorAtividade(Guid atividadeId);
         Task<EntregaAtividade> Atualizar(EntregaAtividade entrega);
+        Task<IEnumerable<EntregaAtividade>> ListarPorAluno(Guid alunoId);
     }
 }

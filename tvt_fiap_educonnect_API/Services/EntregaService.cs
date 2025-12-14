@@ -118,5 +118,43 @@ namespace EduConnect_API.Services
                 Arquivo = e.Arquivo
             };
         }
+        public async Task<IEnumerable<EntregaAlunoDTO>> ListarMinhasEntregas(Guid usuarioId,Guid? disciplinaId,Guid? atividadeId)
+        {
+            var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
+                ?? throw new Exception("Aluno não encontrado.");
+
+            var entregas = await _repo.ListarPorAluno(aluno.Id);
+
+            if (atividadeId.HasValue)
+            {
+                entregas = entregas
+                    .Where(e => e.AtividadeId == atividadeId.Value)
+                    .ToList();
+            }
+
+            if (disciplinaId.HasValue)
+            {
+                entregas = entregas
+                    .Where(e =>
+                        e.Atividade.TurmaDisciplina.DisciplinaId == disciplinaId.Value)
+                    .ToList();
+            }
+
+            return entregas.Select(e => new EntregaAlunoDTO
+            {
+                EntregaId = e.Id,
+                AtividadeId = e.AtividadeId,
+                TituloAtividade = e.Atividade.Titulo,
+
+                DisciplinaId = e.Atividade.TurmaDisciplina.DisciplinaId,
+                NomeDisciplina = e.Atividade.TurmaDisciplina.Disciplina.Nome,
+
+                DataEnvio = e.DataEnvio,
+                Nota = e.Nota,
+                FeedbackProfessor = e.FeedbackProfessor,
+                Arquivo = e.Arquivo
+            });
+        }
+
     }
 }

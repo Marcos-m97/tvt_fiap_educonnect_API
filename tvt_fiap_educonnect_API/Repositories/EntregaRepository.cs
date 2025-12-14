@@ -46,5 +46,17 @@ namespace EduConnect_API.Repositories
             await _context.SaveChangesAsync();
             return entrega;
         }
+        public async Task<IEnumerable<EntregaAtividade>> ListarPorAluno(Guid alunoId)
+        {
+            return await _context.EntregasAtividades
+                .Where(e => e.AlunoId == alunoId)
+                .Include(e => e.Aluno)
+                    .ThenInclude(a => a.Usuario)
+                .Include(e => e.Atividade)
+                    .ThenInclude(a => a.TurmaDisciplina)
+                        .ThenInclude(td => td.Disciplina)
+                .ToListAsync();
+        }
+
     }
 }

@@ -16,13 +16,14 @@ namespace EduConnect_API.Controllers
             _service = service;
         }
 
-        [Authorize(Roles = "2")] // professor
+        [Authorize(Roles = "0, 2")] // sysADM e Professor
         [HttpPost]
         public async Task<IActionResult> Criar(CriarAtividadeDTO dto)
         {
             return Ok(await _service.Criar(dto));
         }
 
+        [Authorize(Roles = "0,1,2")] // sysADM, ADM e Professor
         [HttpGet("turma-disciplina/{id}")]
         public async Task<IActionResult> Listar(Guid id)
         {
