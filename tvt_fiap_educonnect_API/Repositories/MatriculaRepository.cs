@@ -67,6 +67,10 @@ namespace EduConnect_API.Repositories
         public async Task<Matricula?> ObterAtivaPorAlunoId(Guid alunoId)
         {
             return await _context.Matriculas
+                .Include(m => m.Turma)
+                    .ThenInclude(t => t.Curso)
+                .Include(m => m.Aluno)
+                    .ThenInclude(a => a.Usuario)
                 .FirstOrDefaultAsync(m =>
                     m.AlunoId == alunoId &&
                     m.Status == MatriculaStatus.Efetivada);

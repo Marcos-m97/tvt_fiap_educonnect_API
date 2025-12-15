@@ -13,17 +13,20 @@ namespace EduConnect_API.Controllers
         private readonly IAdminService _adminService;
         private readonly IProfessorService _professorService;
         private readonly IAlunoService _alunoService;
+        private readonly IAccountService _accountService;  
 
         public AccountController(
             IUsuarioService usuarioService,
             IAdminService adminService,
             IProfessorService professorService,
-            IAlunoService alunoService)
+            IAlunoService alunoService,
+            IAccountService accountService)  
         {
             _usuarioService = usuarioService;
             _adminService = adminService;
             _professorService = professorService;
             _alunoService = alunoService;
+            _accountService = accountService;
         }
 
         // ============================================================
@@ -53,7 +56,6 @@ namespace EduConnect_API.Controllers
 
             var perfil = await perfilTask;
 
-
             return Ok(new
             {
                 usuario = new
@@ -65,6 +67,25 @@ namespace EduConnect_API.Controllers
                 },
                 perfil
             });
+        }
+
+        // ============================================================
+        // GET /api/account/me/contexto  (Para aluno e professor)
+        // ============================================================
+        [Authorize]
+        [HttpGet("me/contexto")]
+        public async Task<IActionResult> Contexto()
+        {
+            var userId = Guid.Parse(User.FindFirst("id")!.Value);
+            var tipo = User.FindFirst(ClaimTypes.Role)!.Value;
+
+            // Recupera o contexto do aluno ou professor
+            var contexto = await _accountService.ObterContexto(userId, tipo);
+
+            if (contexto == null)
+                return NotFound("Contexto não encontrado para o usuário.");
+
+            return Ok(contexto);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using EduConnect_API.Models.DTOs;
+using EduConnect_API.Services;
 using EduConnect_API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace EduConnect_API.Controllers
     public class ProfessorController : ControllerBase
     {
         private readonly IProfessorService _service;
+        private readonly IAccountService _accountService;
 
-        public ProfessorController(IProfessorService service)
+        public ProfessorController(IProfessorService service, IAccountService accountService)
         {
             _service = service;
+            _accountService = accountService;
         }
 
         [Authorize(Roles = "0,1")]
@@ -50,5 +53,12 @@ namespace EduConnect_API.Controllers
 
             return Ok(prof);
         }
+        [Authorize(Roles = "0,1")] // apenas ADM
+        [HttpGet("{id}/contexto")]
+        public async Task<IActionResult> Contexto(Guid id)
+        {
+            return Ok(await _accountService.ObterContextoProfessor(id));
+        }
+
     }
 }

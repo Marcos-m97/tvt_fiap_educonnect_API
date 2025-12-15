@@ -36,7 +36,6 @@ namespace EduConnect_API.Controllers
             var usuarioId = Guid.Parse(User.FindFirst("id")!.Value);
             return Ok(await _service.ListarMinhasAtividades(usuarioId));
         }
-
     }
 }
 

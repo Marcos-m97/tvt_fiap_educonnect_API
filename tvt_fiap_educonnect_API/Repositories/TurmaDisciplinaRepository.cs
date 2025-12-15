@@ -69,5 +69,16 @@ namespace EduConnect_API.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+        public async Task<IEnumerable<TurmaDisciplina>> ListarPorProfessor(Guid professorId)
+        {
+            return await _context.TurmaDisciplinas
+                .Include(td => td.Turma)
+                .Include(td => td.Disciplina)
+                .Include(td => td.Professor)
+                    .ThenInclude(p => p.Usuario)
+                .Where(td => td.ProfessorId == professorId)
+                .ToListAsync();
+        }
+
     }
 }

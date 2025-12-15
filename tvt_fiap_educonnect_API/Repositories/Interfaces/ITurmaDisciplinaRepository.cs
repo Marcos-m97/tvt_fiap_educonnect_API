@@ -8,6 +8,7 @@ namespace EduConnect_API.Repositories.Interfaces
         Task<TurmaDisciplina?> ObterPorId(Guid id);
         Task<IEnumerable<TurmaDisciplina>> Listar();
         Task<IEnumerable<TurmaDisciplina>> ListarPorTurma(Guid turmaId);
+        Task<IEnumerable<TurmaDisciplina>> ListarPorProfessor(Guid professorId);
         Task<TurmaDisciplina> Atualizar(TurmaDisciplina entity);
         Task<bool> Deletar(Guid id);
     }

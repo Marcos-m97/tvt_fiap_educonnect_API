@@ -1,4 +1,5 @@
 ﻿using EduConnect_API.Models.DTOs;
+using EduConnect_API.Services;
 using EduConnect_API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,13 @@ namespace EduConnect_API.Controllers
     public class AlunoController : ControllerBase
     {
         private readonly IAlunoService _service;
+        private readonly IAccountService _accountService;
 
-        public AlunoController(IAlunoService service)
+
+        public AlunoController(IAlunoService service, IAccountService accountService)
         {
             _service = service;
+            _accountService = accountService;
         }
 
         [Authorize(Roles = "0,1,3")]
@@ -50,5 +54,12 @@ namespace EduConnect_API.Controllers
 
             return Ok(aluno);
         }
+        [Authorize(Roles = "0,1,2")] // ADM e Professor
+        [HttpGet("{id}/contexto")]
+        public async Task<IActionResult> Contexto(Guid id)
+        {
+            return Ok(await _accountService.ObterContextoAluno(id));
+        }
+
     }
 }

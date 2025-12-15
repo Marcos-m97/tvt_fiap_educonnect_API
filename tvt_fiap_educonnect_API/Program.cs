@@ -65,11 +65,7 @@ builder.Services.AddScoped<IEventoRepository, EventoRepository>();
 builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<IBoletimRepository, BoletimRepository>();
 builder.Services.AddScoped<IBoletimService, BoletimService>();
-
-
-
-
-
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 
 // Seeder
