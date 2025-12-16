@@ -2,6 +2,7 @@
 {
     public enum MatriculaStatus
     {
+        Inativa = 0,
         Inscricao = 1,
         Pagamento = 2,
         Documentos = 3,
