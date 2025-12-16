@@ -9,11 +9,17 @@ namespace EduConnect_API.Services
     {
         private readonly IProfessorRepository _repo;
         private readonly IUsuarioRepository _usuarios;
+        private readonly IEmailService _emailService;
 
-        public ProfessorService(IProfessorRepository repo, IUsuarioRepository usuarios)
+        public ProfessorService(
+            IProfessorRepository repo,
+            IUsuarioRepository usuarios,
+            IEmailService emailService
+        )
         {
             _repo = repo;
             _usuarios = usuarios;
+            _emailService = emailService;
         }
 
         public async Task<ProfessorDTO> Criar(CriarProfessorDTO dto)
@@ -32,6 +38,39 @@ namespace EduConnect_API.Services
             };
 
             prof = await _repo.Criar(prof);
+
+            // ==============================================================
+            // ENVIO DE EMAIL – PERFIL DE PROFESSOR CRIADO
+            // ==============================================================
+            var assunto = "Seu acesso como professor no EduConnect foi criado";
+
+            var corpo = $@"
+Olá, {usuario.Nome}!
+
+Seu perfil de professor no EduConnect foi criado com sucesso.
+
+A partir de agora, você já pode acessar a plataforma para:
+- Visualizar suas turmas e disciplinas
+- Publicar atividades
+- Avaliar entregas dos alunos
+- Acompanhar boletins e desempenho
+
+🔐 Acesse a plataforma pelo link abaixo:
+https://educonnect.app/login
+
+Caso seja seu primeiro acesso, utilize o e-mail cadastrado e a senha definida no momento do cadastro.
+
+Se tiver qualquer dúvida, nossa equipe administrativa está à disposição.
+
+Atenciosamente,
+Equipe EduConnect
+";
+
+            await _emailService.EnviarEmail(
+                usuario.Email,
+                assunto,
+                corpo
+            );
 
             return MapToDTO(prof);
         }

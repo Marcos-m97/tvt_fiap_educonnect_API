@@ -9,11 +9,17 @@ namespace EduConnect_API.Services
     {
         private readonly IAdminRepository _repo;
         private readonly IUsuarioRepository _usuarios;
+        private readonly IEmailService _emailService;
 
-        public AdminService(IAdminRepository repo, IUsuarioRepository usuarios)
+        public AdminService(
+            IAdminRepository repo,
+            IUsuarioRepository usuarios,
+            IEmailService emailService
+        )
         {
             _repo = repo;
             _usuarios = usuarios;
+            _emailService = emailService;
         }
 
         public async Task<AdminDTO> Criar(CriarAdminDTO dto)
@@ -32,13 +38,45 @@ namespace EduConnect_API.Services
 
             admin = await _repo.Criar(admin);
 
+            // ==============================================================
+            // ENVIO DE EMAIL – ACESSO ADMINISTRATIVO CRIADO
+            // ==============================================================
+            var assunto = "Seu acesso administrativo ao EduConnect foi criado";
+
+            var corpo = $@"
+Olá, {usuario.Nome}!
+
+Seu acesso como administrador no EduConnect foi criado com sucesso.
+
+Com esse perfil, você poderá:
+- Gerenciar usuários e perfis
+- Aprovar matrículas
+- Criar e manter cursos, turmas e disciplinas
+- Acompanhar relatórios e boletins acadêmicos
+
+🔐 Acesse o painel administrativo pelo link abaixo:
+https://educonnect.app/admin/login
+
+Por segurança, recomendamos manter suas credenciais em local seguro.
+
+Em caso de dúvidas ou necessidade de suporte, entre em contato com a equipe responsável.
+
+Atenciosamente,
+Equipe EduConnect
+";
+
+            await _emailService.EnviarEmail(
+                usuario.Email,
+                assunto,
+                corpo
+            );
+
             return MapToDTO(admin);
         }
 
         public async Task<AdminDTO?> ObterPorUsuario(Guid usuarioId)
         {
             var admin = await _repo.ObterPorUsuarioId(usuarioId);
-
             return admin == null ? null : MapToDTO(admin);
         }
 

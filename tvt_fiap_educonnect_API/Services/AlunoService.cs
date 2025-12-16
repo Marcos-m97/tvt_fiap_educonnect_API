@@ -9,11 +9,17 @@ namespace EduConnect_API.Services
     {
         private readonly IAlunoRepository _repo;
         private readonly IUsuarioRepository _usuarios;
+        private readonly IEmailService _emailService;
 
-        public AlunoService(IAlunoRepository repo, IUsuarioRepository usuarios)
+        public AlunoService(
+            IAlunoRepository repo,
+            IUsuarioRepository usuarios,
+            IEmailService emailService
+        )
         {
             _repo = repo;
             _usuarios = usuarios;
+            _emailService = emailService;
         }
 
         public async Task<AlunoDTO> Criar(CriarAlunoDTO dto)
@@ -32,6 +38,39 @@ namespace EduConnect_API.Services
             };
 
             aluno = await _repo.Criar(aluno);
+
+            // ==============================================================
+            // ENVIO DE EMAIL – CADASTRO CONCLUÍDO (ALUNO)
+            // ==============================================================
+            var assunto = "Bem-vindo ao EduConnect – Cadastro concluído";
+
+            var corpo = $@"
+Olá, {usuario.Nome}!
+
+Seu cadastro como aluno no EduConnect foi concluído com sucesso.
+
+📌 Próximo passo:
+Para ter acesso às disciplinas, atividades e boletim, é necessário concluir o processo de matrícula.
+
+👉 Acesse o link abaixo para continuar:
+https://educonnect.app/matricula
+
+Após a aprovação da matrícula, você receberá um novo e-mail confirmando o acesso completo à plataforma.
+
+🔐 Caso precise acessar sua conta:
+https://educonnect.app/login
+
+Se tiver qualquer dúvida, nossa equipe estará à disposição.
+
+Atenciosamente,
+Equipe EduConnect
+";
+
+            await _emailService.EnviarEmail(
+                usuario.Email,
+                assunto,
+                corpo
+            );
 
             return MapToDTO(aluno);
         }
