@@ -33,6 +33,7 @@ namespace EduConnect_API.Data
         // ============================
         public DbSet<Boletim> Boletins { get; set; }
         public DbSet<BoletimDisciplina> BoletinsDisciplinas { get; set; }
+        public DbSet<BoletimAtividade> BoletimAtividades { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

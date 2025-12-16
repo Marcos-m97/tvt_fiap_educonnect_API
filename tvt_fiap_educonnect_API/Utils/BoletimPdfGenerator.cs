@@ -1,4 +1,4 @@
-﻿using EduConnect_API.Models;
+﻿using EduConnect_API.Models.DTOs;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -7,7 +7,7 @@ namespace EduConnect_API.Utils
 {
     public static class BoletimPdfGenerator
     {
-        public static byte[] GerarPdf(Boletim b, string nomeAluno, string nomeTurma)
+        public static byte[] GerarPdf(BoletimDTO b, string nomeAluno, string nomeTurma)
         {
             var doc = Document.Create(container =>
             {
@@ -15,50 +15,81 @@ namespace EduConnect_API.Utils
                 {
                     page.Margin(40);
 
+                    // ================= HEADER =================
                     page.Header()
                         .AlignCenter()
                         .Text("Boletim Escolar")
                         .Bold()
                         .FontSize(22);
 
+                    // ================= CONTENT =================
                     page.Content().Column(col =>
                     {
                         col.Item().Text($"Aluno: {nomeAluno}");
                         col.Item().Text($"Turma: {nomeTurma}");
                         col.Item().Text($"Gerado em: {b.GeradoEm:dd/MM/yyyy}");
-                        col.Item().PaddingVertical(10);
+                        col.Item().PaddingVertical(15);
 
-                        col.Item().Table(t =>
+                        foreach (var d in b.Disciplinas)
                         {
-                            t.ColumnsDefinition(c =>
-                            {
-                                c.RelativeColumn();   // Disciplina
-                                c.ConstantColumn(60); // Atividades
-                                c.ConstantColumn(70); // Soma Nota
-                                c.ConstantColumn(60); // Média
-                                c.ConstantColumn(80); // Situação
-                            });
+                            // -------- Disciplina --------
+                            col.Item().PaddingBottom(5)
+                               .Text(d.NomeDisciplina)
+                               .Bold()
+                               .FontSize(14);
 
-                            t.Header(h =>
-                            {
-                                h.Cell().BorderBottom(1).Padding(5).Text("Disciplina").Bold();
-                                h.Cell().BorderBottom(1).Padding(5).Text("Ativ.").Bold();
-                                h.Cell().BorderBottom(1).Padding(5).Text("Soma").Bold();
-                                h.Cell().BorderBottom(1).Padding(5).Text("Média").Bold();
-                                h.Cell().BorderBottom(1).Padding(5).Text("Situação").Bold();
-                            });
 
-                            foreach (var d in b.Disciplinas)
+                            // -------- Atividades --------
+                            if (d.Atividades.Any())
                             {
-                                t.Cell().Padding(5).Text(d.NomeDisciplina);
-                                t.Cell().Padding(5).Text(d.TotalAtividades.ToString());
-                                t.Cell().Padding(5).Text(d.Nota.ToString("0.0"));
-                                t.Cell().Padding(5).Text(d.Media.ToString("0.0"));
-                                t.Cell().Padding(5).Text(d.Situacao);
+                                col.Item().Table(t =>
+                                {
+                                    t.ColumnsDefinition(c =>
+                                    {
+                                        c.RelativeColumn();   // Atividade
+                                        c.ConstantColumn(80); // Nota
+                                        c.ConstantColumn(80); // Status
+                                    });
+
+                                    t.Header(h =>
+                                    {
+                                        h.Cell().BorderBottom(1).Padding(5).Text("Atividade").Bold();
+                                        h.Cell().BorderBottom(1).Padding(5).Text("Nota").Bold();
+                                        h.Cell().BorderBottom(1).Padding(5).Text("Status").Bold();
+                                    });
+
+                                    foreach (var a in d.Atividades)
+                                    {
+                                        t.Cell().Padding(5).Text(a.Titulo);
+                                        t.Cell().Padding(5).Text(
+                                            a.Nota.HasValue ? a.Nota.Value.ToString("0.0") : "-"
+                                        );
+                                        t.Cell().Padding(5).Text(
+                                            a.Entregue ? "Entregue" : "Pendente"
+                                        );
+                                    }
+                                });
                             }
-                        });
+                            else
+                            {
+                                col.Item().Text("Nenhuma atividade cadastrada.")
+                                    .Italic()
+                                    .FontSize(10);
+                            }
+
+                            // -------- Resumo --------
+                            col.Item().PaddingTop(5).Row(row =>
+                            {
+                                row.RelativeItem().Text($"Total de atividades: {d.TotalAtividades}");
+                                row.RelativeItem().Text($"Média: {d.Media:0.0}");
+                                row.RelativeItem().Text($"Situação: {d.Situacao}");
+                            });
+
+                            col.Item().PaddingBottom(15);
+                        }
                     });
 
+                    // ================= FOOTER =================
                     page.Footer()
                         .AlignCenter()
                         .Text("EduConnect")

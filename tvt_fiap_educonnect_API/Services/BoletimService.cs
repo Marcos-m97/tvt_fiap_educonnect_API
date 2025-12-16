@@ -1,7 +1,6 @@
 ﻿using EduConnect_API.Data;
 using EduConnect_API.Models;
 using EduConnect_API.Models.DTOs;
-using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
 using EduConnect_API.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -10,21 +9,18 @@ namespace EduConnect_API.Services
 {
     public class BoletimService : IBoletimService
     {
-        private readonly IBoletimRepository _repo;
         private readonly AppDbContext _context;
 
-        public BoletimService(IBoletimRepository repo, AppDbContext context)
+        public BoletimService(AppDbContext context)
         {
-            _repo = repo;
             _context = context;
         }
 
         // ==============================================================
-        // GERAR BOLETIM
+        // GERAR BOLETIM (SEMPRE INSERT – SEM UPDATE)
         // ==============================================================
         public async Task<BoletimDTO> Gerar(CreateBoletimDTO dto)
         {
-            // Buscar disciplinas da turma
             var turmaDisciplinas = await _context.TurmaDisciplinas
                 .Where(td => td.TurmaId == dto.TurmaId)
                 .Include(td => td.Disciplina)
@@ -43,7 +39,6 @@ namespace EduConnect_API.Services
 
             foreach (var td in turmaDisciplinas)
             {
-                // Buscar atividades daquela disciplina
                 var atividades = await _context.Atividades
                     .Where(a => a.TurmaDisciplinaId == td.Id)
                     .ToListAsync();
@@ -52,16 +47,37 @@ namespace EduConnect_API.Services
                 int totalAtividades = atividades.Count;
                 int atividadesComEntrega = 0;
 
+                var boletimDisciplina = new BoletimDisciplina
+                {
+                    Id = Guid.NewGuid(),
+                    NomeDisciplina = td.Disciplina.Nome,
+                    TotalAtividades = totalAtividades
+                };
+
                 foreach (var atv in atividades)
                 {
                     var entrega = await _context.EntregasAtividades
-                        .FirstOrDefaultAsync(e => e.AtividadeId == atv.Id && e.AlunoId == dto.AlunoId);
+                        .FirstOrDefaultAsync(e =>
+                            e.AtividadeId == atv.Id &&
+                            e.AlunoId == dto.AlunoId
+                        );
 
                     if (entrega != null)
                     {
                         somaNotas += (double)(entrega.Nota ?? 0);
                         atividadesComEntrega++;
                     }
+
+                    boletimDisciplina.Atividades.Add(new BoletimAtividade
+                    {
+                        Id = Guid.NewGuid(),
+                        AtividadeId = atv.Id,
+                        Titulo = atv.Titulo,
+                        Nota = entrega?.Nota.HasValue == true
+                            ? (double?)entrega.Nota.Value
+                            : null,
+                        Entregue = entrega != null
+                    });
                 }
 
                 double media = 0;
@@ -83,28 +99,29 @@ namespace EduConnect_API.Services
                         situacao = "Reprovado";
                 }
 
-                boletim.Disciplinas.Add(new BoletimDisciplina
-                {
-                    Id = Guid.NewGuid(),
-                    NomeDisciplina = td.Disciplina.Nome,
-                    Nota = somaNotas,
-                    Media = media,
-                    Situacao = situacao,
-                    TotalAtividades = totalAtividades
-                });
+                boletimDisciplina.Nota = somaNotas;
+                boletimDisciplina.Media = media;
+                boletimDisciplina.Situacao = situacao;
+
+                boletim.Disciplinas.Add(boletimDisciplina);
             }
 
-            await _repo.Criar(boletim);
+            _context.Boletins.Add(boletim);
+            await _context.SaveChangesAsync();
 
             return MapToDTO(boletim);
         }
 
         // ==============================================================
-        // OBTER UM BOLETIM
+        // OBTER BOLETIM
         // ==============================================================
         public async Task<BoletimDTO?> Obter(Guid boletimId)
         {
-            var boletim = await _repo.Obter(boletimId);
+            var boletim = await _context.Boletins
+                .Include(b => b.Disciplinas)
+                    .ThenInclude(d => d.Atividades)
+                .FirstOrDefaultAsync(b => b.Id == boletimId);
+
             return boletim == null ? null : MapToDTO(boletim);
         }
 
@@ -113,16 +130,22 @@ namespace EduConnect_API.Services
         // ==============================================================
         public async Task<IEnumerable<BoletimDTO>> ListarPorAluno(Guid alunoId)
         {
-            var lista = await _repo.ListarPorAluno(alunoId);
+            var lista = await _context.Boletins
+                .Include(b => b.Disciplinas)
+                    .ThenInclude(d => d.Atividades)
+                .Where(b => b.AlunoId == alunoId)
+                .OrderByDescending(b => b.GeradoEm)
+                .ToListAsync();
+
             return lista.Select(MapToDTO);
         }
 
         // ==============================================================
-        // GERAR PDF COM NOME DO ALUNO E NOME DA TURMA
+        // GERAR PDF
         // ==============================================================
         public async Task<byte[]> GerarPdf(Guid boletimId)
         {
-            var boletim = await _repo.Obter(boletimId)
+            var boletim = await Obter(boletimId)
                 ?? throw new Exception("Boletim não encontrado.");
 
             var aluno = await _context.Alunos
@@ -142,7 +165,7 @@ namespace EduConnect_API.Services
         }
 
         // ==============================================================
-        // MAPEAR PARA DTO
+        // MAP DTO
         // ==============================================================
         private BoletimDTO MapToDTO(Boletim b)
         {
@@ -158,7 +181,14 @@ namespace EduConnect_API.Services
                     Nota = d.Nota,
                     Media = d.Media,
                     Situacao = d.Situacao,
-                    TotalAtividades = d.TotalAtividades
+                    TotalAtividades = d.TotalAtividades,
+                    Atividades = d.Atividades.Select(a => new BoletimAtividadeDTO
+                    {
+                        AtividadeId = a.AtividadeId,
+                        Titulo = a.Titulo,
+                        Nota = a.Nota,
+                        Entregue = a.Entregue
+                    }).ToList()
                 }).ToList()
             };
         }
