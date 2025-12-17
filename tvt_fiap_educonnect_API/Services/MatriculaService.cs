@@ -237,5 +237,23 @@ Bem-vindo(a) à EduConnect!
                 AtualizadoEm = m.AtualizadoEm
             };
         }
+        // ==============================================================
+        // LISTAR ALUNOS DA TURMA (PROFESSOR / ADM)
+        // ==============================================================
+        public async Task<IEnumerable<AlunoTurmaDTO>> ListarAlunosPorTurma(Guid turmaId)
+        {
+            var matriculas = await _repo.ListarPorTurma(turmaId);
+
+            return matriculas
+                .Where(m => m.Status == MatriculaStatus.Efetivada)
+                .Select(m => new AlunoTurmaDTO
+                {
+                    AlunoId = m.AlunoId,
+                    Nome = m.Aluno.Usuario.Nome,
+                    Email = m.Aluno.Usuario.Email,
+                    Status = m.Status
+                });
+        }
+
     }
 }
