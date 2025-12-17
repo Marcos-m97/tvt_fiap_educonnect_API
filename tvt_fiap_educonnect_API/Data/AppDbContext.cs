@@ -27,6 +27,8 @@ namespace EduConnect_API.Data
         public DbSet<Atividade> Atividades { get; set; }
         public DbSet<EntregaAtividade> EntregasAtividades { get; set; }
         public DbSet<Evento> Eventos { get; set; }
+        public DbSet<Aula> Aulas { get; set; }
+
 
         // ============================
         // Boletins (NOVO)

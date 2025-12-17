@@ -66,6 +66,10 @@ builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<IBoletimRepository, BoletimRepository>();
 builder.Services.AddScoped<IBoletimService, BoletimService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAulaRepository, AulaRepository>();
+builder.Services.AddScoped<IAulaService, AulaService>();
+builder.Services.AddScoped<IArquivoStorageService, LocalStorageService>();
+
 
 
 // Seeder
