@@ -39,10 +39,17 @@ namespace EduConnect_API.Repositories
                 .ToListAsync();
         }
 
+        // =========================================================
+        // EVENTOS DA TURMA (INCLUI EVENTOS DE DISCIPLINAS DA TURMA)
+        // =========================================================
         public async Task<IEnumerable<Evento>> ListarPorTurma(Guid turmaId)
         {
             return await _context.Eventos
-                .Where(e => e.TurmaId == turmaId)
+                .Where(e =>
+                    e.TurmaId == turmaId ||
+                    (e.TurmaDisciplina != null &&
+                     e.TurmaDisciplina.TurmaId == turmaId)
+                )
                 .Include(e => e.Turma)
                 .Include(e => e.TurmaDisciplina)
                     .ThenInclude(td => td.Disciplina)

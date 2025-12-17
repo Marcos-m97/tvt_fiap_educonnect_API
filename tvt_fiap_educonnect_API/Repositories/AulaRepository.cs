@@ -25,13 +25,31 @@ namespace EduConnect_API.Repositories
         {
             return await _context.Aulas
                 .Include(a => a.TurmaDisciplina)
+                    .ThenInclude(td => td.Turma)
+                .Include(a => a.TurmaDisciplina)
+                    .ThenInclude(td => td.Disciplina)
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
         public async Task<IEnumerable<Aula>> ListarPorTurmaDisciplina(Guid turmaDisciplinaId)
         {
             return await _context.Aulas
+                .Include(a => a.TurmaDisciplina)
+                    .ThenInclude(td => td.Disciplina)
                 .Where(a => a.TurmaDisciplinaId == turmaDisciplinaId)
+                .OrderBy(a => a.CriadoEm)
+                .ToListAsync();
+        }
+
+        // =====================================================
+        // 🔹 NOVO: AULAS DO ALUNO (via matrícula)
+        // =====================================================
+        public async Task<IEnumerable<Aula>> ListarPorTurma(Guid turmaId)
+        {
+            return await _context.Aulas
+                .Include(a => a.TurmaDisciplina)
+                    .ThenInclude(td => td.Disciplina)
+                .Where(a => a.TurmaDisciplina.TurmaId == turmaId)
                 .OrderBy(a => a.CriadoEm)
                 .ToListAsync();
         }

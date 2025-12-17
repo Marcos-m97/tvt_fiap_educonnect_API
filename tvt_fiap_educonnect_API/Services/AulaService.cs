@@ -10,22 +10,28 @@ namespace EduConnect_API.Services
         private readonly IAulaRepository _repo;
         private readonly ITurmaDisciplinaRepository _turmaDisciplinaRepo;
         private readonly IUsuarioRepository _usuarios;
+        private readonly IAlunoRepository _alunoRepo;
+        private readonly IMatriculaRepository _matriculaRepo;
         private readonly IArquivoStorageService _storage;
 
         public AulaService(
             IAulaRepository repo,
             ITurmaDisciplinaRepository turmaDisciplinaRepo,
             IUsuarioRepository usuarios,
+            IAlunoRepository alunoRepo,
+            IMatriculaRepository matriculaRepo,
             IArquivoStorageService storage)
         {
             _repo = repo;
             _turmaDisciplinaRepo = turmaDisciplinaRepo;
             _usuarios = usuarios;
+            _alunoRepo = alunoRepo;
+            _matriculaRepo = matriculaRepo;
             _storage = storage;
         }
 
         // =========================================================
-        // CRIAR AULA (Professor ou Admin)
+        // CRIAR AULA (ADMIN OU PROFESSOR)
         // =========================================================
         public async Task<AulaDTO> Criar(Guid usuarioId, CriarAulaDTO dto)
         {
@@ -50,12 +56,26 @@ namespace EduConnect_API.Services
             };
 
             aula = await _repo.Criar(aula);
-
             return MapToDTO(aula);
         }
 
         // =========================================================
-        // UPLOAD MATERIAL DE APOIO (PDF)
+        // LISTAR AULAS DO ALUNO (PELO TOKEN)
+        // =========================================================
+        public async Task<IEnumerable<AulaDTO>> ListarMinhasAulas(Guid usuarioId)
+        {
+            var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
+                ?? throw new Exception("Aluno não encontrado.");
+
+            var matricula = await _matriculaRepo.ObterAtivaPorAlunoId(aluno.Id)
+                ?? throw new Exception("Aluno não possui matrícula ativa.");
+
+            var aulas = await _repo.ListarPorTurma(matricula.TurmaId);
+            return aulas.Select(MapToDTO);
+        }
+
+        // =========================================================
+        // UPLOAD MATERIAL DE APOIO
         // =========================================================
         public async Task<AulaDTO?> UploadMaterialApoio(Guid aulaId, IFormFile arquivo)
         {
@@ -72,7 +92,7 @@ namespace EduConnect_API.Services
         }
 
         // =========================================================
-        // BAIXAR MATERIAL DE APOIO
+        // DOWNLOAD MATERIAL
         // =========================================================
         public async Task<byte[]?> BaixarMaterialApoio(Guid aulaId)
         {

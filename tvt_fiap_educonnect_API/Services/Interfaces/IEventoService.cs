@@ -10,6 +10,8 @@ namespace EduConnect_API.Services.Interfaces
         Task<IEnumerable<EventoDTO>> Listar();
         Task<IEnumerable<EventoDTO>> ListarPorTurma(Guid turmaId);
         Task<EventoDTO?> Atualizar(Guid id, CriarEventoDTO dto);
+        Task<IEnumerable<EventoDTO>> ListarMeusEventos(Guid usuarioId);
+
         Task<bool> Deletar(Guid id);
     }
 }

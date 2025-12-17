@@ -113,5 +113,15 @@ namespace EduConnect_API.Controllers
             var ok = await _service.Deletar(id);
             return ok ? NoContent() : NotFound();
         }
+
+        // Minhas Aulas
+        [HttpGet("minhas")]
+        [Authorize(Roles = "3")] // aluno
+        public async Task<IActionResult> ListarMinhasAulas()
+        {
+            var usuarioId = Guid.Parse(User.FindFirst("id")!.Value);
+            return Ok(await _service.ListarMinhasAulas(usuarioId));
+        }
+
     }
 }

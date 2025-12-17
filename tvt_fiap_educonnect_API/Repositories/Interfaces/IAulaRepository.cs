@@ -6,7 +6,12 @@ namespace EduConnect_API.Repositories.Interfaces
     {
         Task<Aula> Criar(Aula aula);
         Task<Aula?> ObterPorId(Guid id);
+
         Task<IEnumerable<Aula>> ListarPorTurmaDisciplina(Guid turmaDisciplinaId);
+
+        // 🔹 NOVO: usado pelo painel do aluno
+        Task<IEnumerable<Aula>> ListarPorTurma(Guid turmaId);
+
         Task<IEnumerable<Aula>> Listar();
         Task<Aula> Atualizar(Aula aula);
         Task<bool> Deletar(Guid id);

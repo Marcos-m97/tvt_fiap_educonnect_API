@@ -61,6 +61,17 @@ namespace EduConnect_API.Controllers
             return evento == null ? NotFound() : Ok(evento);
         }
 
+        // =========================================================
+        // EVENTOS DO ALUNO (via token)
+        // =========================================================
+        [Authorize]
+        [HttpGet("meus")]
+        public async Task<IActionResult> ListarMeusEventos()
+        {
+            var usuarioId = Guid.Parse(User.FindFirst("id")!.Value);
+            return Ok(await _service.ListarMeusEventos(usuarioId));
+        }
+
         // Deletar
         [Authorize(Roles = "0,1")]
         [HttpDelete("{id}")]

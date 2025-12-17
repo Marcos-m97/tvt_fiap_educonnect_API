@@ -2,7 +2,6 @@
 using EduConnect_API.Models.DTOs;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
-using tvt_fiap_educonnect_API.Models.DTOs;
 
 namespace EduConnect_API.Services
 {
@@ -11,17 +10,26 @@ namespace EduConnect_API.Services
         private readonly IEventoRepository _repo;
         private readonly ITurmaRepository _turmas;
         private readonly ITurmaDisciplinaRepository _tdRepo;
+        private readonly IAlunoRepository _alunoRepo;
+        private readonly IMatriculaRepository _matriculaRepo;
 
         public EventoService(
             IEventoRepository repo,
             ITurmaRepository turmas,
-            ITurmaDisciplinaRepository tdRepo)
+            ITurmaDisciplinaRepository tdRepo,
+            IAlunoRepository alunoRepo,
+            IMatriculaRepository matriculaRepo)
         {
             _repo = repo;
             _turmas = turmas;
             _tdRepo = tdRepo;
+            _alunoRepo = alunoRepo;
+            _matriculaRepo = matriculaRepo;
         }
 
+        // =========================================================
+        // CRIAR EVENTO
+        // =========================================================
         public async Task<EventoDTO> Criar(Guid criadorId, CriarEventoDTO dto)
         {
             if (dto.TurmaId != null)
@@ -49,10 +57,27 @@ namespace EduConnect_API.Services
             };
 
             evento = await _repo.Criar(evento);
-
             return MapToDTO(evento);
         }
 
+        // =========================================================
+        // EVENTOS DO ALUNO (PAINEL / CALENDÁRIO)
+        // =========================================================
+        public async Task<IEnumerable<EventoDTO>> ListarMeusEventos(Guid usuarioId)
+        {
+            var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
+                ?? throw new Exception("Aluno não encontrado.");
+
+            var matricula = await _matriculaRepo.ObterAtivaPorAlunoId(aluno.Id)
+                ?? throw new Exception("Aluno não possui matrícula ativa.");
+
+            var eventos = await _repo.ListarPorTurma(matricula.TurmaId);
+            return eventos.Select(MapToDTO);
+        }
+
+        // =========================================================
+        // CONSULTAS
+        // =========================================================
         public async Task<EventoDTO?> Obter(Guid id)
         {
             var e = await _repo.Obter(id);
@@ -69,6 +94,9 @@ namespace EduConnect_API.Services
             return (await _repo.ListarPorTurma(turmaId)).Select(MapToDTO);
         }
 
+        // =========================================================
+        // ATUALIZAR
+        // =========================================================
         public async Task<EventoDTO?> Atualizar(Guid id, CriarEventoDTO dto)
         {
             var e = await _repo.Obter(id);
@@ -83,15 +111,14 @@ namespace EduConnect_API.Services
             e.TurmaDisciplinaId = dto.TurmaDisciplinaId;
 
             e = await _repo.Atualizar(e);
-
             return MapToDTO(e);
         }
 
-        public Task<bool> Deletar(Guid id)
-        {
-            return _repo.Deletar(id);
-        }
+        public Task<bool> Deletar(Guid id) => _repo.Deletar(id);
 
+        // =========================================================
+        // MAP
+        // =========================================================
         private EventoDTO MapToDTO(Evento e)
         {
             return new EventoDTO
@@ -106,9 +133,7 @@ namespace EduConnect_API.Services
                 TurmaNome = e.Turma?.Nome ?? "",
                 TurmaDisciplinaId = e.TurmaDisciplinaId,
                 DisciplinaNome = e.TurmaDisciplina?.Disciplina?.Nome ?? ""
-
             };
         }
     }
 }
-
