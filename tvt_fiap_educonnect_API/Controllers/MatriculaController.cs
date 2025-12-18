@@ -57,7 +57,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         // 4. Listar matrículas por aluno
         // =========================================================
-        [Authorize(Roles = "0,1,3")]
+        [Authorize]
         [HttpGet("aluno/{alunoId}")]
         public async Task<IActionResult> ListarPorAluno(Guid alunoId)
         {

@@ -26,7 +26,7 @@ namespace EduConnect_API.Controllers
         }
 
         // Listar todos
-        [Authorize(Roles = "0,1,2")]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Listar()
         {
