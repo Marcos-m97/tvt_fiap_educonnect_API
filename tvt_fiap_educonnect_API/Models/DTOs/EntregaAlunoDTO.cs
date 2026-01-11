@@ -2,12 +2,12 @@
 {
     public class EntregaAlunoDTO
     {
-        public Guid EntregaId { get; set; }
-        public Guid AtividadeId { get; set; }
+        public int EntregaId { get; set; }
+        public int AtividadeId { get; set; }
 
         public string TituloAtividade { get; set; } = string.Empty;
 
-        public Guid DisciplinaId { get; set; }
+        public int DisciplinaId { get; set; }
         public string NomeDisciplina { get; set; } = string.Empty;
 
         public DateTime DataEnvio { get; set; }

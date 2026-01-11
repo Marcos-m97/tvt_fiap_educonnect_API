@@ -124,7 +124,7 @@ namespace EduConnect_API.Controllers
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> ObterPorId(Guid id)
+        public async Task<IActionResult> ObterPorId(int id)
         {
             var usuario = await _service.ObterPorId(id);
 
@@ -139,7 +139,7 @@ namespace EduConnect_API.Controllers
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Atualizar(Guid id, [FromBody] AtualizarUsuarioDTO dto)
+        public async Task<IActionResult> Atualizar(int id, [FromBody] AtualizarUsuarioDTO dto)
         {
             var tipoLogadoClaim = User.FindFirst(ClaimTypes.Role)?.Value;
 
@@ -165,7 +165,7 @@ namespace EduConnect_API.Controllers
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> SoftDelete(Guid id)
+        public async Task<IActionResult> SoftDelete(int id)
         {
             var sucesso = await _service.SoftDelete(id);
 
@@ -180,7 +180,7 @@ namespace EduConnect_API.Controllers
         // ============================================================
         [Authorize(Roles = "0,1")] // SuperAdmin(0) ou Admin(1)
         [HttpPut("{id}/reativar")]
-        public async Task<IActionResult> Reativar(Guid id)
+        public async Task<IActionResult> Reativar(int id)
         {
             var sucesso = await _service.Reativar(id);
 

@@ -30,7 +30,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // CRIAR EVENTO
         // =========================================================
-        public async Task<EventoDTO> Criar(Guid criadorId, CriarEventoDTO dto)
+        public async Task<EventoDTO> Criar(int criadorId, CriarEventoDTO dto)
         {
             if (dto.TurmaId != null)
             {
@@ -63,7 +63,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // EVENTOS DO ALUNO (PAINEL / CALENDÁRIO)
         // =========================================================
-        public async Task<IEnumerable<EventoDTO>> ListarMeusEventos(Guid usuarioId)
+        public async Task<IEnumerable<EventoDTO>> ListarMeusEventos(int usuarioId)
         {
             var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
                 ?? throw new Exception("Aluno não encontrado.");
@@ -78,7 +78,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // CONSULTAS
         // =========================================================
-        public async Task<EventoDTO?> Obter(Guid id)
+        public async Task<EventoDTO?> Obter(int id)
         {
             var e = await _repo.Obter(id);
             return e == null ? null : MapToDTO(e);
@@ -89,7 +89,7 @@ namespace EduConnect_API.Services
             return (await _repo.Listar()).Select(MapToDTO);
         }
 
-        public async Task<IEnumerable<EventoDTO>> ListarPorTurma(Guid turmaId)
+        public async Task<IEnumerable<EventoDTO>> ListarPorTurma(int turmaId)
         {
             return (await _repo.ListarPorTurma(turmaId)).Select(MapToDTO);
         }
@@ -97,7 +97,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // ATUALIZAR
         // =========================================================
-        public async Task<EventoDTO?> Atualizar(Guid id, CriarEventoDTO dto)
+        public async Task<EventoDTO?> Atualizar(int id, CriarEventoDTO dto)
         {
             var e = await _repo.Obter(id);
             if (e == null) return null;
@@ -114,7 +114,7 @@ namespace EduConnect_API.Services
             return MapToDTO(e);
         }
 
-        public Task<bool> Deletar(Guid id) => _repo.Deletar(id);
+        public Task<bool> Deletar(int id) => _repo.Deletar(id);
 
         // =========================================================
         // MAP

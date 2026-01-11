@@ -5,8 +5,8 @@ namespace EduConnect_API.Services.Interfaces
     public interface IProfessorService
     {
         Task<ProfessorDTO> Criar(CriarProfessorDTO dto);
-        Task<ProfessorDTO?> ObterPorUsuario(Guid usuarioId);
+        Task<ProfessorDTO?> ObterPorUsuario(int usuarioId);
         Task<IEnumerable<ProfessorDTO>> Listar();
-        Task<ProfessorDTO?> Atualizar(Guid id, CriarProfessorDTO dto);
+        Task<ProfessorDTO?> Atualizar(int id, CriarProfessorDTO dto);
     }
 }

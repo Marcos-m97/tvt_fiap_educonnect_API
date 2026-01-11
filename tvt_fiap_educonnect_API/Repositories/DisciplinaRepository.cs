@@ -28,14 +28,14 @@ namespace EduConnect_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Disciplina?> ObterPorId(Guid id)
+        public async Task<Disciplina?> ObterPorId(int id)
         {
             return await _context.Disciplinas
                 .Include(d => d.Curso)
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
 
-        public async Task<IEnumerable<Disciplina>> ListarPorCurso(Guid cursoId)
+        public async Task<IEnumerable<Disciplina>> ListarPorCurso(int cursoId)
         {
             return await _context.Disciplinas
                 .Include(d => d.Curso)
@@ -50,7 +50,7 @@ namespace EduConnect_API.Repositories
             return disciplina;
         }
 
-        public async Task<bool> Deletar(Guid id)
+        public async Task<bool> Deletar(int id)
         {
             var disciplina = await _context.Disciplinas.FindAsync(id);
             if (disciplina == null)

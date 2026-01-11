@@ -33,7 +33,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "0,1")]
         [HttpGet("{usuarioId}")]
-        public async Task<IActionResult> Obter(Guid usuarioId)
+        public async Task<IActionResult> Obter(int usuarioId)
         {
             var admin = await _service.ObterPorUsuario(usuarioId);
 
@@ -44,7 +44,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "0")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Atualizar(Guid id, CriarAdminDTO dto)
+        public async Task<IActionResult> Atualizar(int id, CriarAdminDTO dto)
         {
             var admin = await _service.Atualizar(id, dto);
 

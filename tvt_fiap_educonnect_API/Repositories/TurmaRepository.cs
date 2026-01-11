@@ -21,7 +21,7 @@ namespace EduConnect_API.Repositories
             return turma;
         }
 
-        public async Task<Turma?> ObterPorId(Guid id)
+        public async Task<Turma?> ObterPorId(int id)
         {
             return await _context.Turmas
                 .Include(t => t.Curso)
@@ -35,7 +35,7 @@ namespace EduConnect_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Turma>> ListarPorCurso(Guid cursoId)
+        public async Task<IEnumerable<Turma>> ListarPorCurso(int cursoId)
         {
             return await _context.Turmas
                 .Include(t => t.Curso)
@@ -50,7 +50,7 @@ namespace EduConnect_API.Repositories
             return turma;
         }
 
-        public async Task<bool> Deletar(Guid id)
+        public async Task<bool> Deletar(int id)
         {
             var turma = await _context.Turmas.FindAsync(id);
             if (turma == null)

@@ -8,8 +8,8 @@ namespace EduConnect_API.Services.Interfaces
     public interface IAdminService
     {
         Task<AdminDTO> Criar(CriarAdminDTO dto);
-        Task<AdminDTO?> ObterPorUsuario(Guid usuarioId);
+        Task<AdminDTO?> ObterPorUsuario(int usuarioId);
         Task<IEnumerable<AdminDTO>> Listar();
-        Task<AdminDTO?> Atualizar(Guid id, CriarAdminDTO dto);
+        Task<AdminDTO?> Atualizar(int id, CriarAdminDTO dto);
     }
 }

@@ -25,7 +25,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "0,1,2")] // sysADM, ADM e Professor
         [HttpGet("turma-disciplina/{id}")]
-        public async Task<IActionResult> Listar(Guid id)
+        public async Task<IActionResult> Listar(int id)
         {
             return Ok(await _service.ListarPorTurmaDisciplina(id));
         }
@@ -33,7 +33,7 @@ namespace EduConnect_API.Controllers
         [HttpGet("minhas")]
         public async Task<IActionResult> ListarMinhasAtividades()
         {
-            var usuarioId = Guid.Parse(User.FindFirst("id")!.Value);
+            var usuarioId = int.Parse(User.FindFirst("id")!.Value);
             return Ok(await _service.ListarMinhasAtividades(usuarioId));
         }
     }

@@ -6,8 +6,8 @@ namespace EduConnect_API.Services.Interfaces
     {
         Task<CursoDTO> Criar(CriarCursoDTO dto);
         Task<IEnumerable<CursoDTO>> Listar();
-        Task<CursoDTO?> ObterPorId(Guid id);
-        Task<CursoDTO?> Atualizar(Guid id, CriarCursoDTO dto);
-        Task<bool> Deletar(Guid id);
+        Task<CursoDTO?> ObterPorId(int id);
+        Task<CursoDTO?> Atualizar(int id, CriarCursoDTO dto);
+        Task<bool> Deletar(int id);
     }
 }

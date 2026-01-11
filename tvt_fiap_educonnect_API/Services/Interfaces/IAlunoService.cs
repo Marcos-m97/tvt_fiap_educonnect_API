@@ -5,8 +5,8 @@ namespace EduConnect_API.Services.Interfaces
     public interface IAlunoService
     {
         Task<AlunoDTO> Criar(CriarAlunoDTO dto);
-        Task<AlunoDTO?> ObterPorUsuario(Guid usuarioId);
+        Task<AlunoDTO?> ObterPorUsuario(int usuarioId);
         Task<IEnumerable<AlunoDTO>> Listar();
-        Task<AlunoDTO?> Atualizar(Guid id, CriarAlunoDTO dto);
+        Task<AlunoDTO?> Atualizar(int id, CriarAlunoDTO dto);
     }
 }

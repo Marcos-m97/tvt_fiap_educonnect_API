@@ -41,19 +41,19 @@ namespace EduConnect_API.Services
             return list.Select(MapToDTO);
         }
 
-        public async Task<IEnumerable<DisciplinaDTO>> ListarPorCurso(Guid cursoId)
+        public async Task<IEnumerable<DisciplinaDTO>> ListarPorCurso(int cursoId)
         {
             var list = await _repo.ListarPorCurso(cursoId);
             return list.Select(MapToDTO);
         }
 
-        public async Task<DisciplinaDTO?> ObterPorId(Guid id)
+        public async Task<DisciplinaDTO?> ObterPorId(int id)
         {
             var disciplina = await _repo.ObterPorId(id);
             return disciplina == null ? null : MapToDTO(disciplina);
         }
 
-        public async Task<DisciplinaDTO?> Atualizar(Guid id, CriarDisciplinaDTO dto)
+        public async Task<DisciplinaDTO?> Atualizar(int id, CriarDisciplinaDTO dto)
         {
             var disciplina = await _repo.ObterPorId(id);
             if (disciplina == null)
@@ -69,7 +69,7 @@ namespace EduConnect_API.Services
             return MapToDTO(disciplina);
         }
 
-        public Task<bool> Deletar(Guid id)
+        public Task<bool> Deletar(int id)
         {
             return _repo.Deletar(id);
         }

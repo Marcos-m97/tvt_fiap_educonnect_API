@@ -16,7 +16,7 @@ namespace EduConnect_API.Services
             _config = config;
         }
 
-        public string GenerateToken(Guid id, string nome, int tipo)
+        public string GenerateToken(int id, string nome, int tipo)
         {
             var jwtSettings = _config.GetSection("Jwt");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));

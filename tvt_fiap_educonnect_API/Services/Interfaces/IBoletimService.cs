@@ -5,8 +5,8 @@ namespace EduConnect_API.Services.Interfaces
     public interface IBoletimService
     {
         Task<BoletimDTO> Gerar(CreateBoletimDTO dto);
-        Task<BoletimDTO?> Obter(Guid boletimId);
-        Task<IEnumerable<BoletimDTO>> ListarPorAluno(Guid alunoId);
-        Task<byte[]> GerarPdf(Guid boletimId);
+        Task<BoletimDTO?> Obter(int boletimId);
+        Task<IEnumerable<BoletimDTO>> ListarPorAluno(int alunoId);
+        Task<byte[]> GerarPdf(int boletimId);
     }
 }

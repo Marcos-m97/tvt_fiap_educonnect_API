@@ -2,12 +2,12 @@
 {
     public class BoletimAtividade
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
-        public Guid BoletimDisciplinaId { get; set; }
+        public int BoletimDisciplinaId { get; set; }
         public BoletimDisciplina BoletimDisciplina { get; set; } = null!;
 
-        public Guid AtividadeId { get; set; }
+        public int AtividadeId { get; set; }
         public string Titulo { get; set; } = string.Empty;
 
         public double? Nota { get; set; }

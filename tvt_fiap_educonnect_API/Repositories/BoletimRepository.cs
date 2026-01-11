@@ -21,14 +21,14 @@ namespace EduConnect_API.Repositories
             return boletim;
         }
 
-        public async Task<Boletim?> Obter(Guid id)
+        public async Task<Boletim?> Obter(int id)
         {
             return await _context.Boletins
                 .Include(b => b.Disciplinas)
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<IEnumerable<Boletim>> ListarPorAluno(Guid alunoId)
+        public async Task<IEnumerable<Boletim>> ListarPorAluno(int alunoId)
         {
             return await _context.Boletins
                 .Include(b => b.Disciplinas)

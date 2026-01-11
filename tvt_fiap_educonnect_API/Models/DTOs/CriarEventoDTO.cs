@@ -8,7 +8,7 @@
         public DateTime? Fim { get; set; }
         public TipoEvento Tipo { get; set; }
 
-        public Guid? TurmaId { get; set; }
-        public Guid? TurmaDisciplinaId { get; set; }
+        public int? TurmaId { get; set; }
+        public int? TurmaDisciplinaId { get; set; }
     }
 }

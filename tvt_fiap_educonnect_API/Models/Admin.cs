@@ -1,16 +1,16 @@
 ﻿using System;
+using EduConnect_API.Models;
 
 namespace EduConnect_API.Models
 {
     public class Admin
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }   
 
         // FK → Usuario
-        public Guid UsuarioId { get; set; }
+        public int UsuarioId { get; set; }
         public Usuario Usuario { get; set; }
 
-        // Dados opcionais
         public string? Departamento { get; set; }
         public string? Cargo { get; set; }
     }

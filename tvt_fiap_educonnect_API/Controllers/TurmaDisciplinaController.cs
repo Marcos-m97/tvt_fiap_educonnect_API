@@ -33,7 +33,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "0,1,2,3")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Obter(Guid id)
+        public async Task<IActionResult> Obter(int id)
         {
             var result = await _service.ObterPorId(id);
             if (result == null) return NotFound();
@@ -43,14 +43,14 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "0,1,2,3")]
         [HttpGet("turma/{turmaId}")]
-        public async Task<IActionResult> ListarPorTurma(Guid turmaId)
+        public async Task<IActionResult> ListarPorTurma(int turmaId)
         {
             return Ok(await _service.ListarPorTurma(turmaId));
         }
 
         [Authorize(Roles = "0,1")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Atualizar(Guid id, CriarTurmaDisciplinaDTO dto)
+        public async Task<IActionResult> Atualizar(int id, CriarTurmaDisciplinaDTO dto)
         {
             var result = await _service.Atualizar(id, dto);
             if (result == null) return NotFound();
@@ -60,7 +60,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "0,1")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Deletar(Guid id)
+        public async Task<IActionResult> Deletar(int id)
         {
             var ok = await _service.Deletar(id);
             if (!ok) return NotFound();

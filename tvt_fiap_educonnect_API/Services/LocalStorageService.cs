@@ -43,7 +43,7 @@ namespace EduConnect_API.Services
             return await File.ReadAllBytesAsync(caminhoFisico);
         }
         // ENTREGAS DE ATIVIDADES
-        public async Task<string> SalvarEntrega(Guid atividadeId, Guid alunoId, IFormFile arquivo)
+        public async Task<string> SalvarEntrega(int atividadeId, int alunoId, IFormFile arquivo)
         {
             var pasta = Path.Combine("wwwroot", "uploads", "entregas",
                 atividadeId.ToString(),

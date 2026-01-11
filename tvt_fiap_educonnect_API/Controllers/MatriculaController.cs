@@ -24,7 +24,7 @@ namespace EduConnect_API.Controllers
         [HttpPost]
         public async Task<IActionResult> Criar([FromBody] CriarMatriculaDTO dto)
         {
-            var alunoId = Guid.Parse(User.FindFirst("id")!.Value);
+            var alunoId = int.Parse(User.FindFirst("id")!.Value);
 
             var matricula = await _service.Criar(alunoId, dto);
 
@@ -36,7 +36,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [Authorize(Roles = "0,1,2,3")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Obter(Guid id)
+        public async Task<IActionResult> Obter(int id)
         {
             var m = await _service.ObterPorId(id);
             if (m == null) return NotFound();
@@ -59,7 +59,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [Authorize]
         [HttpGet("aluno/{alunoId}")]
-        public async Task<IActionResult> ListarPorAluno(Guid alunoId)
+        public async Task<IActionResult> ListarPorAluno(int alunoId)
         {
             return Ok(await _service.ListarPorAluno(alunoId));
         }
@@ -69,7 +69,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [Authorize(Roles = "0,1,2")]
         [HttpGet("turma/{turmaId}")]
-        public async Task<IActionResult> ListarPorTurma(Guid turmaId)
+        public async Task<IActionResult> ListarPorTurma(int turmaId)
         {
             return Ok(await _service.ListarPorTurma(turmaId));
         }
@@ -79,7 +79,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [Authorize(Roles = "0,1")]
         [HttpPut("{id}/status/{novoStatus}")]
-        public async Task<IActionResult> AtualizarStatus(Guid id, MatriculaStatus novoStatus)
+        public async Task<IActionResult> AtualizarStatus(int id, MatriculaStatus novoStatus)
         {
             var m = await _service.AtualizarStatus(id, novoStatus);
             if (m == null) return NotFound();
@@ -92,7 +92,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [Authorize(Roles = "0,1")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Deletar(Guid id)
+        public async Task<IActionResult> Deletar(int id)
         {
             var ok = await _service.Deletar(id);
             if (!ok) return NotFound();
@@ -105,7 +105,7 @@ namespace EduConnect_API.Controllers
         // =============================
         [Authorize(Roles = "3")]
         [HttpPut("{id}/upload-comprovante")]
-        public async Task<IActionResult> UploadComprovante(Guid id, IFormFile arquivo)
+        public async Task<IActionResult> UploadComprovante(int id, IFormFile arquivo)
         {
             var result = await _service.UploadComprovantePagamento(id, arquivo);
             if (result == null) return NotFound();
@@ -114,7 +114,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "3")]
         [HttpPut("{id}/upload-documentos-pessoais")]
-        public async Task<IActionResult> UploadDocumentosPessoais(Guid id, IFormFile arquivo)
+        public async Task<IActionResult> UploadDocumentosPessoais(int id, IFormFile arquivo)
         {
             var result = await _service.UploadDocumentosPessoais(id, arquivo);
             if (result == null) return NotFound();
@@ -123,7 +123,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "3")]
         [HttpPut("{id}/upload-documentos-escolaridade")]
-        public async Task<IActionResult> UploadDocumentosEscolaridade(Guid id, IFormFile arquivo)
+        public async Task<IActionResult> UploadDocumentosEscolaridade(int id, IFormFile arquivo)
         {
             var result = await _service.UploadDocumentosEscolaridade(id, arquivo);
             if (result == null) return NotFound();
@@ -135,7 +135,7 @@ namespace EduConnect_API.Controllers
         // =============================
         [Authorize(Roles = "0,1")]
         [HttpGet("{id}/download/comprovante")]
-        public async Task<IActionResult> DownloadComprovante(Guid id)
+        public async Task<IActionResult> DownloadComprovante(int id)
         {
             var bytes = await _service.BaixarComprovante(id);
             if (bytes == null) return NotFound();
@@ -145,7 +145,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "0,1")]
         [HttpGet("{id}/download/documentos-pessoais")]
-        public async Task<IActionResult> DownloadDocumentosPessoais(Guid id)
+        public async Task<IActionResult> DownloadDocumentosPessoais(int id)
         {
             var bytes = await _service.BaixarDocumentosPessoais(id);
             if (bytes == null) return NotFound();
@@ -155,7 +155,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "0,1")]
         [HttpGet("{id}/download/documentos-escolaridade")]
-        public async Task<IActionResult> DownloadDocumentosEscolaridade(Guid id)
+        public async Task<IActionResult> DownloadDocumentosEscolaridade(int id)
         {
             var bytes = await _service.BaixarDocumentosEscolaridade(id);
             if (bytes == null) return NotFound();
@@ -168,7 +168,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [Authorize(Roles = "0,1,2")]
         [HttpGet("turma/{turmaId}/alunos")]
-        public async Task<IActionResult> ListarAlunosDaTurma(Guid turmaId)
+        public async Task<IActionResult> ListarAlunosDaTurma(int turmaId)
         {
             return Ok(await _service.ListarAlunosPorTurma(turmaId));
         }

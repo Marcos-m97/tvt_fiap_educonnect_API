@@ -33,7 +33,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // CRIAR AULA (ADMIN OU PROFESSOR)
         // =========================================================
-        public async Task<AulaDTO> Criar(Guid usuarioId, CriarAulaDTO dto)
+        public async Task<AulaDTO> Criar(int usuarioId, CriarAulaDTO dto)
         {
             var usuario = await _usuarios.ObterPorId(usuarioId)
                 ?? throw new Exception("Usuário não encontrado.");
@@ -46,7 +46,6 @@ namespace EduConnect_API.Services
 
             var aula = new Aula
             {
-                Id = Guid.NewGuid(),
                 TurmaDisciplinaId = dto.TurmaDisciplinaId,
                 Titulo = dto.Titulo,
                 Descricao = dto.Descricao,
@@ -62,7 +61,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // LISTAR AULAS DO ALUNO (PELO TOKEN)
         // =========================================================
-        public async Task<IEnumerable<AulaDTO>> ListarMinhasAulas(Guid usuarioId)
+        public async Task<IEnumerable<AulaDTO>> ListarMinhasAulas(int usuarioId)
         {
             var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
                 ?? throw new Exception("Aluno não encontrado.");
@@ -77,7 +76,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // UPLOAD MATERIAL DE APOIO
         // =========================================================
-        public async Task<AulaDTO?> UploadMaterialApoio(Guid aulaId, IFormFile arquivo)
+        public async Task<AulaDTO?> UploadMaterialApoio(int aulaId, IFormFile arquivo)
         {
             var aula = await _repo.ObterPorId(aulaId);
             if (aula == null) return null;
@@ -94,7 +93,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // DOWNLOAD MATERIAL
         // =========================================================
-        public async Task<byte[]?> BaixarMaterialApoio(Guid aulaId)
+        public async Task<byte[]?> BaixarMaterialApoio(int aulaId)
         {
             var aula = await _repo.ObterPorId(aulaId);
             if (aula?.MaterialApoio == null) return null;
@@ -105,13 +104,13 @@ namespace EduConnect_API.Services
         // =========================================================
         // CONSULTAS
         // =========================================================
-        public async Task<AulaDTO?> ObterPorId(Guid id)
+        public async Task<AulaDTO?> ObterPorId(int id)
         {
             var aula = await _repo.ObterPorId(id);
             return aula == null ? null : MapToDTO(aula);
         }
 
-        public async Task<IEnumerable<AulaDTO>> ListarPorTurmaDisciplina(Guid turmaDisciplinaId)
+        public async Task<IEnumerable<AulaDTO>> ListarPorTurmaDisciplina(int turmaDisciplinaId)
         {
             var lista = await _repo.ListarPorTurmaDisciplina(turmaDisciplinaId);
             return lista.Select(MapToDTO);
@@ -126,7 +125,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // DELETAR
         // =========================================================
-        public Task<bool> Deletar(Guid id) => _repo.Deletar(id);
+        public Task<bool> Deletar(int id) => _repo.Deletar(id);
 
         // =========================================================
         // MAP

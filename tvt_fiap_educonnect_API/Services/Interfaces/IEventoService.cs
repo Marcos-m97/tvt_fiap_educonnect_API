@@ -5,13 +5,13 @@ namespace EduConnect_API.Services.Interfaces
 {
     public interface IEventoService
     {
-        Task<EventoDTO> Criar(Guid criadorId, CriarEventoDTO dto);
-        Task<EventoDTO?> Obter(Guid id);
+        Task<EventoDTO> Criar(int criadorId, CriarEventoDTO dto);
+        Task<EventoDTO?> Obter(int id);
         Task<IEnumerable<EventoDTO>> Listar();
-        Task<IEnumerable<EventoDTO>> ListarPorTurma(Guid turmaId);
-        Task<EventoDTO?> Atualizar(Guid id, CriarEventoDTO dto);
-        Task<IEnumerable<EventoDTO>> ListarMeusEventos(Guid usuarioId);
+        Task<IEnumerable<EventoDTO>> ListarPorTurma(int turmaId);
+        Task<EventoDTO?> Atualizar(int id, CriarEventoDTO dto);
+        Task<IEnumerable<EventoDTO>> ListarMeusEventos(int usuarioId);
 
-        Task<bool> Deletar(Guid id);
+        Task<bool> Deletar(int id);
     }
 }

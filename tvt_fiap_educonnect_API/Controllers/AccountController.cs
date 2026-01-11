@@ -36,7 +36,7 @@ namespace EduConnect_API.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> Me()
         {
-            var userId = Guid.Parse(User.FindFirst("id")!.Value);
+            var userId = int.Parse(User.FindFirst("id")!.Value);
             var tipo = int.Parse(User.FindFirst(ClaimTypes.Role)!.Value);
 
             // Buscar dados básicos do usuário
@@ -76,7 +76,7 @@ namespace EduConnect_API.Controllers
         [HttpGet("me/contexto")]
         public async Task<IActionResult> Contexto()
         {
-            var userId = Guid.Parse(User.FindFirst("id")!.Value);
+            var userId = int.Parse(User.FindFirst("id")!.Value);
             var tipo = User.FindFirst(ClaimTypes.Role)!.Value;
 
             // Recupera o contexto do aluno ou professor

@@ -21,14 +21,14 @@ namespace EduConnect_API.Repositories
             return professor;
         }
 
-        public async Task<Professor?> ObterPorUsuarioId(Guid usuarioId)
+        public async Task<Professor?> ObterPorUsuarioId(int usuarioId)
         {
             return await _context.Professores
                 .Include(p => p.Usuario)
                 .FirstOrDefaultAsync(p => p.UsuarioId == usuarioId);
         }
 
-        public async Task<Professor?> ObterPorId(Guid id)
+        public async Task<Professor?> ObterPorId(int id)
         {
             return await _context.Professores
                 .Include(p => p.Usuario)

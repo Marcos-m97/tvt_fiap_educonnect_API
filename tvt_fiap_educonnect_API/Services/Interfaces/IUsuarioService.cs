@@ -6,12 +6,12 @@ namespace EduConnect_API.Services.Interfaces
     public interface IUsuarioService
     {
         Task<Usuario?> Login(LoginDTO dto);
-        Task<Usuario?> ObterPorId(Guid id);
+        Task<Usuario?> ObterPorId(int id);
         Task<Usuario> Criar(CriarUsuarioDTO dto);
         Task<IEnumerable<Usuario>> ListarTodos();
-        Task<Usuario?> Atualizar(Guid id, AtualizarUsuarioDTO dto);  
-        Task<bool> SoftDelete(Guid id);
-        Task<bool> Reativar(Guid id);
+        Task<Usuario?> Atualizar(int id, AtualizarUsuarioDTO dto);  
+        Task<bool> SoftDelete(int id);
+        Task<bool> Reativar(int id);
         Task SolicitarResetSenha(string email);
         Task<bool> ResetarSenha(string email, string codigo, string novaSenha);
 

@@ -24,9 +24,11 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Admin", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Cargo")
                         .HasColumnType("nvarchar(max)");
@@ -34,8 +36,8 @@ namespace tvt_fiap_educonnect_API.Migrations
                     b.Property<string>("Departamento")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -46,9 +48,11 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Aluno", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CPF")
                         .IsRequired()
@@ -60,8 +64,8 @@ namespace tvt_fiap_educonnect_API.Migrations
                     b.Property<string>("Endereco")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -72,9 +76,11 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Atividade", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DataEntrega")
                         .HasColumnType("datetime2");
@@ -90,8 +96,8 @@ namespace tvt_fiap_educonnect_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TurmaDisciplinaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TurmaDisciplinaId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -102,9 +108,11 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Aula", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CriadoEm")
                         .HasColumnType("datetime2");
@@ -127,8 +135,8 @@ namespace tvt_fiap_educonnect_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TurmaDisciplinaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TurmaDisciplinaId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UrlVideo")
                         .IsRequired()
@@ -143,18 +151,20 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Boletim", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AlunoId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AlunoId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("GeradoEm")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("TurmaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TurmaId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -163,15 +173,17 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.BoletimAtividade", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AtividadeId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("BoletimDisciplinaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("AtividadeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BoletimDisciplinaId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Entregue")
                         .HasColumnType("bit");
@@ -192,12 +204,14 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.BoletimDisciplina", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("BoletimId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BoletimId")
+                        .HasColumnType("int");
 
                     b.Property<double>("Media")
                         .HasColumnType("float");
@@ -225,9 +239,11 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Curso", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CargaHoraria")
                         .HasColumnType("int");
@@ -247,15 +263,17 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Disciplina", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CargaHoraria")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("CursoId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("CursoId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
@@ -274,18 +292,20 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.EntregaAtividade", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AlunoId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AlunoId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Arquivo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("AtividadeId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("AtividadeId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DataEnvio")
                         .HasColumnType("datetime2");
@@ -307,12 +327,14 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Evento", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("CriadoPorId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CriadoPorId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Descricao")
                         .HasColumnType("nvarchar(max)");
@@ -330,11 +352,11 @@ namespace tvt_fiap_educonnect_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("TurmaDisciplinaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("TurmaDisciplinaId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("TurmaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("TurmaId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -349,12 +371,14 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Matricula", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AlunoId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AlunoId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("AtualizadoEm")
                         .HasColumnType("datetime2");
@@ -374,8 +398,8 @@ namespace tvt_fiap_educonnect_API.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("TurmaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TurmaId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -388,9 +412,11 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.PasswordResetCode", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Codigo")
                         .IsRequired()
@@ -413,9 +439,11 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Professor", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CurriculoLattes")
                         .HasColumnType("nvarchar(max)");
@@ -426,8 +454,8 @@ namespace tvt_fiap_educonnect_API.Migrations
                     b.Property<string>("Formacao")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -438,12 +466,14 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Turma", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("CursoId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CursoId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -466,18 +496,20 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.TurmaDisciplina", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("DisciplinaId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("ProfessorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("DisciplinaId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("TurmaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ProfessorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TurmaId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -492,9 +524,11 @@ namespace tvt_fiap_educonnect_API.Migrations
 
             modelBuilder.Entity("EduConnect_API.Models.Usuario", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");

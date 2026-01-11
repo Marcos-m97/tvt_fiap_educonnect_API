@@ -22,20 +22,20 @@ namespace EduConnect_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Obter(Guid id)
+        public async Task<IActionResult> Obter(int id)
         {
             var result = await _service.Obter(id);
             return result == null ? NotFound() : Ok(result);
         }
 
         [HttpGet("aluno/{alunoId}")]
-        public async Task<IActionResult> ListarPorAluno(Guid alunoId)
+        public async Task<IActionResult> ListarPorAluno(int alunoId)
         {
             return Ok(await _service.ListarPorAluno(alunoId));
         }
 
         [HttpGet("{id}/pdf")]
-        public async Task<IActionResult> Pdf(Guid id)
+        public async Task<IActionResult> Pdf(int id)
         {
             var pdf = await _service.GerarPdf(id);
             return File(pdf, "application/pdf", $"boletim-{id}.pdf");

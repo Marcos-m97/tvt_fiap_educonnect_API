@@ -34,13 +34,13 @@ namespace EduConnect_API.Services
             return cursos.Select(MapToDTO);
         }
 
-        public async Task<CursoDTO?> ObterPorId(Guid id)
+        public async Task<CursoDTO?> ObterPorId(int id)
         {
             var curso = await _repo.ObterPorId(id);
             return curso == null ? null : MapToDTO(curso);
         }
 
-        public async Task<CursoDTO?> Atualizar(Guid id, CriarCursoDTO dto)
+        public async Task<CursoDTO?> Atualizar(int id, CriarCursoDTO dto)
         {
             var curso = await _repo.ObterPorId(id);
             if (curso == null)
@@ -54,7 +54,7 @@ namespace EduConnect_API.Services
             return MapToDTO(atualizado);
         }
 
-        public async Task<bool> Deletar(Guid id)
+        public async Task<bool> Deletar(int id)
         {
             return await _repo.Deletar(id);
         }

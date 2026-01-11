@@ -4,7 +4,7 @@ namespace EduConnect_API.Models
 {
     public class Evento
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
 
         public string Titulo { get; set; } = string.Empty;
         public string? Descricao { get; set; }
@@ -15,13 +15,13 @@ namespace EduConnect_API.Models
         public TipoEvento Tipo { get; set; }
 
         // Relacionamentos opcionais:
-        public Guid? TurmaId { get; set; }
+        public int? TurmaId { get; set; }
         public Turma? Turma { get; set; }
 
-        public Guid? TurmaDisciplinaId { get; set; }
+        public int? TurmaDisciplinaId { get; set; }
         public TurmaDisciplina? TurmaDisciplina { get; set; }
 
-        public Guid CriadoPorId { get; set; }
+        public int CriadoPorId { get; set; }
         public Usuario CriadoPor { get; set; }
     }
 

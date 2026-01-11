@@ -40,7 +40,7 @@ namespace EduConnect_API.Services
         // ============================================================
         // 2. OBTER POR ID (/me)
         // ============================================================
-        public async Task<Usuario?> ObterPorId(Guid id)
+        public async Task<Usuario?> ObterPorId(int id)
         {
             return await _repo.ObterPorId(id);
         }
@@ -52,7 +52,6 @@ namespace EduConnect_API.Services
         {
             var novo = new Usuario
             {
-                Id = Guid.NewGuid(),
                 Nome = dto.Nome,
                 Email = dto.Email,
                 Tipo = dto.Tipo,
@@ -74,7 +73,7 @@ namespace EduConnect_API.Services
         // ============================================================
         // 5. ATUALIZAR
         // ============================================================
-        public async Task<Usuario?> Atualizar(Guid id, AtualizarUsuarioDTO dto)
+        public async Task<Usuario?> Atualizar(int id, AtualizarUsuarioDTO dto)
         {
             var usuario = await _repo.ObterPorId(id);
 
@@ -91,7 +90,7 @@ namespace EduConnect_API.Services
         // ============================================================
         // 6. SOFT DELETE
         // ============================================================
-        public async Task<bool> SoftDelete(Guid id)
+        public async Task<bool> SoftDelete(int id)
         {
             return await _repo.SoftDelete(id);
         }
@@ -99,7 +98,7 @@ namespace EduConnect_API.Services
         // ============================================================
         // 7. REATIVAR
         // ============================================================
-        public async Task<bool> Reativar(Guid id)
+        public async Task<bool> Reativar(int id)
         {
             return await _repo.Reativar(id);
         }

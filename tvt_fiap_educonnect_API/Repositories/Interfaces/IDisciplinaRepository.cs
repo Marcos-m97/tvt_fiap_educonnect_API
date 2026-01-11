@@ -6,9 +6,9 @@ namespace EduConnect_API.Repositories.Interfaces
     {
         Task<Disciplina> Criar(Disciplina disciplina);
         Task<IEnumerable<Disciplina>> Listar();
-        Task<Disciplina?> ObterPorId(Guid id);
-        Task<IEnumerable<Disciplina>> ListarPorCurso(Guid cursoId);
+        Task<Disciplina?> ObterPorId(int id);
+        Task<IEnumerable<Disciplina>> ListarPorCurso(int cursoId);
         Task<Disciplina> Atualizar(Disciplina disciplina);
-        Task<bool> Deletar(Guid id);
+        Task<bool> Deletar(int id);
     }
 }

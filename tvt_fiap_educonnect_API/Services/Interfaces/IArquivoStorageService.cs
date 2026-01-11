@@ -9,6 +9,6 @@ namespace EduConnect_API.Services.Interfaces
         Task<byte[]> BaixarAsync(string caminhoRelativo);
 
         // Upload específico de entrega de atividade
-        Task<string> SalvarEntrega(Guid atividadeId, Guid alunoId, IFormFile arquivo);
+        Task<string> SalvarEntrega(int atividadeId, int alunoId, IFormFile arquivo);
     }
 }

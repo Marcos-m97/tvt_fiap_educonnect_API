@@ -5,7 +5,7 @@ namespace EduConnect_API.Models
 {
     public class Turma
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
 
         public string Nome { get; set; } = string.Empty;
         // Ex: "ADS - Turma 2025/1 Noite"
@@ -17,7 +17,7 @@ namespace EduConnect_API.Models
         // Ex: "2025/1", "2025/2"
 
         // FK → Curso ao qual a turma pertence
-        public Guid CursoId { get; set; }
+        public int CursoId { get; set; }
         public Curso Curso { get; set; }
 
         // Relacionamento com os alunos matriculados

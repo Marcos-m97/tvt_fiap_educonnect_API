@@ -4,7 +4,7 @@ namespace EduConnect_API.Models
 {
     public class Disciplina
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
 
         public string Nome { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
@@ -13,7 +13,7 @@ namespace EduConnect_API.Models
         public int CargaHoraria { get; set; }
 
         // FK → Curso ao qual esta disciplina pertence
-        public Guid CursoId { get; set; }
+        public int CursoId { get; set; }
         public Curso Curso { get; set; }
     }
 }

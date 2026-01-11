@@ -36,7 +36,7 @@ namespace EduConnect_API.Controllers
         // Obter por ID
         [Authorize(Roles = "0,1,2")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Obter(Guid id)
+        public async Task<IActionResult> Obter(int id)
         {
             var curso = await _service.ObterPorId(id);
             if (curso == null) return NotFound();
@@ -47,7 +47,7 @@ namespace EduConnect_API.Controllers
         // Atualizar
         [Authorize(Roles = "0,1")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Atualizar(Guid id, CriarCursoDTO dto)
+        public async Task<IActionResult> Atualizar(int id, CriarCursoDTO dto)
         {
             var curso = await _service.Atualizar(id, dto);
             if (curso == null) return NotFound();
@@ -58,7 +58,7 @@ namespace EduConnect_API.Controllers
         // Deletar
         [Authorize(Roles = "0,1")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Deletar(Guid id)
+        public async Task<IActionResult> Deletar(int id)
         {
             var sucesso = await _service.Deletar(id);
             if (!sucesso) return NotFound();

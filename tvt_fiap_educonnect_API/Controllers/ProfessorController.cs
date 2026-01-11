@@ -36,7 +36,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "0,1,2")]
         [HttpGet("{usuarioId}")]
-        public async Task<IActionResult> Obter(Guid usuarioId)
+        public async Task<IActionResult> Obter(int usuarioId)
         {
             var prof = await _service.ObterPorUsuario(usuarioId);
             if (prof == null) return NotFound();
@@ -46,7 +46,7 @@ namespace EduConnect_API.Controllers
 
         [Authorize(Roles = "0,1")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Atualizar(Guid id, CriarProfessorDTO dto)
+        public async Task<IActionResult> Atualizar(int id, CriarProfessorDTO dto)
         {
             var prof = await _service.Atualizar(id, dto);
             if (prof == null) return NotFound();
@@ -55,7 +55,7 @@ namespace EduConnect_API.Controllers
         }
         [Authorize(Roles = "0,1")] // apenas ADM
         [HttpGet("{id}/contexto")]
-        public async Task<IActionResult> Contexto(Guid id)
+        public async Task<IActionResult> Contexto(int id)
         {
             return Ok(await _accountService.ObterContextoProfessor(id));
         }

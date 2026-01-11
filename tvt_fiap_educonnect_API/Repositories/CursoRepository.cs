@@ -21,7 +21,7 @@ namespace EduConnect_API.Repositories
             return curso;
         }
 
-        public async Task<Curso?> ObterPorId(Guid id)
+        public async Task<Curso?> ObterPorId(int id)
         {
             return await _context.Cursos
                 .FirstOrDefaultAsync(c => c.Id == id);
@@ -39,7 +39,7 @@ namespace EduConnect_API.Repositories
             return curso;
         }
 
-        public async Task<bool> Deletar(Guid id)
+        public async Task<bool> Deletar(int id)
         {
             var curso = await _context.Cursos.FindAsync(id);
             if (curso == null)

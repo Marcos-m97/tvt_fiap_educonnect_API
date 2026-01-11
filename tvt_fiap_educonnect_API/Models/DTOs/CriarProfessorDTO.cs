@@ -2,7 +2,7 @@
 {
     public class CriarProfessorDTO
     {
-        public Guid UsuarioId { get; set; }
+        public int UsuarioId { get; set; }
         public string? Especialidade { get; set; }
         public string? Formacao { get; set; }
         public string? CurriculoLattes { get; set; }

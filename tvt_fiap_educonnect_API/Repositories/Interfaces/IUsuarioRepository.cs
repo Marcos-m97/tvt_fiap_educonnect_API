@@ -6,12 +6,12 @@
     public interface IUsuarioRepository
     {
         Task<Usuario?> ObterPorEmail(string email);
-        Task<Usuario?> ObterPorId(Guid id);
+        Task<Usuario?> ObterPorId(int id);
         Task<Usuario> Criar(Usuario usuario);
         Task<IEnumerable<Usuario>> ListarTodos();
         Task<Usuario> Atualizar(Usuario usuario);
-        Task<bool> SoftDelete(Guid id);
-        Task<bool> Reativar(Guid id);
+        Task<bool> SoftDelete(int id);
+        Task<bool> Reativar(int id);
 
     
     }

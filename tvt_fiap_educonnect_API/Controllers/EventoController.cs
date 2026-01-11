@@ -22,7 +22,7 @@ namespace EduConnect_API.Controllers
         [HttpPost]
         public async Task<IActionResult> Criar(CriarEventoDTO dto)
         {
-            var criadorId = Guid.Parse(User.FindFirst("id")!.Value);
+            var criadorId = int.Parse(User.FindFirst("id")!.Value);
             var evento = await _service.Criar(criadorId, dto);
             return Ok(evento);
         }
@@ -38,7 +38,7 @@ namespace EduConnect_API.Controllers
         // Obter por ID
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Obter(Guid id)
+        public async Task<IActionResult> Obter(int id)
         {
             var evento = await _service.Obter(id);
             return evento == null ? NotFound() : Ok(evento);
@@ -47,7 +47,7 @@ namespace EduConnect_API.Controllers
         // Listar eventos por turma
         [Authorize]
         [HttpGet("turma/{turmaId}")]
-        public async Task<IActionResult> ListarPorTurma(Guid turmaId)
+        public async Task<IActionResult> ListarPorTurma(int turmaId)
         {
             return Ok(await _service.ListarPorTurma(turmaId));
         }
@@ -55,7 +55,7 @@ namespace EduConnect_API.Controllers
         // Atualizar
         [Authorize(Roles = "0,1,2")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Atualizar(Guid id, CriarEventoDTO dto)
+        public async Task<IActionResult> Atualizar(int id, CriarEventoDTO dto)
         {
             var evento = await _service.Atualizar(id, dto);
             return evento == null ? NotFound() : Ok(evento);
@@ -68,14 +68,14 @@ namespace EduConnect_API.Controllers
         [HttpGet("meus")]
         public async Task<IActionResult> ListarMeusEventos()
         {
-            var usuarioId = Guid.Parse(User.FindFirst("id")!.Value);
+            var usuarioId = int.Parse(User.FindFirst("id")!.Value);
             return Ok(await _service.ListarMeusEventos(usuarioId));
         }
 
         // Deletar
         [Authorize(Roles = "0,1")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Deletar(Guid id)
+        public async Task<IActionResult> Deletar(int id)
         {
             var ok = await _service.Deletar(id);
             return ok ? NoContent() : NotFound();

@@ -31,7 +31,6 @@ namespace EduConnect_API.Services
 
             var boletim = new Boletim
             {
-                Id = Guid.NewGuid(),
                 AlunoId = dto.AlunoId,
                 TurmaId = dto.TurmaId,
                 GeradoEm = DateTime.Now
@@ -49,7 +48,6 @@ namespace EduConnect_API.Services
 
                 var boletimDisciplina = new BoletimDisciplina
                 {
-                    Id = Guid.NewGuid(),
                     NomeDisciplina = td.Disciplina.Nome,
                     TotalAtividades = totalAtividades
                 };
@@ -70,7 +68,6 @@ namespace EduConnect_API.Services
 
                     boletimDisciplina.Atividades.Add(new BoletimAtividade
                     {
-                        Id = Guid.NewGuid(),
                         AtividadeId = atv.Id,
                         Titulo = atv.Titulo,
                         Nota = entrega?.Nota.HasValue == true
@@ -115,7 +112,7 @@ namespace EduConnect_API.Services
         // ==============================================================
         // OBTER BOLETIM
         // ==============================================================
-        public async Task<BoletimDTO?> Obter(Guid boletimId)
+        public async Task<BoletimDTO?> Obter(int boletimId)
         {
             var boletim = await _context.Boletins
                 .Include(b => b.Disciplinas)
@@ -128,7 +125,7 @@ namespace EduConnect_API.Services
         // ==============================================================
         // LISTAR POR ALUNO
         // ==============================================================
-        public async Task<IEnumerable<BoletimDTO>> ListarPorAluno(Guid alunoId)
+        public async Task<IEnumerable<BoletimDTO>> ListarPorAluno(int alunoId)
         {
             var lista = await _context.Boletins
                 .Include(b => b.Disciplinas)
@@ -143,7 +140,7 @@ namespace EduConnect_API.Services
         // ==============================================================
         // GERAR PDF
         // ==============================================================
-        public async Task<byte[]> GerarPdf(Guid boletimId)
+        public async Task<byte[]> GerarPdf(int boletimId)
         {
             var boletim = await Obter(boletimId)
                 ?? throw new Exception("Boletim não encontrado.");

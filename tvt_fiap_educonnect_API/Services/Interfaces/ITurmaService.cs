@@ -5,10 +5,10 @@ namespace EduConnect_API.Services.Interfaces
     public interface ITurmaService
     {
         Task<TurmaDTO> Criar(CriarTurmaDTO dto);
-        Task<TurmaDTO?> ObterPorId(Guid id);
+        Task<TurmaDTO?> ObterPorId(int id);
         Task<IEnumerable<TurmaDTO>> Listar();
-        Task<IEnumerable<TurmaDTO>> ListarPorCurso(Guid cursoId);
-        Task<TurmaDTO?> Atualizar(Guid id, CriarTurmaDTO dto);
-        Task<bool> Deletar(Guid id);
+        Task<IEnumerable<TurmaDTO>> ListarPorCurso(int cursoId);
+        Task<TurmaDTO?> Atualizar(int id, CriarTurmaDTO dto);
+        Task<bool> Deletar(int id);
     }
 }

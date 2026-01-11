@@ -5,8 +5,8 @@ namespace EduConnect_API.Services.Interfaces
     public interface IAtividadeService
     {
         Task<AtividadeDTO> Criar(CriarAtividadeDTO dto);
-        Task<IEnumerable<AtividadeDTO>> ListarPorTurmaDisciplina(Guid turmaDisciplinaId);
-        Task<IEnumerable<AtividadeAlunoDTO>> ListarMinhasAtividades(Guid usuarioId);
+        Task<IEnumerable<AtividadeDTO>> ListarPorTurmaDisciplina(int turmaDisciplinaId);
+        Task<IEnumerable<AtividadeAlunoDTO>> ListarMinhasAtividades(int usuarioId);
 
     }
 }

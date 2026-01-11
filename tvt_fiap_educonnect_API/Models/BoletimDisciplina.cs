@@ -2,9 +2,9 @@
 {
     public class BoletimDisciplina
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
-        public Guid BoletimId { get; set; }
+        public int BoletimId { get; set; }
         public Boletim Boletim { get; set; } = null!;
 
         public string NomeDisciplina { get; set; } = string.Empty;

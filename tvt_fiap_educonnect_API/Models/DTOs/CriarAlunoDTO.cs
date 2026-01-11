@@ -2,7 +2,7 @@
 {
     public class CriarAlunoDTO
     {
-        public Guid UsuarioId { get; set; }
+        public int UsuarioId { get; set; }
 
         public string CPF { get; set; } = string.Empty;
         public DateTime? DataNascimento { get; set; }

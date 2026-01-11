@@ -2,7 +2,7 @@
 {
     public class PasswordResetCode
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
         public string Email { get; set; } = string.Empty;
         public string Codigo { get; set; } = string.Empty;
         public DateTime ExpiraEm { get; set; }

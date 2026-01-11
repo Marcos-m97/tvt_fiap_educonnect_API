@@ -4,8 +4,8 @@ namespace EduConnect_API.Models.DTOs
 {
     public class AlunoDTO
     {
-        public Guid Id { get; set; }
-        public Guid UsuarioId { get; set; }
+        public int Id { get; set; }
+        public int UsuarioId { get; set; }
 
         public string Nome { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

@@ -2,12 +2,12 @@
 {
     public class EntregaDTO
     {
-        public Guid Id { get; set; }
-        public Guid AtividadeId { get; set; }
+        public int Id { get; set; }
+        public int AtividadeId { get; set; }
 
         // 🔹 NOVOS CAMPOS
-        public Guid AlunoId { get; set; }
-        public Guid UsuarioId { get; set; }
+        public int AlunoId { get; set; }
+        public int UsuarioId { get; set; }
         public string NomeAluno { get; set; } = string.Empty;
 
         public string TituloAtividade { get; set; } = string.Empty;

@@ -19,14 +19,14 @@ namespace EduConnect_API.Repositories.Interfaces
             return admin;
         }
 
-        public async Task<Admin?> ObterPorUsuarioId(Guid usuarioId)
+        public async Task<Admin?> ObterPorUsuarioId(int usuarioId)
         {
             return await _context.Admins
                 .Include(a => a.Usuario)
                 .FirstOrDefaultAsync(a => a.UsuarioId == usuarioId);
         }
 
-        public async Task<Admin?> ObterPorId(Guid id)
+        public async Task<Admin?> ObterPorId(int id)
         {
             return await _context.Admins
                 .Include(a => a.Usuario)

@@ -21,7 +21,7 @@ namespace EduConnect_API.Repositories
             return evento;
         }
 
-        public async Task<Evento?> Obter(Guid id)
+        public async Task<Evento?> Obter(int id)
         {
             return await _context.Eventos
                 .Include(e => e.Turma)
@@ -42,7 +42,7 @@ namespace EduConnect_API.Repositories
         // =========================================================
         // EVENTOS DA TURMA (INCLUI EVENTOS DE DISCIPLINAS DA TURMA)
         // =========================================================
-        public async Task<IEnumerable<Evento>> ListarPorTurma(Guid turmaId)
+        public async Task<IEnumerable<Evento>> ListarPorTurma(int turmaId)
         {
             return await _context.Eventos
                 .Where(e =>
@@ -56,7 +56,7 @@ namespace EduConnect_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Evento>> ListarPorUsuario(Guid usuarioId)
+        public async Task<IEnumerable<Evento>> ListarPorUsuario(int usuarioId)
         {
             return await _context.Eventos
                 .Where(e => e.CriadoPorId == usuarioId)
@@ -73,7 +73,7 @@ namespace EduConnect_API.Repositories
             return evento;
         }
 
-        public async Task<bool> Deletar(Guid id)
+        public async Task<bool> Deletar(int id)
         {
             var e = await _context.Eventos.FindAsync(id);
             if (e == null) return false;

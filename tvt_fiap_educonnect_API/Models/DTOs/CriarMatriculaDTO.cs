@@ -2,6 +2,6 @@
 {
     public class CriarMatriculaDTO
     {
-        public Guid TurmaId { get; set; }
+        public int TurmaId { get; set; }
     }
 }

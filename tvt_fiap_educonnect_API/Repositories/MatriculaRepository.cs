@@ -18,7 +18,7 @@ namespace EduConnect_API.Repositories
             await _context.SaveChangesAsync();
             return matricula;
         }
-        public async Task<Matricula?> ObterPorId(Guid id)
+        public async Task<Matricula?> ObterPorId(int id)
         {
             return await _context.Matriculas
                 .Include(m => m.Aluno).ThenInclude(a => a.Usuario)
@@ -32,7 +32,7 @@ namespace EduConnect_API.Repositories
                 .Include(m => m.Turma)
                 .ToListAsync();
         }
-        public async Task<IEnumerable<Matricula>> ListarPorAluno(Guid alunoId)
+        public async Task<IEnumerable<Matricula>> ListarPorAluno(int alunoId)
         {
             return await _context.Matriculas
                 .Include(m => m.Aluno).ThenInclude(a => a.Usuario)
@@ -40,7 +40,7 @@ namespace EduConnect_API.Repositories
                 .Where(m => m.AlunoId == alunoId)
                 .ToListAsync();
         }
-        public async Task<IEnumerable<Matricula>> ListarPorTurma(Guid turmaId)
+        public async Task<IEnumerable<Matricula>> ListarPorTurma(int turmaId)
         {
             return await _context.Matriculas
                 .Include(m => m.Aluno).ThenInclude(a => a.Usuario)
@@ -54,7 +54,7 @@ namespace EduConnect_API.Repositories
             await _context.SaveChangesAsync();
             return matricula;
         }
-        public async Task<bool> Deletar(Guid id)
+        public async Task<bool> Deletar(int id)
         {
             var matricula = await _context.Matriculas.FindAsync(id);
             if (matricula == null)
@@ -64,7 +64,7 @@ namespace EduConnect_API.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<Matricula?> ObterAtivaPorAlunoId(Guid alunoId)
+        public async Task<Matricula?> ObterAtivaPorAlunoId(int alunoId)
         {
             return await _context.Matriculas
                 .Include(m => m.Turma)

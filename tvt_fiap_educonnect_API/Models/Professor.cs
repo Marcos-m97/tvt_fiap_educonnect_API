@@ -5,10 +5,10 @@ namespace EduConnect_API.Models
 {
     public class Professor
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
 
         // FK → Usuario
-        public Guid UsuarioId { get; set; }
+        public int UsuarioId { get; set; }
         public Usuario Usuario { get; set; }
 
         // Informações específicas do professor

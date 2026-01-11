@@ -82,7 +82,6 @@ namespace EduConnect_API.Data.Seed
 
             var admin = new Admin
             {
-                Id = Guid.NewGuid(),
                 UsuarioId = usuario.Id,
                 Departamento = "Diretoria Acadêmica",
                 Cargo = "Administrador do Sistema"

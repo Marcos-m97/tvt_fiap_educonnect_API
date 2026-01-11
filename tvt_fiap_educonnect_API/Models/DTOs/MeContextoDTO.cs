@@ -7,8 +7,8 @@
         // =========================
         // ALUNO
         // =========================
-        public Guid? AlunoId { get; set; }
-        public Guid? TurmaId { get; set; }
+        public int? AlunoId { get; set; }
+        public int? TurmaId { get; set; }
         public string? TurmaNome { get; set; }
         public string? CursoNome { get; set; }
 
@@ -17,7 +17,7 @@
         // =========================
         // PROFESSOR
         // =========================
-        public Guid? ProfessorId { get; set; }
+        public int? ProfessorId { get; set; }
         public List<TurmaDisciplinaResumoDTO>? TurmasDisciplinas { get; set; }
     }
 }

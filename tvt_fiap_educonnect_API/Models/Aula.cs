@@ -5,12 +5,12 @@ namespace EduConnect_API.Models
 {
     public class Aula
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         // ============================
         // RELACIONAMENTO
         // ============================
-        public Guid TurmaDisciplinaId { get; set; }
+        public int TurmaDisciplinaId { get; set; }
         public TurmaDisciplina TurmaDisciplina { get; set; } = null!;
 
         // ============================

@@ -2,15 +2,15 @@
 {
     public class TurmaDisciplinaDTO
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
-        public Guid TurmaId { get; set; }
+        public int TurmaId { get; set; }
         public string TurmaNome { get; set; } = string.Empty;
 
-        public Guid DisciplinaId { get; set; }
+        public int DisciplinaId { get; set; }
         public string DisciplinaNome { get; set; } = string.Empty;
 
-        public Guid ProfessorId { get; set; }
+        public int ProfessorId { get; set; }
         public string ProfessorNome { get; set; } = string.Empty;
     }
 

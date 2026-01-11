@@ -21,7 +21,7 @@ namespace EduConnect_API.Repositories
             return entrega;
         }
 
-        public async Task<EntregaAtividade?> ObterPorId(Guid id)
+        public async Task<EntregaAtividade?> ObterPorId(int id)
         {
             return await _context.EntregasAtividades
                 .Include(e => e.Aluno)
@@ -30,7 +30,7 @@ namespace EduConnect_API.Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<IEnumerable<EntregaAtividade>> ListarPorAtividade(Guid atividadeId)
+        public async Task<IEnumerable<EntregaAtividade>> ListarPorAtividade(int atividadeId)
         {
             return await _context.EntregasAtividades
                 .Where(e => e.AtividadeId == atividadeId)
@@ -46,7 +46,7 @@ namespace EduConnect_API.Repositories
             await _context.SaveChangesAsync();
             return entrega;
         }
-        public async Task<IEnumerable<EntregaAtividade>> ListarPorAluno(Guid alunoId)
+        public async Task<IEnumerable<EntregaAtividade>> ListarPorAluno(int alunoId)
         {
             return await _context.EntregasAtividades
                 .Where(e => e.AlunoId == alunoId)

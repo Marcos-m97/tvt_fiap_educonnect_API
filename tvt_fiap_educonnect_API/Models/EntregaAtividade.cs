@@ -4,14 +4,14 @@ namespace EduConnect_API.Models
 {
     public class EntregaAtividade
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
 
         // FK → Atividade
-        public Guid AtividadeId { get; set; }
+        public int AtividadeId { get; set; }
         public Atividade Atividade { get; set; }
 
         // FK → Aluno
-        public Guid AlunoId { get; set; }
+        public int AlunoId { get; set; }
         public Aluno Aluno { get; set; }
 
         // Arquivo enviado (pode ser path ou Base64)

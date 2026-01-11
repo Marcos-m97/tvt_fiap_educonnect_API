@@ -2,7 +2,7 @@
 {
     public class CreateBoletimDTO
     {
-        public Guid AlunoId { get; set; }
-        public Guid TurmaId { get; set; }
+        public int AlunoId { get; set; }
+        public int TurmaId { get; set; }
     }
 }

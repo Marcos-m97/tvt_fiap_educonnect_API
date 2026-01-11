@@ -55,7 +55,7 @@ namespace EduConnect_API.Services
             };
         }
 
-        public async Task<IEnumerable<AtividadeDTO>> ListarPorTurmaDisciplina(Guid turmaDisciplinaId)
+        public async Task<IEnumerable<AtividadeDTO>> ListarPorTurmaDisciplina(int turmaDisciplinaId)
         {
             var lista = await _atividadeRepo.ListarPorTurmaDisciplina(turmaDisciplinaId);
 
@@ -72,7 +72,7 @@ namespace EduConnect_API.Services
                 ProfessorNome = a.TurmaDisciplina.Professor.Usuario.Nome
             });
         }
-        public async Task<IEnumerable<AtividadeAlunoDTO>> ListarMinhasAtividades(Guid usuarioId)
+        public async Task<IEnumerable<AtividadeAlunoDTO>> ListarMinhasAtividades(int usuarioId)
         {
             var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
                 ?? throw new Exception("Aluno não encontrado.");

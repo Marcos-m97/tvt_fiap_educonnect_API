@@ -5,7 +5,7 @@ namespace EduConnect_API.Models
 {
     public class Atividade
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
 
         public string Titulo { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
@@ -17,7 +17,7 @@ namespace EduConnect_API.Models
         public TipoAtividade Tipo { get; set; }
 
         // FK → TurmaDisciplina (atividade vinculada à disciplina da turma)
-        public Guid TurmaDisciplinaId { get; set; }
+        public int TurmaDisciplinaId { get; set; }
         public TurmaDisciplina TurmaDisciplina { get; set; }
 
         // Entregas dos alunos

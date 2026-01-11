@@ -30,7 +30,7 @@ namespace EduConnect_API.Services
         // ==============================================================
         // CRIAR MATRÍCULA (INSCRIÇÃO)
         // ==============================================================
-        public async Task<MatriculaDTO> Criar(Guid usuarioId, CriarMatriculaDTO dto)
+        public async Task<MatriculaDTO> Criar(int usuarioId, CriarMatriculaDTO dto)
         {
             var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
                 ?? throw new Exception("Aluno não encontrado.");
@@ -53,7 +53,7 @@ namespace EduConnect_API.Services
         // ==============================================================
         // UPLOAD COMPROVANTE DE PAGAMENTO
         // ==============================================================
-        public async Task<MatriculaDTO?> UploadComprovantePagamento(Guid id, IFormFile arquivo)
+        public async Task<MatriculaDTO?> UploadComprovantePagamento(int id, IFormFile arquivo)
         {
             var m = await _repo.ObterPorId(id);
             if (m == null) return null;
@@ -73,7 +73,7 @@ namespace EduConnect_API.Services
         // ==============================================================
         // UPLOAD DOCUMENTOS PESSOAIS
         // ==============================================================
-        public async Task<MatriculaDTO?> UploadDocumentosPessoais(Guid id, IFormFile arquivo)
+        public async Task<MatriculaDTO?> UploadDocumentosPessoais(int id, IFormFile arquivo)
         {
             var m = await _repo.ObterPorId(id);
             if (m == null) return null;
@@ -93,7 +93,7 @@ namespace EduConnect_API.Services
         // ==============================================================
         // UPLOAD DOCUMENTOS DE ESCOLARIDADE
         // ==============================================================
-        public async Task<MatriculaDTO?> UploadDocumentosEscolaridade(Guid id, IFormFile arquivo)
+        public async Task<MatriculaDTO?> UploadDocumentosEscolaridade(int id, IFormFile arquivo)
         {
             var m = await _repo.ObterPorId(id);
             if (m == null) return null;
@@ -113,7 +113,7 @@ namespace EduConnect_API.Services
         // ==============================================================
         // DOWNLOADS
         // ==============================================================
-        public async Task<byte[]?> BaixarComprovante(Guid id)
+        public async Task<byte[]?> BaixarComprovante(int id)
         {
             var m = await _repo.ObterPorId(id);
             if (m?.ComprovantePagamento == null) return null;
@@ -121,7 +121,7 @@ namespace EduConnect_API.Services
             return await _storage.BaixarAsync(m.ComprovantePagamento);
         }
 
-        public async Task<byte[]?> BaixarDocumentosPessoais(Guid id)
+        public async Task<byte[]?> BaixarDocumentosPessoais(int id)
         {
             var m = await _repo.ObterPorId(id);
             if (m?.DocumentosPessoais == null) return null;
@@ -129,7 +129,7 @@ namespace EduConnect_API.Services
             return await _storage.BaixarAsync(m.DocumentosPessoais);
         }
 
-        public async Task<byte[]?> BaixarDocumentosEscolaridade(Guid id)
+        public async Task<byte[]?> BaixarDocumentosEscolaridade(int id)
         {
             var m = await _repo.ObterPorId(id);
             if (m?.DocumentosEscolaridade == null) return null;
@@ -140,7 +140,7 @@ namespace EduConnect_API.Services
         // ==============================================================
         // CONSULTAS
         // ==============================================================
-        public async Task<MatriculaDTO?> ObterPorId(Guid id)
+        public async Task<MatriculaDTO?> ObterPorId(int id)
         {
             var m = await _repo.ObterPorId(id);
             return m == null ? null : MapToDTO(m, m.Aluno.Usuario.Nome, m.Turma.Nome);
@@ -152,13 +152,13 @@ namespace EduConnect_API.Services
             return lista.Select(m => MapToDTO(m, m.Aluno.Usuario.Nome, m.Turma.Nome));
         }
 
-        public async Task<IEnumerable<MatriculaDTO>> ListarPorAluno(Guid alunoId)
+        public async Task<IEnumerable<MatriculaDTO>> ListarPorAluno(int alunoId)
         {
             var lista = await _repo.ListarPorAluno(alunoId);
             return lista.Select(m => MapToDTO(m, m.Aluno.Usuario.Nome, m.Turma.Nome));
         }
 
-        public async Task<IEnumerable<MatriculaDTO>> ListarPorTurma(Guid turmaId)
+        public async Task<IEnumerable<MatriculaDTO>> ListarPorTurma(int turmaId)
         {
             var lista = await _repo.ListarPorTurma(turmaId);
             return lista.Select(m => MapToDTO(m, m.Aluno.Usuario.Nome, m.Turma.Nome));
@@ -167,7 +167,7 @@ namespace EduConnect_API.Services
         // ==============================================================
         // ATUALIZAR STATUS (EMAIL AUTOMÁTICO NA EFETIVAÇÃO)
         // ==============================================================
-        public async Task<MatriculaDTO?> AtualizarStatus(Guid id, MatriculaStatus novoStatus)
+        public async Task<MatriculaDTO?> AtualizarStatus(int id, MatriculaStatus novoStatus)
         {
             var m = await _repo.ObterPorId(id);
             if (m == null) return null;
@@ -218,7 +218,7 @@ Bem-vindo(a) à EduConnect!
         // ==============================================================
         // EXCLUIR MATRÍCULA
         // ==============================================================
-        public Task<bool> Deletar(Guid id) => _repo.Deletar(id);
+        public Task<bool> Deletar(int id) => _repo.Deletar(id);
 
         // ==============================================================
         // MAPEAMENTO DTO
@@ -240,7 +240,7 @@ Bem-vindo(a) à EduConnect!
         // ==============================================================
         // LISTAR ALUNOS DA TURMA (PROFESSOR / ADM)
         // ==============================================================
-        public async Task<IEnumerable<AlunoTurmaDTO>> ListarAlunosPorTurma(Guid turmaId)
+        public async Task<IEnumerable<AlunoTurmaDTO>> ListarAlunosPorTurma(int turmaId)
         {
             var matriculas = await _repo.ListarPorTurma(turmaId);
 

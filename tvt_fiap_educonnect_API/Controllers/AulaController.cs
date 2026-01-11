@@ -20,14 +20,14 @@ namespace EduConnect_API.Controllers
         // =========================================================
         // MÉTODO AUXILIAR – OBTER ID DO USUÁRIO PELO TOKEN
         // =========================================================
-        private Guid ObterUsuarioId()
+        private int ObterUsuarioId()
         {
             var usuarioIdClaim = User.FindFirst("id")?.Value;
 
             if (string.IsNullOrEmpty(usuarioIdClaim))
                 throw new UnauthorizedAccessException("Token não contém o id do usuário.");
 
-            return Guid.Parse(usuarioIdClaim);
+            return int.Parse(usuarioIdClaim);
         }
 
         // =========================================================
@@ -48,7 +48,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [HttpPost("{id}/material")]
         [Authorize(Roles = "0,1,2")]
-        public async Task<IActionResult> UploadMaterial(Guid id, IFormFile arquivo)
+        public async Task<IActionResult> UploadMaterial(int id, IFormFile arquivo)
         {
             if (arquivo == null || arquivo.Length == 0)
                 return BadRequest("Arquivo inválido.");
@@ -62,7 +62,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [HttpGet("{id}/material")]
         [Authorize]
-        public async Task<IActionResult> BaixarMaterial(Guid id)
+        public async Task<IActionResult> BaixarMaterial(int id)
         {
             var bytes = await _service.BaixarMaterialApoio(id);
             if (bytes == null) return NotFound();
@@ -75,7 +75,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> Obter(Guid id)
+        public async Task<IActionResult> Obter(int id)
         {
             var aula = await _service.ObterPorId(id);
             return aula == null ? NotFound() : Ok(aula);
@@ -86,7 +86,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [HttpGet("turma-disciplina/{turmaDisciplinaId}")]
         [Authorize]
-        public async Task<IActionResult> ListarPorTurmaDisciplina(Guid turmaDisciplinaId)
+        public async Task<IActionResult> ListarPorTurmaDisciplina(int turmaDisciplinaId)
         {
             var lista = await _service.ListarPorTurmaDisciplina(turmaDisciplinaId);
             return Ok(lista);
@@ -108,7 +108,7 @@ namespace EduConnect_API.Controllers
         // =========================================================
         [HttpDelete("{id}")]
         [Authorize(Roles = "0,1")]
-        public async Task<IActionResult> Deletar(Guid id)
+        public async Task<IActionResult> Deletar(int id)
         {
             var ok = await _service.Deletar(id);
             return ok ? NoContent() : NotFound();
@@ -119,7 +119,7 @@ namespace EduConnect_API.Controllers
         [Authorize(Roles = "3")] // aluno
         public async Task<IActionResult> ListarMinhasAulas()
         {
-            var usuarioId = Guid.Parse(User.FindFirst("id")!.Value);
+            var usuarioId = int.Parse(User.FindFirst("id")!.Value);
             return Ok(await _service.ListarMinhasAulas(usuarioId));
         }
 

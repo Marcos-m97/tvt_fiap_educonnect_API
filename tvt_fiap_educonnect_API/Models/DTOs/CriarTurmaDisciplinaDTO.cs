@@ -2,9 +2,9 @@
 {
     public class CriarTurmaDisciplinaDTO
     {
-        public Guid TurmaId { get; set; }
-        public Guid DisciplinaId { get; set; }
-        public Guid ProfessorId { get; set; }
+        public int TurmaId { get; set; }
+        public int DisciplinaId { get; set; }
+        public int ProfessorId { get; set; }
     }
 
 }

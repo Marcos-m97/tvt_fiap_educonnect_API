@@ -2,7 +2,7 @@
 {
     public class DisciplinaResumoDTO
     {
-        public Guid DisciplinaId { get; set; }
+        public int DisciplinaId { get; set; }
         public string Nome { get; set; } = string.Empty;
     }
 }

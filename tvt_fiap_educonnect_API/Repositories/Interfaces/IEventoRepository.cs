@@ -5,11 +5,11 @@ namespace EduConnect_API.Repositories.Interfaces
     public interface IEventoRepository
     {
         Task<Evento> Criar(Evento evento);
-        Task<Evento?> Obter(Guid id);
+        Task<Evento?> Obter(int id);
         Task<IEnumerable<Evento>> Listar();
-        Task<IEnumerable<Evento>> ListarPorTurma(Guid turmaId);
-        Task<IEnumerable<Evento>> ListarPorUsuario(Guid usuarioId);
+        Task<IEnumerable<Evento>> ListarPorTurma(int turmaId);
+        Task<IEnumerable<Evento>> ListarPorUsuario(int usuarioId);
         Task<Evento> Atualizar(Evento evento);
-        Task<bool> Deletar(Guid id);
+        Task<bool> Deletar(int id);
     }
 }

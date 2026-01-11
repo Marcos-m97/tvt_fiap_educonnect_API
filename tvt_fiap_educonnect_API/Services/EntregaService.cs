@@ -27,7 +27,7 @@ namespace EduConnect_API.Services
         // ============================================================
         // CRIAR ENTREGA
         // ============================================================
-        public async Task<EntregaDTO> CriarEntrega(Guid usuarioId, Guid atividadeId, IFormFile arquivo)
+        public async Task<EntregaDTO> CriarEntrega(int usuarioId, int atividadeId, IFormFile arquivo)
         {
             var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
                 ?? throw new Exception("Aluno não encontrado.");
@@ -53,7 +53,7 @@ namespace EduConnect_API.Services
         // ============================================================
         // CORRIGIR ENTREGA (professor)
         // ============================================================
-        public async Task<EntregaDTO> Corrigir(Guid entregaId, decimal nota, string? feedback)
+        public async Task<EntregaDTO> Corrigir(int entregaId, decimal nota, string? feedback)
         {
             var entrega = await _repo.ObterPorId(entregaId)
                 ?? throw new Exception("Entrega não encontrada.");
@@ -78,7 +78,7 @@ namespace EduConnect_API.Services
         // ============================================================
         // LISTAR ENTREGAS POR ATIVIDADE
         // ============================================================
-        public async Task<IEnumerable<EntregaDTO>> ListarPorAtividade(Guid atividadeId)
+        public async Task<IEnumerable<EntregaDTO>> ListarPorAtividade(int atividadeId)
         {
             var lista = await _repo.ListarPorAtividade(atividadeId);
 
@@ -98,8 +98,8 @@ namespace EduConnect_API.Services
             EntregaAtividade e,
             string titulo,
             string nomeAluno,
-            Guid alunoId,
-            Guid usuarioId)
+            int alunoId,
+            int usuarioId)
         {
             return new EntregaDTO
             {
@@ -118,7 +118,7 @@ namespace EduConnect_API.Services
                 Arquivo = e.Arquivo
             };
         }
-        public async Task<IEnumerable<EntregaAlunoDTO>> ListarMinhasEntregas(Guid usuarioId,Guid? disciplinaId,Guid? atividadeId)
+        public async Task<IEnumerable<EntregaAlunoDTO>> ListarMinhasEntregas(int usuarioId,int? disciplinaId,int? atividadeId)
         {
             var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
                 ?? throw new Exception("Aluno não encontrado.");

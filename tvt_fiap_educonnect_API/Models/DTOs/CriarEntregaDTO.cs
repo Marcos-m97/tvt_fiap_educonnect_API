@@ -2,7 +2,7 @@
 
     public class CriarEntregaDTO
     {
-        public Guid AtividadeId { get; set; }
+        public int AtividadeId { get; set; }
         // arquivo será IFormFile
     }
 

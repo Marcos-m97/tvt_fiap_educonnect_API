@@ -21,7 +21,7 @@ namespace EduConnect_API.Repositories
             return entity;
         }
 
-        public async Task<TurmaDisciplina?> ObterPorId(Guid id)
+        public async Task<TurmaDisciplina?> ObterPorId(int id)
         {
             return await _context.TurmaDisciplinas
                 .Include(td => td.Turma)
@@ -41,7 +41,7 @@ namespace EduConnect_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<TurmaDisciplina>> ListarPorTurma(Guid turmaId)
+        public async Task<IEnumerable<TurmaDisciplina>> ListarPorTurma(int turmaId)
         {
             return await _context.TurmaDisciplinas
                 .Include(td => td.Turma)
@@ -59,7 +59,7 @@ namespace EduConnect_API.Repositories
             return entity;
         }
 
-        public async Task<bool> Deletar(Guid id)
+        public async Task<bool> Deletar(int id)
         {
             var entity = await _context.TurmaDisciplinas.FindAsync(id);
             if (entity == null)
@@ -69,7 +69,7 @@ namespace EduConnect_API.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<IEnumerable<TurmaDisciplina>> ListarPorProfessor(Guid professorId)
+        public async Task<IEnumerable<TurmaDisciplina>> ListarPorProfessor(int professorId)
         {
             return await _context.TurmaDisciplinas
                 .Include(td => td.Turma)

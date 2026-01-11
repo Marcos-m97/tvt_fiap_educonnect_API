@@ -21,7 +21,7 @@ namespace EduConnect_API.Repositories
             return aula;
         }
 
-        public async Task<Aula?> ObterPorId(Guid id)
+        public async Task<Aula?> ObterPorId(int id)
         {
             return await _context.Aulas
                 .Include(a => a.TurmaDisciplina)
@@ -31,7 +31,7 @@ namespace EduConnect_API.Repositories
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task<IEnumerable<Aula>> ListarPorTurmaDisciplina(Guid turmaDisciplinaId)
+        public async Task<IEnumerable<Aula>> ListarPorTurmaDisciplina(int turmaDisciplinaId)
         {
             return await _context.Aulas
                 .Include(a => a.TurmaDisciplina)
@@ -44,7 +44,7 @@ namespace EduConnect_API.Repositories
         // =====================================================
         // 🔹 NOVO: AULAS DO ALUNO (via matrícula)
         // =====================================================
-        public async Task<IEnumerable<Aula>> ListarPorTurma(Guid turmaId)
+        public async Task<IEnumerable<Aula>> ListarPorTurma(int turmaId)
         {
             return await _context.Aulas
                 .Include(a => a.TurmaDisciplina)
@@ -68,7 +68,7 @@ namespace EduConnect_API.Repositories
             return aula;
         }
 
-        public async Task<bool> Deletar(Guid id)
+        public async Task<bool> Deletar(int id)
         {
             var aula = await _context.Aulas.FindAsync(id);
             if (aula == null)

@@ -26,7 +26,7 @@ namespace EduConnect_API.Repositories
         // ============================================================
         // 2. OBTER POR ID (/ME)
         // ============================================================
-        public async Task<Usuario?> ObterPorId(Guid id)
+        public async Task<Usuario?> ObterPorId(int id)
         {
             return await _context.Usuarios
                 .FirstOrDefaultAsync(u => u.Id == id);
@@ -59,7 +59,7 @@ namespace EduConnect_API.Repositories
         }
 
         // SOFT DELETE
-        public async Task<bool> SoftDelete(Guid id)
+        public async Task<bool> SoftDelete(int id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);
 
@@ -74,7 +74,7 @@ namespace EduConnect_API.Repositories
             return true;
         }
         // reativar usuario
-        public async Task<bool> Reativar(Guid id)
+        public async Task<bool> Reativar(int id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);
 

@@ -5,10 +5,10 @@ namespace EduConnect_API.Repositories.Interfaces
     public interface ITurmaRepository
     {
         Task<Turma> Criar(Turma turma);
-        Task<Turma?> ObterPorId(Guid id);
+        Task<Turma?> ObterPorId(int id);
         Task<IEnumerable<Turma>> Listar();
-        Task<IEnumerable<Turma>> ListarPorCurso(Guid cursoId);
+        Task<IEnumerable<Turma>> ListarPorCurso(int cursoId);
         Task<Turma> Atualizar(Turma turma);
-        Task<bool> Deletar(Guid id);
+        Task<bool> Deletar(int id);
     }
 }

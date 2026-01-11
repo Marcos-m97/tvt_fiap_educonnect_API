@@ -26,7 +26,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // CONTEXTO DO USUÁRIO LOGADO
         // =========================================================
-        public async Task<MeContextoDTO> ObterContexto(Guid usuarioId, string tipoUsuario)
+        public async Task<MeContextoDTO> ObterContexto(int usuarioId, string tipoUsuario)
         {
             if (tipoUsuario == "3") // aluno
             {
@@ -50,12 +50,12 @@ namespace EduConnect_API.Services
         // =========================================================
         // CONTEXTO ADMINISTRATIVO
         // =========================================================
-        public async Task<MeContextoDTO> ObterContextoAluno(Guid alunoId)
+        public async Task<MeContextoDTO> ObterContextoAluno(int alunoId)
         {
             return await MontarContextoAluno(alunoId);
         }
 
-        public async Task<MeContextoDTO> ObterContextoProfessor(Guid professorId)
+        public async Task<MeContextoDTO> ObterContextoProfessor(int professorId)
         {
             return await MontarContextoProfessor(professorId);
         }
@@ -63,7 +63,7 @@ namespace EduConnect_API.Services
         // =========================================================
         // MÉTODOS PRIVADOS (REUTILIZÁVEIS)
         // =========================================================
-        private async Task<MeContextoDTO> MontarContextoAluno(Guid alunoId)
+        private async Task<MeContextoDTO> MontarContextoAluno(int alunoId)
         {
             var aluno = await _alunoRepo.ObterPorId(alunoId)
                 ?? throw new Exception("Aluno não encontrado.");
@@ -88,7 +88,7 @@ namespace EduConnect_API.Services
             };
         }
 
-        private async Task<MeContextoDTO> MontarContextoProfessor(Guid professorId)
+        private async Task<MeContextoDTO> MontarContextoProfessor(int professorId)
         {
             var professor = await _professorRepo.ObterPorId(professorId)
                 ?? throw new Exception("Professor não encontrado.");

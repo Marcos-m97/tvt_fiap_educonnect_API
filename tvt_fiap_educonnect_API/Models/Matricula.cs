@@ -4,14 +4,14 @@ namespace EduConnect_API.Models
 {
     public class Matricula
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
 
         // FK → Aluno
-        public Guid AlunoId { get; set; }
+        public int AlunoId { get; set; }
         public Aluno Aluno { get; set; }
 
         // FK → Turma
-        public Guid TurmaId { get; set; }
+        public int TurmaId { get; set; }
         public Turma Turma { get; set; }
 
         // Etapas (1-inscrição, 2-pagamento, 3-documentos, 4-efetivada)

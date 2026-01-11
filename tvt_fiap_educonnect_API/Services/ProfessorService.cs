@@ -75,7 +75,7 @@ Equipe EduConnect
             return MapToDTO(prof);
         }
 
-        public async Task<ProfessorDTO?> ObterPorUsuario(Guid usuarioId)
+        public async Task<ProfessorDTO?> ObterPorUsuario(int usuarioId)
         {
             var prof = await _repo.ObterPorUsuarioId(usuarioId);
             return prof == null ? null : MapToDTO(prof);
@@ -87,7 +87,7 @@ Equipe EduConnect
             return lista.Select(p => MapToDTO(p));
         }
 
-        public async Task<ProfessorDTO?> Atualizar(Guid id, CriarProfessorDTO dto)
+        public async Task<ProfessorDTO?> Atualizar(int id, CriarProfessorDTO dto)
         {
             var prof = await _repo.ObterPorId(id);
 
