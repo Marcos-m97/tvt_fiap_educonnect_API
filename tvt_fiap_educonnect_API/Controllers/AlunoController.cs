@@ -20,7 +20,7 @@ namespace EduConnect_API.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "0,1,3")]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Criar(CriarAlunoDTO dto)
         {

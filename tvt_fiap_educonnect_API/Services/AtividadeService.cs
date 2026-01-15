@@ -104,6 +104,25 @@ namespace EduConnect_API.Services
                 };
             });
         }
+        public async Task<AtividadeDTO> ObterPorId(int id)
+        {
+            var atividade = await _atividadeRepo.ObterPorId(id)
+                ?? throw new Exception("Atividade não encontrada.");
+
+            return new AtividadeDTO
+            {
+                Id = atividade.Id,
+                Titulo = atividade.Titulo,
+                Descricao = atividade.Descricao,
+                DataEntrega = atividade.DataEntrega,
+                Tipo = atividade.Tipo,
+                TurmaDisciplinaId = atividade.TurmaDisciplinaId,
+                TurmaNome = atividade.TurmaDisciplina.Turma.Nome,
+                DisciplinaNome = atividade.TurmaDisciplina.Disciplina.Nome,
+                ProfessorNome = atividade.TurmaDisciplina.Professor.Usuario.Nome
+            };
+        }
+
 
     }
 }

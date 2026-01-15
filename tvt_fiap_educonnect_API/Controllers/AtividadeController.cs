@@ -36,6 +36,13 @@ namespace EduConnect_API.Controllers
             var usuarioId = int.Parse(User.FindFirst("id")!.Value);
             return Ok(await _service.ListarMinhasAtividades(usuarioId));
         }
+        [Authorize(Roles = "0,1,2,3")] // sysADM, ADM, Professor, Aluno
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ObterPorId(int id)
+        {
+            return Ok(await _service.ObterPorId(id));
+        }
+
     }
 }
 
