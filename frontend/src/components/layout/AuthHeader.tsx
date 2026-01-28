@@ -1,38 +1,29 @@
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, IconButton } from "@mui/material";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
+import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
+import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
+import { useThemeApp } from "../../contexts/ThemeContext";
 
-type Props = {
-  subtitle: string;
-};
+export default function AuthHeader({ subtitle }: { subtitle: string }) {
+  const { mode, toggle } = useThemeApp();
 
-export default function AuthHeader({ subtitle }: Props) {
   return (
-    <Stack alignItems="center" spacing={1} mb={3}>
-      <Stack direction="row" spacing={1} alignItems="center">
-        <SchoolRoundedIcon
-          sx={{
-            fontSize: 38,
-            color: "primary.main",
-            filter: "drop-shadow(0 0 10px rgba(94,163,255,.6))",
-          }}
-        />
+    <Stack alignItems="center" spacing={1} mb={3} position="relative">
+      <IconButton
+        onClick={toggle}
+        sx={{ position: "absolute", right: 0, top: 0 }}
+      >
+        {mode === "dark" ? <LightModeRoundedIcon /> : <DarkModeRoundedIcon />}
+      </IconButton>
 
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: 700,
-            letterSpacing: 1,
-          }}
-        >
+      <Stack direction="row" spacing={1} alignItems="center">
+        <SchoolRoundedIcon sx={{ fontSize: 38, color: "primary.main" }} />
+        <Typography variant="h4" fontWeight={700}>
           EduConnect
         </Typography>
       </Stack>
 
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        textAlign="center"
-      >
+      <Typography variant="body2" color="text.secondary" textAlign="center">
         {subtitle}
       </Typography>
     </Stack>
