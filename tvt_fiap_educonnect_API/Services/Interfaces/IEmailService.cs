@@ -2,6 +2,13 @@
 {
     public interface IEmailService
     {
-        Task EnviarEmail(string para, string assunto, string corpo);
+        Task EnviarEmail(
+            string para,
+            string assunto,
+            string corpo,
+            bool isHtml = false
+        );
     }
 }
+
+

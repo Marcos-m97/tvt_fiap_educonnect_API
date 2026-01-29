@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using System.Text;
 using EduConnect_API.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 
@@ -14,7 +15,12 @@ namespace EduConnect_API.Services
             _config = config;
         }
 
-        public async Task EnviarEmail(string para, string assunto, string corpo)
+        public async Task EnviarEmail(
+            string para,
+            string assunto,
+            string corpo,
+            bool isHtml = false
+        )
         {
             var smtpHost = _config["EmailSettings:Smtp"];
             var smtpPort = int.Parse(_config["EmailSettings:Port"]);
@@ -25,7 +31,9 @@ namespace EduConnect_API.Services
             {
                 Subject = assunto,
                 Body = corpo,
-                IsBodyHtml = false // coloque true se quiser formatar com HTML
+                IsBodyHtml = isHtml,
+                BodyEncoding = Encoding.UTF8,
+                SubjectEncoding = Encoding.UTF8
             };
 
             var smtp = new SmtpClient(smtpHost, smtpPort)

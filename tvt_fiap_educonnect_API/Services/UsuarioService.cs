@@ -1,4 +1,4 @@
-using EduConnect_API.Models;
+﻿using EduConnect_API.Models;
 using EduConnect_API.Models.DTOs;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
@@ -46,7 +46,7 @@ namespace EduConnect_API.Services
         }
 
         // ============================================================
-        // 3. CRIAR USU�RIO
+        // 3. CRIAR USUÁRIO
         // ============================================================
         public async Task<Usuario> Criar(CriarUsuarioDTO dto)
         {
@@ -104,7 +104,7 @@ namespace EduConnect_API.Services
         }
 
         // ============================================================
-        // 8. SOLICITAR RESET DE SENHA (envia c�digo para email)
+        // 8. SOLICITAR RESET DE SENHA (HTML + LINK)
         // ============================================================
         public async Task SolicitarResetSenha(string email)
         {
@@ -122,16 +122,69 @@ namespace EduConnect_API.Services
             };
 
             await _passwordResetRepository.Salvar(reset);
+            var resetLinkComCodigo = $"http://localhost:5173/reset-password?email={email}&codigo={codigo}";
+
+            var resetLinkManual = "http://localhost:5173/reset-password";
+
+            var bodyHtml = $@"
+                <div style='font-family: Arial, sans-serif; color: #333;'>
+                    <h2>Redefinição de Senha</h2>
+
+                    <p>Olá,</p>
+
+                    <p>Recebemos uma solicitação para redefinir sua senha.</p>
+
+                    <p>
+                        <strong>Código de verificação:</strong><br/>
+                        <span style='font-size: 20px; letter-spacing: 2px;'>
+                            {codigo}
+                        </span>
+                    </p>
+
+                    <p>
+                        Você pode redefinir sua senha clicando no botão abaixo:
+                    </p>
+
+                    <p>
+                        <a href='{resetLinkComCodigo}'
+                           style='background-color:#4f46e5;
+                                  color:white;
+                                  padding:10px 16px;
+                                  text-decoration:none;
+                                  border-radius:6px;
+                                  display:inline-block;'>
+                            Redefinir Senha
+                        </a>
+                    </p>
+
+                    <p style='margin-top:12px; font-size: 13px;'>
+                        Caso o botão acima não funcione, acesse o link abaixo e informe o código manualmente:
+                    </p>
+
+                    <p>
+                        <a href='{resetLinkManual}'
+                           style='color:#4f46e5;'>
+                            {resetLinkManual}
+                        </a>
+                    </p>
+
+                    <p style='margin-top:20px; font-size: 12px; color: #666;'>
+                        Este código expira em 10 minutos.<br/>
+                        Se você não solicitou essa alteração, ignore este e-mail.
+                    </p>
+                </div>
+                ";
 
             await _emailService.EnviarEmail(
                 email,
-                "C�digo para Redefini��o de Senha",
-                $"Seu c�digo para redefini��o de senha �: {codigo}"
+                "Redefinição de Senha - EduConnect",
+                bodyHtml,
+                isHtml: true
             );
         }
 
         // ============================================================
-        // 9. RESETAR SENHA (verifica c�digo + atualiza senha)
+        // 9. RESETAR SENHA
         // ============================================================
         public async Task<bool> ResetarSenha(string email, string codigo, string novaSenha)
         {

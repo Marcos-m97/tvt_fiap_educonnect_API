@@ -1,6 +1,6 @@
-import { Button, TextField, Stack } from "@mui/material";
+import { Button, TextField, Stack, Typography, Link } from "@mui/material";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function LoginForm() {
@@ -10,15 +10,16 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
     try {
       const usuario = await login(email, senha);
 
-      // 🔀 Redirecionamento automático por perfil
       switch (usuario.tipo) {
         case 0:
           navigate("/admin");
@@ -32,11 +33,9 @@ export default function LoginForm() {
         case 3:
           navigate("/aluno");
           break;
-        default:
-          navigate("/login");
       }
     } catch {
-      alert("Usuário ou senha inválidos.");
+      setError("Credenciais inválidas.");
     } finally {
       setLoading(false);
     }
@@ -63,6 +62,12 @@ export default function LoginForm() {
           fullWidth
         />
 
+        {error && (
+          <Typography color="error" fontSize="0.9rem">
+            {error}
+          </Typography>
+        )}
+
         <Button
           type="submit"
           variant="contained"
@@ -71,6 +76,16 @@ export default function LoginForm() {
         >
           {loading ? "Entrando..." : "Entrar"}
         </Button>
+
+        <Link
+          component={RouterLink}
+          to="/forgot-password"
+          underline="hover"
+          textAlign="center"
+          fontSize="0.9rem"
+        >
+          Esqueci minha senha
+        </Link>
       </Stack>
     </form>
   );
