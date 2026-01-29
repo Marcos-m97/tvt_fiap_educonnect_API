@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import TopBar from "./topBar";
+import TopBar from "./TopBar";
 import Footer from "./Footer";
 
 type Props = {
