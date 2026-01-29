@@ -2,7 +2,7 @@ import { Box, Paper } from "@mui/material";
 import LoginForm from "../../components/login/LoginForm";
 import AuthHeader from "../../components/layout/AuthHeader";
 
-export default function LoginAluno() {
+export default function Login() {
   return (
     <Box
       minHeight="100vh"
@@ -16,7 +16,7 @@ export default function LoginAluno() {
       >
         <AuthHeader subtitle="Conectando você à educação" />
 
-        <LoginForm role="ALUNO" />
+        <LoginForm />
       </Paper>
     </Box>
   );
