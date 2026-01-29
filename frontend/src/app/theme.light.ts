@@ -1,15 +1,18 @@
 import { createTheme } from "@mui/material/styles";
 
 const tokens = {
-  bg: "#f6f8ff",
-  bgSoft: "#eef2ff",
+  bg: "hsl(130, 60%, 84%)",        // verde água bem claro
+  bgSoft: "#e6fffa",
   card: "#ffffff",
   primary: "#3b82f6",
   primaryHover: "#2563eb",
-  accent: "#22d3ee",
+  accent: "#2dd4bf",    // menta
   text: "#0f172a",
   muted: "#475569",
 };
+
+
+
 
 export const lightTheme = createTheme({
   palette: {

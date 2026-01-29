@@ -1,4 +1,13 @@
-import { Button, TextField, Stack, Typography, Link } from "@mui/material";
+import {
+  Button,
+  TextField,
+  Stack,
+  Typography,
+  Link,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -9,6 +18,7 @@ export default function LoginForm() {
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -55,11 +65,24 @@ export default function LoginForm() {
 
         <TextField
           label="Senha"
-          type="password"
+          type={showPassword ? "text" : "password"}
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
           required
           fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
 
         {error && (
