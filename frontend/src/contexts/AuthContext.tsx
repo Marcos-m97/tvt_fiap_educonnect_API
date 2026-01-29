@@ -1,72 +1,122 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { api } from "../services/api";
 
-type Usuario = {
+/* =========================
+   TIPOS
+========================= */
+
+export type Usuario = {
   id: number;
   nome: string;
-  tipo: number; // 1=Admin | 2=Professor | 3=Aluno
+  email: string;
+  tipo: number; // 0=Admin | 1=Professor | 2=Aluno (ajuste se necessário)
+};
+
+type Perfil = {
+  departamento: string;
+  cargo: string;
 };
 
 type LoginResponse = {
   token: string;
+};
+
+type MeResponse = {
   usuario: Usuario;
+  perfil: Perfil;
 };
 
 type AuthContextType = {
   user: Usuario | null;
+  perfil: Perfil | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (email: string, senha: string) => Promise<Usuario>;
+  loading: boolean;
+  login: (email: string, senha: string) => Promise<void>;
   logout: () => void;
 };
 
+/* =========================
+   CONTEXT
+========================= */
+
 const AuthContext = createContext<AuthContextType | null>(null);
+
+/* =========================
+   PROVIDER
+========================= */
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<Usuario | null>(null);
+  const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // 🔄 Recupera sessão ao recarregar a página
+  /* =========================
+     BOOTSTRAP (carrega /me)
+  ========================= */
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+    if (!storedToken) {
+      setLoading(false);
+      return;
     }
+
+    setToken(storedToken);
+
+    api
+      .get<MeResponse>("/account/me")
+      .then((res) => {
+        setUser(res.data.usuario);
+        setPerfil(res.data.perfil);
+      })
+      .catch(() => {
+        logout();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
-  // 🔐 Login
+  /* =========================
+     LOGIN
+  ========================= */
   async function login(email: string, senha: string) {
     const { data } = await api.post<LoginResponse>("/usuario/login", {
       email,
       senha,
     });
 
-    setToken(data.token);
-    setUser(data.usuario);
-
     localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.usuario));
+    setToken(data.token);
 
-    return data.usuario;
+    const me = await api.get<MeResponse>("/account/me");
+    setUser(me.data.usuario);
+    setPerfil(me.data.perfil);
   }
 
-  // 🚪 Logout
+  /* =========================
+     LOGOUT
+  ========================= */
   function logout() {
-    setToken(null);
     setUser(null);
+    setPerfil(null);
+    setToken(null);
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
   }
 
+  /* =========================
+     PROVIDER VALUE
+  ========================= */
   return (
     <AuthContext.Provider
       value={{
         user,
+        perfil,
         token,
-        isAuthenticated: !!token,
+        loading,
+        isAuthenticated: !!token && !!user,
         login,
         logout,
       }}
@@ -75,6 +125,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     </AuthContext.Provider>
   );
 }
+
+/* =========================
+   HOOK
+========================= */
 
 export function useAuth() {
   const ctx = useContext(AuthContext);

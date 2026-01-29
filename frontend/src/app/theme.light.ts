@@ -11,9 +11,6 @@ const tokens = {
   muted: "#475569",
 };
 
-
-
-
 export const lightTheme = createTheme({
   palette: {
     mode: "light",

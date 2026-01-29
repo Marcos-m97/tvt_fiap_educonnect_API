@@ -8,12 +8,12 @@ import {
   IconButton,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  const { login, user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -22,31 +22,40 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  /* =========================
+     REDIRECIONA APÓS LOGIN
+  ========================= */
+  useEffect(() => {
+    if (!isAuthenticated || !user) return;
+
+    switch (user.tipo) {
+      case 0:
+        navigate("/admin");
+        break;
+      case 1:
+        navigate("/admin");
+        break;
+      case 2:
+        navigate("/professor");
+        break;
+      case 3:
+        navigate("/aluno");
+        break;
+    }
+  }, [isAuthenticated, user, navigate]);
+
+  /* =========================
+     SUBMIT
+  ========================= */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const usuario = await login(email, senha);
-
-      switch (usuario.tipo) {
-        case 0:
-          navigate("/admin");
-          break;
-        case 1:
-          navigate("/admin");
-          break;
-        case 2:
-          navigate("/professor");
-          break;
-        case 3:
-          navigate("/aluno");
-          break;
-      }
+      await login(email, senha);
     } catch {
       setError("Credenciais inválidas.");
-    } finally {
       setLoading(false);
     }
   }
