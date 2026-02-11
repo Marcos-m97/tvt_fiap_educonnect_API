@@ -62,13 +62,22 @@ namespace EduConnect_API.Services
             return await _repo.Criar(novo);
         }
 
-        // ============================================================
-        // 4. LISTAR TODOS
-        // ============================================================
-        public async Task<IEnumerable<Usuario>> ListarTodos()
+        //// ============================================================
+        //// 4. LISTAR TODOS
+        //// ============================================================
+        //public async Task<IEnumerable<Usuario>> ListarTodos()
+        //{
+        //    return await _repo.ListarTodos();
+        //}
+        public async Task<(IEnumerable<Usuario>, int)> ListarPaginado(
+            int page,
+            int pageSize,
+            string? search
+            )
         {
-            return await _repo.ListarTodos();
+            return await _repo.ListarPaginado(page, pageSize, search);
         }
+
 
         // ============================================================
         // 5. ATUALIZAR
@@ -186,9 +195,6 @@ namespace EduConnect_API.Services
         // ============================================================
         // 9. RESETAR SENHA
         // ============================================================
-        // ============================================================
-        // 9. RESETAR SENHA
-        // ============================================================
         public async Task<bool> ResetarSenha(string email, string codigo, string novaSenha)
         {
             var reset = await _passwordResetRepository.Obter(email, codigo);
@@ -243,25 +249,5 @@ namespace EduConnect_API.Services
 
             return true;
         }
-
-        //public async Task<bool> ResetarSenha(string email, string codigo, string novaSenha)
-        //{
-        //    var reset = await _passwordResetRepository.Obter(email, codigo);
-
-        //    if (reset == null || reset.Usado || reset.ExpiraEm < DateTime.Now)
-        //        return false;
-
-        //    var usuario = await _repo.ObterPorEmail(email);
-        //    if (usuario == null)
-        //        return false;
-
-        //    usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(novaSenha);
-        //    await _repo.Atualizar(usuario);
-
-        //    reset.Usado = true;
-        //    await _passwordResetRepository.Atualizar(reset);
-
-        //    return true;
-        //}
     }
 }

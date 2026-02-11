@@ -33,7 +33,7 @@ namespace EduConnect_API.Repositories
         }
 
         // ============================================================
-        // 3. CRIAR USUÁRIO 
+        // 3. CRIAR USUÁRIO
         // ============================================================
         public async Task<Usuario> Criar(Usuario usuario)
         {
@@ -42,15 +42,41 @@ namespace EduConnect_API.Repositories
             return usuario;
         }
 
-        // GET ALL USUARIOS
-        public async Task<IEnumerable<Usuario>> ListarTodos()
+        // ============================================================
+        // 4. LISTAR PAGINADO + BUSCA
+        // ============================================================
+        public async Task<(IEnumerable<Usuario>, int)> ListarPaginado(
+            int page,
+            int pageSize,
+            string? search)
         {
-            return await _context.Usuarios
-                .Where(u => u.Ativo)
+            var query = _context.Usuarios.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(u =>
+                    u.Nome.Contains(search) ||
+                    u.Email.Contains(search) ||
+                    u.Id.ToString().Contains(search));
+            }
+
+            query = query
+                .OrderByDescending(u => u.Ativo)
+                .ThenBy(u => u.Nome);
+
+            var total = await query.CountAsync();
+
+            var usuarios = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return (usuarios, total);
         }
 
-        // ATUALIZAR USUARIOS
+        // ============================================================
+        // 5. ATUALIZAR
+        // ============================================================
         public async Task<Usuario> Atualizar(Usuario usuario)
         {
             _context.Usuarios.Update(usuario);
@@ -58,37 +84,36 @@ namespace EduConnect_API.Repositories
             return usuario;
         }
 
-        // SOFT DELETE
+        // ============================================================
+        // 6. SOFT DELETE
+        // ============================================================
         public async Task<bool> SoftDelete(int id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);
-
             if (usuario == null)
                 return false;
 
             usuario.Ativo = false;
-
             _context.Usuarios.Update(usuario);
             await _context.SaveChangesAsync();
 
             return true;
         }
-        // reativar usuario
+
+        // ============================================================
+        // 7. REATIVAR
+        // ============================================================
         public async Task<bool> Reativar(int id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);
-
             if (usuario == null)
                 return false;
 
             usuario.Ativo = true;
-
             _context.Usuarios.Update(usuario);
             await _context.SaveChangesAsync();
 
             return true;
         }
-
-
     }
 }

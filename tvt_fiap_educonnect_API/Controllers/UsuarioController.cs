@@ -108,16 +108,37 @@ namespace EduConnect_API.Controllers
             });
         }
 
+        //// ============================================================
+        //// 5. LISTAR TODOS (SUPERADMIN = 0 | ADMIN = 1)
+        //// ============================================================
+        //[Authorize(Roles = "0,1")]
+        //[HttpGet]
+        //public async Task<IActionResult> Listar()
+        //{
+        //    var lista = await _service.ListarTodos();
+        //    return Ok(lista);
+        //}
         // ============================================================
-        // 5. LISTAR TODOS (SUPERADMIN = 0 | ADMIN = 1)
+        // 5. LISTAR PAGINADO (SUPERADMIN = 0 | ADMIN = 1)
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpGet]
-        public async Task<IActionResult> Listar()
+        public async Task<IActionResult> Listar(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 5,
+            [FromQuery] string? search = null)
         {
-            var lista = await _service.ListarTodos();
-            return Ok(lista);
+            var (usuarios, total) = await _service.ListarPaginado(page, pageSize, search);
+
+            return Ok(new
+            {
+                data = usuarios,
+                total,
+                page,
+                pageSize
+            });
         }
+
 
         // ============================================================
         // 6. OBTER POR ID (SUPERADMIN = 0 | ADMIN = 1)
