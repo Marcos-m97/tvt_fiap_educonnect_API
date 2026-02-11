@@ -19,7 +19,7 @@ export default function TopBar() {
   return (
     <AppBar position="static">
       <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Typography variant="h6">EduConnect</Typography>
+        <Typography variant="h6">EduConnect 🎓</Typography>
 
         <Box display="flex" alignItems="center" gap={1}>
           <Typography variant="body2">
