@@ -12,9 +12,11 @@ import {
   CircularProgress
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AppLayout from "../../components/layout/AppLayout";
 import { useEffect, useState } from "react";
 import { api } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 interface Usuario {
   id: number;
@@ -40,6 +42,8 @@ function traduzirTipo(tipo: number) {
 }
 
 export default function AdminUsuarios() {
+  const navigate = useNavigate();
+
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -92,41 +96,62 @@ export default function AdminUsuarios() {
 
   return (
     <AppLayout>
-      <Typography variant="h4" gutterBottom>
-        Gestão de Usuários
-      </Typography>
 
-      <Typography variant="body1" color="text.secondary" mb={3}>
-        Crie, edite e gerencie administradores, professores e alunos.
-      </Typography>
+      {/* HEADER CENTRALIZADO */}
+      <Box textAlign="center" mb={4}>
+        <Typography variant="h4" gutterBottom>
+          Gestão de Usuários
+        </Typography>
 
-      {/* Ações superiores */}
+        <Typography variant="body1" color="text.secondary">
+          Crie, edite e gerencie administradores, professores e alunos.
+        </Typography>
+      </Box>
+
+      {/* LINHA DE AÇÕES */}
       <Box
         display="flex"
-        justifyContent="space-between"
+        justifyContent="center"
         alignItems="center"
-        mb={3}
-        gap={2}
+        gap={3}
+        mb={4}
         flexWrap="wrap"
       >
         <Button
           variant="contained"
           startIcon={<AddIcon />}
+          sx={{ textTransform: "none" }}
         >
           Criar Usuário
         </Button>
 
         <TextField
-          size="small"
-          label="Pesquisar por nome, email ou ID"
+          placeholder="Pesquisar por nome, email ou ID"
           value={search}
           onChange={(e) => {
             setPage(1);
             setSearch(e.target.value);
           }}
+          sx={{
+            width: {
+              xs: "100%",
+              sm: 350,
+              md: 450
+            }
+          }}
         />
+
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/admin")}
+          sx={{ textTransform: "none" }}
+        >
+          Voltar
+        </Button>
       </Box>
 
+      {/* LISTA */}
       <Card
         sx={{
           transition: "0.2s",
@@ -182,12 +207,26 @@ export default function AdminUsuarios() {
                     </Box>
                   </Box>
 
-                  <Button
-                    size="small"
-                    onClick={() => toggleStatus(usuario)}
-                  >
-                    {usuario.ativo ? "Desativar" : "Reativar"}
-                  </Button>
+                  <Box display="flex" gap={1}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() =>
+                        navigate(`/admin/usuarios/${usuario.id}`)
+                      }
+                      sx={{ textTransform: "none" }}
+                    >
+                      Ver Perfil
+                    </Button>
+
+                    <Button
+                      size="small"
+                      onClick={() => toggleStatus(usuario)}
+                      sx={{ textTransform: "none" }}
+                    >
+                      {usuario.ativo ? "Desativar" : "Reativar"}
+                    </Button>
+                  </Box>
                 </Box>
 
                 {index !== usuarios.length - 1 && <Divider />}
@@ -195,10 +234,7 @@ export default function AdminUsuarios() {
             ))}
         </CardContent>
 
-        {/* Paginação */}
-        <CardActions
-          sx={{ justifyContent: "center", py: 2 }}
-        >
+        <CardActions sx={{ justifyContent: "center", py: 2 }}>
           {totalPages > 1 && (
             <Pagination
               count={totalPages}
