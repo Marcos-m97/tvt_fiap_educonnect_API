@@ -7,6 +7,8 @@ import ProfessorHome from "../pages/professor/ProfessorHome";
 import AlunoHome from "../pages/aluno/AlunoHome";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
+import AdminUsuarioPerfil from "../pages/admin/AdminUsuarioPerfil";
+
 
 import RoleGuard from "../guards/RoleGuard";
 
@@ -34,6 +36,15 @@ export const router = createBrowserRouter([
       </RoleGuard>
     ),
   },
+  {
+  path: "/admin/usuarios/:id",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminUsuarioPerfil />
+    </RoleGuard>
+  ),
+},
+
   {
     path: "/admin/usuarios",
     element: (
