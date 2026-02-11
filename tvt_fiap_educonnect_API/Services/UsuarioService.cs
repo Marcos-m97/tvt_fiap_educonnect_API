@@ -186,6 +186,9 @@ namespace EduConnect_API.Services
         // ============================================================
         // 9. RESETAR SENHA
         // ============================================================
+        // ============================================================
+        // 9. RESETAR SENHA
+        // ============================================================
         public async Task<bool> ResetarSenha(string email, string codigo, string novaSenha)
         {
             var reset = await _passwordResetRepository.Obter(email, codigo);
@@ -197,13 +200,68 @@ namespace EduConnect_API.Services
             if (usuario == null)
                 return false;
 
+            // 🔐 Atualiza senha
             usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(novaSenha);
             await _repo.Atualizar(usuario);
 
+            // 🔒 Marca código como usado
             reset.Usado = true;
             await _passwordResetRepository.Atualizar(reset);
 
+            // 📧 ENVIA EMAIL DE CONFIRMAÇÃO
+            var bodyHtml = $@"
+        <div style='font-family: Arial, sans-serif; color: #333;'>
+            <h2>Senha Alterada com Sucesso</h2>
+
+            <p>Olá,</p>
+
+            <p>
+                Informamos que sua senha foi alterada com sucesso.
+            </p>
+
+            <p>
+                Se você realizou essa alteração, nenhuma ação adicional é necessária.
+            </p>
+
+            <p>
+                Caso você <strong>não reconheça essa alteração</strong>,
+                recomendamos redefinir sua senha imediatamente.
+            </p>
+
+            <p style='margin-top:20px; font-size: 12px; color: #666;'>
+                EduConnect - Sistema Acadêmico
+            </p>
+        </div>
+    ";
+
+            await _emailService.EnviarEmail(
+                email,
+                "Senha alterada com sucesso - EduConnect",
+                bodyHtml,
+                isHtml: true
+            );
+
             return true;
         }
+
+        //public async Task<bool> ResetarSenha(string email, string codigo, string novaSenha)
+        //{
+        //    var reset = await _passwordResetRepository.Obter(email, codigo);
+
+        //    if (reset == null || reset.Usado || reset.ExpiraEm < DateTime.Now)
+        //        return false;
+
+        //    var usuario = await _repo.ObterPorEmail(email);
+        //    if (usuario == null)
+        //        return false;
+
+        //    usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(novaSenha);
+        //    await _repo.Atualizar(usuario);
+
+        //    reset.Usado = true;
+        //    await _passwordResetRepository.Atualizar(reset);
+
+        //    return true;
+        //}
     }
 }
