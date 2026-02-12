@@ -118,11 +118,11 @@ export default function AdminUsuarios() {
         flexWrap="wrap"
       >
         <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          sx={{ textTransform: "none" }}
-        >
-          Criar Usuário
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => navigate("/admin/usuarios/novo")}
+            >
+            Criar Usuário
         </Button>
 
         <TextField

@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material/styles";
 
 const tokens = {
   bg: "hsl(130, 60%, 84%)",        // verde água bem claro
-  bgSoft: "#e6fffa",
+  bgSoft: "#f3f3f3",
   card: "#ffffff",
   primary: "#3b82f6",
   primaryHover: "#2563eb",

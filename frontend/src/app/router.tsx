@@ -8,6 +8,7 @@ import AlunoHome from "../pages/aluno/AlunoHome";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import AdminUsuarioPerfil from "../pages/admin/AdminUsuarioPerfil";
+import AdminUsuarioForm from "../pages/admin/AdminUsuarioForm";
 
 
 import RoleGuard from "../guards/RoleGuard";
@@ -74,6 +75,22 @@ export const router = createBrowserRouter([
     ),
   },
 
+  {
+  path: "/admin/usuarios/novo",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminUsuarioForm />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/admin/usuarios/:id/editar",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminUsuarioForm />
+    </RoleGuard>
+  ),
+},
   {
     path: "*",
     element: <Login />,
