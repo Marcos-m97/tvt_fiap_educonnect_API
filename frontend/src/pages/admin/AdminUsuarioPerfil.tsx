@@ -9,6 +9,7 @@ import {
   CircularProgress
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EditIcon from "@mui/icons-material/Edit";
 import AppLayout from "../../components/layout/AppLayout";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -95,7 +96,16 @@ export default function AdminUsuarioPerfil() {
           Perfil do Usuário
         </Typography>
 
-        <Box position="absolute" right={0} top={0}>
+        {/* BOTÕES DIREITA */}
+        <Box position="absolute" right={0} top={0} display="flex" gap={1}>
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={() => navigate(`/admin/usuarios/${id}/editar`)}
+          >
+            Editar
+          </Button>
+
           <Button
             variant="outlined"
             startIcon={<ArrowBackIcon />}

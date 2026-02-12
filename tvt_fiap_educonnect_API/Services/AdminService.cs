@@ -48,6 +48,10 @@ Olá, {usuario.Nome}!
 
 Seu acesso como administrador no EduConnect foi criado com sucesso.
 
+Para realizar o primeiro acesso, utilize:
+
+E-mail: {usuario.Email}
+
 Com esse perfil, você poderá:
 - Gerenciar usuários e perfis
 - Aprovar matrículas
@@ -55,15 +59,16 @@ Com esse perfil, você poderá:
 - Acompanhar relatórios e boletins acadêmicos
 
 🔐 Acesse o painel administrativo pelo link abaixo:
-https://educonnect.app/admin/login
+https://educonnect.app/admin
 
-Por segurança, recomendamos manter suas credenciais em local seguro.
+Após acessar, utilize a opção ""Redefinir senha"" para criar uma nova senha pessoal.
 
-Em caso de dúvidas ou necessidade de suporte, entre em contato com a equipe responsável.
+Em caso de dúvidas, nossa equipe está à disposição.
 
 Atenciosamente,
 Equipe EduConnect
 ";
+
 
             await _emailService.EnviarEmail(
                 usuario.Email,

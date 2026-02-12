@@ -9,11 +9,13 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import AdminUsuarioPerfil from "../pages/admin/AdminUsuarioPerfil";
 import AdminUsuarioForm from "../pages/admin/AdminUsuarioForm";
+import AdminUsuarioEditar from "../pages/admin/AdminUsuarioEditar";
 
 
 import RoleGuard from "../guards/RoleGuard";
 
 export const router = createBrowserRouter([
+
   // 🔓 ROTAS PÚBLICAS
   {
     path: "/login",
@@ -37,20 +39,40 @@ export const router = createBrowserRouter([
       </RoleGuard>
     ),
   },
-  {
-  path: "/admin/usuarios/:id",
-  element: (
-    <RoleGuard allowed={[0, 1]}>
-      <AdminUsuarioPerfil />
-    </RoleGuard>
-  ),
-},
 
   {
     path: "/admin/usuarios",
     element: (
       <RoleGuard allowed={[0, 1]}>
         <AdminUsuarios />
+      </RoleGuard>
+    ),
+  },
+
+  // ⚠️ ROTAS MAIS ESPECÍFICAS PRIMEIRO
+  {
+    path: "/admin/usuarios/novo",
+    element: (
+      <RoleGuard allowed={[0, 1]}>
+        <AdminUsuarioForm />
+      </RoleGuard>
+    ),
+  },
+
+  {
+  path: "/admin/usuarios/:id/editar",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminUsuarioEditar />
+    </RoleGuard>
+  ),
+},
+
+  {
+    path: "/admin/usuarios/:id",
+    element: (
+      <RoleGuard allowed={[0, 1]}>
+        <AdminUsuarioPerfil />
       </RoleGuard>
     ),
   },
@@ -75,22 +97,7 @@ export const router = createBrowserRouter([
     ),
   },
 
-  {
-  path: "/admin/usuarios/novo",
-  element: (
-    <RoleGuard allowed={[0, 1]}>
-      <AdminUsuarioForm />
-    </RoleGuard>
-  ),
-},
-{
-  path: "/admin/usuarios/:id/editar",
-  element: (
-    <RoleGuard allowed={[0, 1]}>
-      <AdminUsuarioForm />
-    </RoleGuard>
-  ),
-},
+  // fallback
   {
     path: "*",
     element: <Login />,

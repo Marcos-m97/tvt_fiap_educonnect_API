@@ -23,7 +23,7 @@ export default function TopBar() {
 
         <Box display="flex" alignItems="center" gap={1}>
           <Typography variant="body2">
-            {user?.email}
+            👩‍💻 {user?.email}
           </Typography>
 
           {/* 🌙 / ☀️ Toggle de tema */}
