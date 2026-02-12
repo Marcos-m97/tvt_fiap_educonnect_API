@@ -172,22 +172,27 @@ export default function AdminUsuarioPerfil() {
                   }}
                   gap={2}
                 >
-                  {Object.entries(perfil).map(([key, value]) => (
-                    <Box
-                      key={key}
-                      sx={{
-                        backgroundColor: "background.paper",
-                        p: 2,
-                        borderRadius: 2,
-                        border: 1,
-                        borderColor: "divider"
-                      }}
-                    >
-                      <Typography variant="body2">
-                        <strong>{key}:</strong> {String(value)}
-                      </Typography>
-                    </Box>
-                  ))}
+                  {Object.entries(perfil)
+                    .filter(
+                      ([key]) =>
+                        !["id", "usuarioId", "nome"].includes(key)
+                    )
+                    .map(([key, value]) => (
+                      <Box
+                        key={key}
+                        sx={{
+                          backgroundColor: "background.paper",
+                          p: 2,
+                          borderRadius: 2,
+                          border: 1,
+                          borderColor: "divider"
+                        }}
+                      >
+                        <Typography variant="body2">
+                          <strong>{key}:</strong> {String(value)}
+                        </Typography>
+                      </Box>
+                    ))}
                 </Box>
 
                 <Divider sx={{ my: 3 }} />

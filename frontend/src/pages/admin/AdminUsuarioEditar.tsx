@@ -60,14 +60,12 @@ export default function AdminUsuarioEditar() {
     try {
       setLoading(true);
 
-      // Atualiza apenas nome (email não é editável)
       await api.put(`/usuario/${id}`, {
         nome: usuario.nome,
-        email: usuario.email, // mantemos o mesmo email
+        email: usuario.email,
         tipo: usuario.tipo
       });
 
-      // Atualiza perfil
       if (usuario.tipo === 1) {
         await api.put(`/admin/${perfil.id}`, {
           usuarioId: usuario.id,
@@ -134,11 +132,15 @@ export default function AdminUsuarioEditar() {
           <CardContent>
             <Box display="flex" flexDirection="column" gap={3}>
 
-              <Typography fontWeight={600}>
+              {/* ===== TÍTULO CENTRALIZADO ===== */}
+              <Typography
+                fontWeight={600}
+                textAlign="center"
+                variant="h6"
+              >
                 Dados do Usuário
               </Typography>
 
-              {/* Nome editável */}
               <TextField
                 label="Nome"
                 value={usuario.nome}
@@ -148,7 +150,6 @@ export default function AdminUsuarioEditar() {
                 fullWidth
               />
 
-              {/* Email bloqueado */}
               <TextField
                 label="Email"
                 value={usuario.email}
@@ -158,7 +159,13 @@ export default function AdminUsuarioEditar() {
 
               {perfil && (
                 <>
-                  <Typography fontWeight={600} mt={3}>
+                  {/* ===== TÍTULO CENTRALIZADO ===== */}
+                  <Typography
+                    fontWeight={600}
+                    textAlign="center"
+                    variant="h6"
+                    mt={3}
+                  >
                     Dados do Perfil
                   </Typography>
 
