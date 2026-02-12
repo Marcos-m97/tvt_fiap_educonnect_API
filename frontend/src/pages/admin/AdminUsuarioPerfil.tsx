@@ -128,7 +128,11 @@ export default function AdminUsuarioPerfil() {
                 {usuario.nome}
               </Typography>
 
-              <Typography variant="body2" color="text.secondary" mb={2}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                mb={2}
+              >
                 {usuario.email}
               </Typography>
 
@@ -162,9 +166,11 @@ export default function AdminUsuarioPerfil() {
                     <Box
                       key={key}
                       sx={{
-                        background: "#f8fafc",
+                        backgroundColor: "background.paper",
                         p: 2,
-                        borderRadius: 2
+                        borderRadius: 2,
+                        border: 1,
+                        borderColor: "divider"
                       }}
                     >
                       <Typography variant="body2">
@@ -178,7 +184,7 @@ export default function AdminUsuarioPerfil() {
               </>
             )}
 
-            {/* CONTEXTO FORMATADO */}
+            {/* CONTEXTO */}
             {contexto && (
               <>
                 <Typography variant="subtitle1" fontWeight={600} mb={2}>
@@ -192,15 +198,20 @@ export default function AdminUsuarioPerfil() {
                       <Box
                         key={item.turmaDisciplinaId}
                         sx={{
-                          background: "#eef2ff",
+                          backgroundColor: "action.hover",
                           p: 2,
-                          borderRadius: 2
+                          borderRadius: 2,
+                          border: 1,
+                          borderColor: "divider"
                         }}
                       >
                         <Typography fontWeight={600}>
                           {item.disciplinaNome}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                        >
                           Turma: {item.turmaNome}
                         </Typography>
                       </Box>
@@ -211,12 +222,15 @@ export default function AdminUsuarioPerfil() {
                 {/* ALUNO */}
                 {usuario.tipo === 3 && (
                   <Box display="grid" gap={2}>
+
                     {contexto.turmaNome && (
                       <Box
                         sx={{
-                          background: "#ecfdf5",
+                          backgroundColor: "action.hover",
                           p: 2,
-                          borderRadius: 2
+                          borderRadius: 2,
+                          border: 1,
+                          borderColor: "divider"
                         }}
                       >
                         <Typography fontWeight={600}>
@@ -228,28 +242,34 @@ export default function AdminUsuarioPerfil() {
                       </Box>
                     )}
 
-                    {contexto.disciplinas && contexto.disciplinas.length > 0 && (
-                      <Box>
-                        <Typography fontWeight={600} mb={1}>
-                          Disciplinas
-                        </Typography>
+                    {contexto.disciplinas &&
+                      contexto.disciplinas.length > 0 && (
+                        <Box>
+                          <Typography fontWeight={600} mb={1}>
+                            Disciplinas
+                          </Typography>
 
-                        <Box display="grid" gap={2}>
-                          {contexto.disciplinas.map((disc: any, i: number) => (
-                            <Box
-                              key={i}
-                              sx={{
-                                background: "#f1f5f9",
-                                p: 2,
-                                borderRadius: 2
-                              }}
-                            >
-                              {disc.nome || JSON.stringify(disc)}
-                            </Box>
-                          ))}
+                          <Box display="grid" gap={2}>
+                            {contexto.disciplinas.map(
+                              (disc: any, i: number) => (
+                                <Box
+                                  key={i}
+                                  sx={{
+                                    backgroundColor: "background.paper",
+                                    p: 2,
+                                    borderRadius: 2,
+                                    border: 1,
+                                    borderColor: "divider"
+                                  }}
+                                >
+                                  {disc.nome ||
+                                    JSON.stringify(disc)}
+                                </Box>
+                              )
+                            )}
+                          </Box>
                         </Box>
-                      </Box>
-                    )}
+                      )}
                   </Box>
                 )}
               </>
