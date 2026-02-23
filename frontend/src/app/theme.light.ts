@@ -1,15 +1,27 @@
 import { createTheme } from "@mui/material/styles";
 
+// const tokens = {
+//   bg: "hsl(130, 60%, 84%)",        // verde água bem claro
+//   bgSoft: " #f3f3f3",
+//   card: "#ffffff",
+//   primary: "#3b82f6",
+//   primaryHover: "#2563eb",
+//   accent: "#2dd4bf",    // menta
+//   text: "#0f172a",
+//   muted: "#475569",
+// };
+
 const tokens = {
-  bg: "hsl(130, 60%, 84%)",        // verde água bem claro
+  bg: "#f3f3f3",        
   bgSoft: "#f3f3f3",
-  card: "#ffffff",
+  card: "hsl(201, 26%, 89%)",
   primary: "#3b82f6",
   primaryHover: "#2563eb",
   accent: "#2dd4bf",    // menta
   text: "#0f172a",
   muted: "#475569",
 };
+
 
 export const lightTheme = createTheme({
   palette: {

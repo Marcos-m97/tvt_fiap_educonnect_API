@@ -7,4 +7,5 @@ dotnet run --launch-profile https
 
 ## Rodar front end: 
 NPM run dev 
+cd frontend
 http://localhost:5173/login

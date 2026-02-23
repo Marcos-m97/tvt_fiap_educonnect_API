@@ -2,6 +2,7 @@
 using EduConnect_API.Models.DTOs;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduConnect_API.Services
 {
@@ -28,10 +29,28 @@ namespace EduConnect_API.Services
             return MapToDTO(curso);
         }
 
-        public async Task<IEnumerable<CursoDTO>> Listar()
+        public async Task<PagedResultDTO<CursoDTO>> Listar(int page, int pageSize, string? search)
         {
-            var cursos = await _repo.Listar();
-            return cursos.Select(MapToDTO);
+            var query = _repo.Query();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(c => c.Nome.Contains(search));
+            }
+
+            var total = await query.CountAsync();
+
+            var cursos = await query
+                .OrderBy(c => c.Nome)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResultDTO<CursoDTO>
+            {
+                Data = cursos.Select(MapToDTO),
+                Total = total
+            };
         }
 
         public async Task<CursoDTO?> ObterPorId(int id)

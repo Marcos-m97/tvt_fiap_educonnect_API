@@ -49,5 +49,9 @@ namespace EduConnect_API.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+        public IQueryable<Curso> Query()
+        {
+            return _context.Cursos.AsQueryable();
+        }
     }
 }

@@ -9,5 +9,6 @@ namespace EduConnect_API.Repositories.Interfaces
         Task<IEnumerable<Curso>> Listar();
         Task<Curso> Atualizar(Curso curso);
         Task<bool> Deletar(int id);
+        IQueryable<Curso> Query();
     }
 }

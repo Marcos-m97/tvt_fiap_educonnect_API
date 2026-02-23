@@ -10,7 +10,10 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import AdminUsuarioPerfil from "../pages/admin/AdminUsuarioPerfil";
 import AdminUsuarioForm from "../pages/admin/AdminUsuarioForm";
 import AdminUsuarioEditar from "../pages/admin/AdminUsuarioEditar";
-
+import AdminAcademicoHome from "../pages/admin/academico/AdminAcademicoHome";
+import AdminCursos from "../pages/admin/academico/AdminCursos";
+import AdminCursoForm from "../pages/admin/academico/AdminCursoForm";
+import AdminCursoDetalhe from "../pages/admin/academico/AdminCursoDetalhe";
 
 import RoleGuard from "../guards/RoleGuard";
 
@@ -76,7 +79,39 @@ export const router = createBrowserRouter([
       </RoleGuard>
     ),
   },
-
+// 🔐 ADMIN - ESTRUTURA ACADÊMICA
+{
+  path: "/admin/academico",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminAcademicoHome />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/admin/academico/cursos",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminCursos />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/admin/academico/cursos/novo",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminCursoForm />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/admin/academico/cursos/:id",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminCursoDetalhe />
+    </RoleGuard>
+  ),
+},
   // 🔐 PROFESSOR (role 2)
   {
     path: "/professor",

@@ -24,13 +24,16 @@ namespace EduConnect_API.Controllers
             var curso = await _service.Criar(dto);
             return Ok(curso);
         }
-
-        // Listar todos
-        [Authorize]
+       
+        // listar cursos (com paginação)
+        [Authorize(Roles = "0,1")]
         [HttpGet]
-        public async Task<IActionResult> Listar()
+        public async Task<IActionResult> Listar(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 5,
+            [FromQuery] string? search = null)
         {
-            return Ok(await _service.Listar());
+            return Ok(await _service.Listar(page, pageSize, search));
         }
 
         // Obter por ID
