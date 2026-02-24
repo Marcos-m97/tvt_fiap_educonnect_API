@@ -50,12 +50,20 @@ interface Professor {
   nome: string;
 }
 
+interface AlunoTurma {
+  alunoId: number;
+  nome: string;
+  email: string;
+  status: number;
+}
+
 export default function AdminTurmaDetalhe() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [turma, setTurma] = useState<Turma | null>(null);
   const [vinculos, setVinculos] = useState<TurmaDisciplina[]>([]);
+  const [alunos, setAlunos] = useState<AlunoTurma[]>([]);
   const [disciplinas, setDisciplinas] = useState<Disciplina[]>([]);
   const [professores, setProfessores] = useState<Professor[]>([]);
   const [loading, setLoading] = useState(false);
@@ -64,15 +72,34 @@ export default function AdminTurmaDetalhe() {
   const [disciplinaId, setDisciplinaId] = useState<number | "">("");
   const [professorId, setProfessorId] = useState<number | "">("");
 
+  function getStatusLabel(status: number) {
+    switch (status) {
+      case 0:
+        return { label: "Inativa", color: "default" };
+      case 1:
+        return { label: "Inscrição", color: "info" };
+      case 2:
+        return { label: "Pagamento", color: "warning" };
+      case 3:
+        return { label: "Documentos", color: "warning" };
+      case 4:
+        return { label: "Efetivada", color: "success" };
+      default:
+        return { label: "Desconhecido", color: "default" };
+    }
+  }
+
   async function carregarDados() {
     try {
       setLoading(true);
 
       const turmaResponse = await api.get(`/turma/${id}`);
       const vinculosResponse = await api.get(`/turmadisciplina/turma/${id}`);
+      const alunosResponse = await api.get(`/matricula/turma/${id}/alunos`);
 
       setTurma(turmaResponse.data);
       setVinculos(vinculosResponse.data);
+      setAlunos(alunosResponse.data);
 
     } catch (error) {
       console.error("Erro ao carregar turma:", error);
@@ -169,7 +196,7 @@ export default function AdminTurmaDetalhe() {
   return (
     <AppLayout>
 
-      {/* HEADER PADRÃO */}
+      {/* HEADER */}
       <Box
         mb={4}
         display="flex"
@@ -229,12 +256,7 @@ export default function AdminTurmaDetalhe() {
       <Card>
         <CardContent>
 
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={3}
-          >
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
             <Typography variant="h6">
               Disciplinas da Turma
             </Typography>
@@ -283,6 +305,64 @@ export default function AdminTurmaDetalhe() {
               </Button>
             </Box>
           ))}
+
+        </CardContent>
+      </Card>
+
+      {/* ALUNOS */}
+      <Card sx={{ mt: 4 }}>
+        <CardContent>
+
+          <Typography variant="h6" mb={3}>
+            Alunos da Turma
+          </Typography>
+
+          {alunos.length === 0 && (
+            <Typography variant="body2" color="text.secondary">
+              Nenhum aluno matriculado nesta turma.
+            </Typography>
+          )}
+
+          {alunos.map((aluno) => {
+            const statusInfo = getStatusLabel(aluno.status);
+
+            return (
+              <Box
+                key={aluno.alunoId}
+                py={1.5}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Box>
+                  <Typography fontWeight={600}>
+                    {aluno.nome}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {aluno.email}
+                  </Typography>
+                </Box>
+
+                <Box display="flex" gap={2} alignItems="center">
+                  <Chip
+                    label={statusInfo.label}
+                    color={statusInfo.color as any}
+                    size="small"
+                  />
+
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() =>
+                      navigate(`/admin/academico/alunos/${aluno.alunoId}`)
+                    }
+                  >
+                    Ver Detalhes
+                  </Button>
+                </Box>
+              </Box>
+            );
+          })}
 
         </CardContent>
       </Card>
