@@ -8,7 +8,8 @@ import {
   Divider,
   TextField,
   Pagination,
-  CircularProgress
+  CircularProgress,
+  Chip
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -18,10 +19,11 @@ import { api } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
 
 interface Curso {
-  id: string;
+  id: number;
   nome: string;
   descricao: string;
   cargaHoraria: number;
+  ativo: boolean;
 }
 
 export default function AdminCursos() {
@@ -58,6 +60,18 @@ export default function AdminCursos() {
     }
   }
 
+  async function desativarCurso(id: number) {
+    if (!confirm("Deseja desativar este curso?")) return;
+
+    await api.delete(`/curso/${id}`);
+    carregarCursos();
+  }
+
+  async function reativarCurso(id: number) {
+    await api.put(`/curso/reativar/${id}`);
+    carregarCursos();
+  }
+
   useEffect(() => {
     carregarCursos();
   }, [page, search]);
@@ -67,7 +81,7 @@ export default function AdminCursos() {
   return (
     <AppLayout>
 
-      {/* HEADER CENTRALIZADO */}
+      {/* HEADER */}
       <Box textAlign="center" mb={4}>
         <Typography variant="h4" gutterBottom>
           Gestão de Cursos
@@ -122,14 +136,7 @@ export default function AdminCursos() {
       </Box>
 
       {/* LISTA */}
-      <Card
-        sx={{
-          transition: "0.2s",
-          "&:hover": {
-            boxShadow: 6
-          }
-        }}
-      >
+      <Card>
         <CardContent>
 
           {loading && (
@@ -152,11 +159,25 @@ export default function AdminCursos() {
                   justifyContent="space-between"
                   alignItems="center"
                   py={2}
+                  sx={{
+                    opacity: curso.ativo ? 1 : 0.4,
+                    transition: "0.3s"
+                  }}
                 >
                   <Box>
-                    <Typography fontWeight={600}>
-                      {curso.nome}
-                    </Typography>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Typography fontWeight={600}>
+                        {curso.nome}
+                      </Typography>
+
+                      {!curso.ativo && (
+                        <Chip
+                          label="Inativo"
+                          size="small"
+                          color="error"
+                        />
+                      )}
+                    </Box>
 
                     <Typography variant="body2" color="text.secondary">
                       {curso.descricao}
@@ -167,16 +188,37 @@ export default function AdminCursos() {
                     </Typography>
                   </Box>
 
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={() =>
-                      navigate(`/admin/academico/cursos/${curso.id}`)
-                    }
-                    sx={{ textTransform: "none" }}
-                  >
-                    Detalhes
-                  </Button>
+                  <Box display="flex" gap={1}>
+                    {curso.ativo ? (
+                      <>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() =>
+                            navigate(`/admin/academico/cursos/${curso.id}`)
+                          }
+                        >
+                          Detalhes
+                        </Button>
+
+                        <Button
+                          size="small"
+                          color="error"
+                          onClick={() => desativarCurso(curso.id)}
+                        >
+                          Desativar
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        size="small"
+                        color="success"
+                        onClick={() => reativarCurso(curso.id)}
+                      >
+                        Reativar
+                      </Button>
+                    )}
+                  </Box>
                 </Box>
 
                 {index !== cursos.length - 1 && <Divider />}

@@ -24,8 +24,8 @@ namespace EduConnect_API.Controllers
             var curso = await _service.Criar(dto);
             return Ok(curso);
         }
-       
-        // listar cursos (com paginação)
+
+        // Listar cursos (com paginação)
         [Authorize(Roles = "0,1")]
         [HttpGet]
         public async Task<IActionResult> Listar(
@@ -58,12 +58,23 @@ namespace EduConnect_API.Controllers
             return Ok(curso);
         }
 
-        // Deletar
+        // 🔥 SOFT DELETE
         [Authorize(Roles = "0,1")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Deletar(int id)
         {
             var sucesso = await _service.Deletar(id);
+            if (!sucesso) return NotFound();
+
+            return NoContent();
+        }
+
+        // 🔥 REATIVAR
+        [Authorize(Roles = "0,1")]
+        [HttpPut("reativar/{id}")]
+        public async Task<IActionResult> Reativar(int id)
+        {
+            var sucesso = await _service.Reativar(id);
             if (!sucesso) return NotFound();
 
             return NoContent();

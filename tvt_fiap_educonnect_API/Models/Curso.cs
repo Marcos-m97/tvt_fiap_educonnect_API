@@ -13,6 +13,9 @@ namespace EduConnect_API.Models
         // Quantidade total de horas do curso
         public int CargaHoraria { get; set; }
 
+        // 🔥 SOFT DELETE
+        public bool Ativo { get; set; } = true;
+
         // Relacionamento 1:N → Curso tem muitas disciplinas
         public ICollection<Disciplina> Disciplinas { get; set; } = new List<Disciplina>();
 

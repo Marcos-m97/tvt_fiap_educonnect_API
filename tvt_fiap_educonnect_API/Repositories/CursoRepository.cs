@@ -39,16 +39,36 @@ namespace EduConnect_API.Repositories
             return curso;
         }
 
+        // 🔥 SOFT DELETE
         public async Task<bool> Deletar(int id)
         {
             var curso = await _context.Cursos.FindAsync(id);
             if (curso == null)
                 return false;
 
-            _context.Cursos.Remove(curso);
+            curso.Ativo = false;
+
+            _context.Cursos.Update(curso);
             await _context.SaveChangesAsync();
+
             return true;
         }
+
+        // 🔥 REATIVAR
+        public async Task<bool> Reativar(int id)
+        {
+            var curso = await _context.Cursos.FindAsync(id);
+            if (curso == null)
+                return false;
+
+            curso.Ativo = true;
+
+            _context.Cursos.Update(curso);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         public IQueryable<Curso> Query()
         {
             return _context.Cursos.AsQueryable();

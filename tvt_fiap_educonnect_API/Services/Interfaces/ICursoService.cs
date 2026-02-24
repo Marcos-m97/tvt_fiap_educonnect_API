@@ -8,6 +8,11 @@ namespace EduConnect_API.Services.Interfaces
         Task<PagedResultDTO<CursoDTO>> Listar(int page, int pageSize, string? search);
         Task<CursoDTO?> ObterPorId(int id);
         Task<CursoDTO?> Atualizar(int id, CriarCursoDTO dto);
+
+        // 🔥 SOFT DELETE
         Task<bool> Deletar(int id);
+
+        // 🔥 REATIVAR
+        Task<bool> Reativar(int id);
     }
 }

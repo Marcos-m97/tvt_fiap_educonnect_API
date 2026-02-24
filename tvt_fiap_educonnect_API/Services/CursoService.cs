@@ -21,7 +21,8 @@ namespace EduConnect_API.Services
             {
                 Nome = dto.Nome,
                 Descricao = dto.Descricao,
-                CargaHoraria = dto.CargaHoraria
+                CargaHoraria = dto.CargaHoraria,
+                Ativo = true
             };
 
             curso = await _repo.Criar(curso);
@@ -73,9 +74,14 @@ namespace EduConnect_API.Services
             return MapToDTO(atualizado);
         }
 
-        public async Task<bool> Deletar(int id)
+        public Task<bool> Deletar(int id)
         {
-            return await _repo.Deletar(id);
+            return _repo.Deletar(id);
+        }
+
+        public Task<bool> Reativar(int id)
+        {
+            return _repo.Reativar(id);
         }
 
         private CursoDTO MapToDTO(Curso c)
@@ -85,7 +91,8 @@ namespace EduConnect_API.Services
                 Id = c.Id,
                 Nome = c.Nome,
                 Descricao = c.Descricao,
-                CargaHoraria = c.CargaHoraria
+                CargaHoraria = c.CargaHoraria,
+                Ativo = c.Ativo
             };
         }
     }

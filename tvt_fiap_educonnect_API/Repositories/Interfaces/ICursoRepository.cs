@@ -8,7 +8,13 @@ namespace EduConnect_API.Repositories.Interfaces
         Task<Curso?> ObterPorId(int id);
         Task<IEnumerable<Curso>> Listar();
         Task<Curso> Atualizar(Curso curso);
+
+        // 🔥 SOFT DELETE
         Task<bool> Deletar(int id);
+
+        // 🔥 REATIVAR
+        Task<bool> Reativar(int id);
+
         IQueryable<Curso> Query();
     }
 }
