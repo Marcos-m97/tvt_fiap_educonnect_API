@@ -16,6 +16,8 @@ import AdminCursoForm from "../pages/admin/academico/AdminCursoForm";
 import AdminCursoDetalhe from "../pages/admin/academico/AdminCursoDetalhe";
 import AdminTurmaDetalhe from "../pages/admin/academico/AdminTurmaDetalhe";
 import AdminTurmaForm from "../pages/admin/academico/AdminTurmaForm";
+import AdminDisciplinaForm from "../pages/admin/academico/AdminDisciplinaForm";
+import AdminDisciplinaEditar from "../pages/admin/academico/AdminDisciplinaEditar";
 
 import RoleGuard from "../guards/RoleGuard";
 
@@ -136,6 +138,22 @@ export const router = createBrowserRouter([
   element: (
     <RoleGuard allowed={[0, 1]}>
       <AdminTurmaForm />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/admin/academico/disciplinas/novo",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminDisciplinaForm />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/admin/academico/disciplinas/:id",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminDisciplinaEditar />
     </RoleGuard>
   ),
 },
