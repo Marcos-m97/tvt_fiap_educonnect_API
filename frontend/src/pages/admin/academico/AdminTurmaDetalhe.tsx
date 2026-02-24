@@ -17,6 +17,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -80,53 +81,6 @@ export default function AdminTurmaDetalhe() {
     }
   }
 
-  async function carregarSelects() {
-    if (!turma) return;
-
-    try {
-      const disciplinasResponse = await api.get(
-        `/disciplina/curso/${turma.cursoId}`
-      );
-
-      const professoresResponse = await api.get(`/professor`);
-
-      setDisciplinas(disciplinasResponse.data);
-      setProfessores(professoresResponse.data);
-
-    } catch (error) {
-      console.error("Erro ao carregar selects:", error);
-    }
-  }
-
-  async function vincularDisciplina() {
-    try {
-      await api.post(`/turmadisciplina`, {
-        turmaId: Number(id),
-        disciplinaId: Number(disciplinaId),
-        professorId: Number(professorId)
-      });
-
-      setOpenModal(false);
-      setDisciplinaId("");
-      setProfessorId("");
-
-      carregarDados();
-    } catch (error) {
-      console.error("Erro ao vincular disciplina:", error);
-    }
-  }
-
-  async function removerVinculo(vinculoId: number) {
-    if (!confirm("Deseja remover esta disciplina da turma?")) return;
-
-    try {
-      await api.delete(`/turmadisciplina/${vinculoId}`);
-      carregarDados();
-    } catch (error) {
-      console.error("Erro ao remover vínculo:", error);
-    }
-  }
-
   async function desativarTurma() {
     if (!confirm("Deseja desativar esta turma?")) return;
 
@@ -172,51 +126,62 @@ export default function AdminTurmaDetalhe() {
   return (
     <AppLayout>
 
-      <Box mb={3}>
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate(-1)}
-        >
-          Voltar
-        </Button>
-      </Box>
-
-      {/* HEADER */}
-      <Box mb={4}>
-        <Box display="flex" alignItems="center" gap={2}>
+      {/* HEADER PADRONIZADO */}
+      <Box
+        mb={4}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="flex-start"
+      >
+        <Box>
           <Typography variant="h4">
             {turma.nome}
           </Typography>
 
-          {!turma.ativo && (
-            <Chip label="Inativa" color="error" />
-          )}
+          <Typography color="text.secondary">
+            {turma.semestre} • {turma.periodo}
+          </Typography>
         </Box>
 
-        <Typography color="text.secondary">
-          {turma.semestre} • {turma.periodo}
-        </Typography>
+        <Box display="flex" gap={2}>
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={() =>
+              navigate(`/admin/academico/turmas/${turma.id}/editar`)
+            }
+          >
+            Editar
+          </Button>
 
-        <Box mt={2} display="flex" gap={2}>
-          {turma.ativo ? (
-            <Button
-              variant="contained"
-              color="error"
-              onClick={desativarTurma}
-            >
-              Desativar Turma
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="success"
-              onClick={reativarTurma}
-            >
-              Reativar Turma
-            </Button>
-          )}
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate(-1)}
+          >
+            Voltar
+          </Button>
         </Box>
+      </Box>
+
+      <Box mt={2} mb={4}>
+        {turma.ativo ? (
+          <Button
+            variant="contained"
+            color="error"
+            onClick={desativarTurma}
+          >
+            Desativar Turma
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="success"
+            onClick={reativarTurma}
+          >
+            Reativar Turma
+          </Button>
+        )}
       </Box>
 
       <Divider sx={{ mb: 4 }} />
@@ -239,10 +204,7 @@ export default function AdminTurmaDetalhe() {
               size="small"
               startIcon={<AddIcon />}
               disabled={!turma.ativo}
-              onClick={() => {
-                setOpenModal(true);
-                carregarSelects();
-              }}
+              onClick={() => setOpenModal(true)}
             >
               Vincular Disciplina
             </Button>
@@ -276,7 +238,6 @@ export default function AdminTurmaDetalhe() {
                 color="error"
                 startIcon={<DeleteIcon />}
                 disabled={!turma.ativo}
-                onClick={() => removerVinculo(v.id)}
               >
                 Remover
               </Button>
@@ -285,70 +246,6 @@ export default function AdminTurmaDetalhe() {
 
         </CardContent>
       </Card>
-
-      {/* MODAL */}
-      <Dialog
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        fullWidth
-        maxWidth="md"
-      >
-        <DialogTitle>Vincular Disciplina</DialogTitle>
-
-        <DialogContent
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 3,
-            mt: 2,
-            minWidth: 400
-          }}
-        >
-
-          <TextField
-            select
-            label="Disciplina"
-            value={disciplinaId}
-            onChange={(e) => setDisciplinaId(Number(e.target.value))}
-            fullWidth
-          >
-            {disciplinas.map((d) => (
-              <MenuItem key={d.id} value={d.id}>
-                {d.nome}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          <TextField
-            select
-            label="Professor"
-            value={professorId}
-            onChange={(e) => setProfessorId(Number(e.target.value))}
-            fullWidth
-          >
-            {professores.map((p) => (
-              <MenuItem key={p.id} value={p.id}>
-                {p.nome}
-              </MenuItem>
-            ))}
-          </TextField>
-
-        </DialogContent>
-
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setOpenModal(false)}>
-            Cancelar
-          </Button>
-
-          <Button
-            variant="contained"
-            onClick={vincularDisciplina}
-            disabled={!disciplinaId || !professorId}
-          >
-            Vincular
-          </Button>
-        </DialogActions>
-      </Dialog>
 
     </AppLayout>
   );

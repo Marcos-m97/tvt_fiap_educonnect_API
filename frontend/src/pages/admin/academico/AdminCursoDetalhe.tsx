@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -27,7 +28,7 @@ interface Turma {
   nome: string;
   periodo: string;
   semestre: string;
-  ativo: boolean; // 🔥 adicionamos
+  ativo: boolean;
 }
 
 interface Disciplina {
@@ -90,31 +91,51 @@ export default function AdminCursoDetalhe() {
   return (
     <AppLayout>
 
-      <Box mb={3}>
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/admin/academico/cursos")}
-        >
-          Voltar
-        </Button>
-      </Box>
+      {/* HEADER PADRONIZADO */}
+      <Box
+        mb={4}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="flex-start"
+      >
 
-      <Box mb={4}>
-        <Typography variant="h4" gutterBottom>
-          {curso.nome}
-        </Typography>
+        <Box>
+          <Typography variant="h4" gutterBottom>
+            {curso.nome}
+          </Typography>
 
-        <Typography variant="body1" color="text.secondary">
-          {curso.descricao}
-        </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {curso.descricao}
+          </Typography>
 
-        <Box mt={2}>
-          <Chip
-            label={`Carga Horária: ${curso.cargaHoraria}h`}
-            color="primary"
-          />
+          <Box mt={2}>
+            <Chip
+              label={`Carga Horária: ${curso.cargaHoraria}h`}
+              color="primary"
+            />
+          </Box>
         </Box>
+
+        <Box display="flex" gap={2}>
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={() =>
+              navigate(`/admin/academico/cursos/${curso.id}/editar`)
+            }
+          >
+            Editar
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate("/admin/academico/cursos")}
+          >
+            Voltar
+          </Button>
+        </Box>
+
       </Box>
 
       <Divider sx={{ mb: 4 }} />

@@ -10,7 +10,6 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import AdminUsuarioPerfil from "../pages/admin/usuario/AdminUsuarioPerfil";
 import AdminUsuarioForm from "../pages/admin/usuario/AdminUsuarioForm";
 import AdminUsuarioEditar from "../pages/admin/usuario/AdminUsuarioEditar";
-// import AdminAcademicoHome from "../pages/admin/academico/AdminAcademicoHome";
 import AdminCursos from "../pages/admin/academico/AdminCursos";
 import AdminCursoForm from "../pages/admin/academico/AdminCursoForm";
 import AdminCursoDetalhe from "../pages/admin/academico/AdminCursoDetalhe";
@@ -18,6 +17,8 @@ import AdminTurmaDetalhe from "../pages/admin/academico/AdminTurmaDetalhe";
 import AdminTurmaForm from "../pages/admin/academico/AdminTurmaForm";
 import AdminDisciplinaForm from "../pages/admin/academico/AdminDisciplinaForm";
 import AdminDisciplinaEditar from "../pages/admin/academico/AdminDisciplinaEditar";
+import AdminTurmaEditar from "../pages/admin/academico/AdminTurmaEditar";
+import AdminCursoEditar from "../pages/admin/academico/AdminCursoEditar";
 
 import RoleGuard from "../guards/RoleGuard";
 
@@ -83,15 +84,6 @@ export const router = createBrowserRouter([
       </RoleGuard>
     ),
   },
-// 🔐 ADMIN - ESTRUTURA ACADÊMICA
-// {
-//   path: "/admin/academico",
-//   element: (
-//     <RoleGuard allowed={[0, 1]}>
-//       <AdminAcademicoHome />
-//     </RoleGuard>
-//   ),
-// },
 {
   path: "/admin/academico/cursos",
   element: (
@@ -105,6 +97,14 @@ export const router = createBrowserRouter([
   element: (
     <RoleGuard allowed={[0, 1]}>
       <AdminCursoForm />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/admin/academico/cursos/:id/editar",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminCursoEditar />
     </RoleGuard>
   ),
 },
@@ -154,6 +154,14 @@ export const router = createBrowserRouter([
   element: (
     <RoleGuard allowed={[0, 1]}>
       <AdminDisciplinaEditar />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/admin/academico/turmas/:id/editar",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminTurmaEditar />
     </RoleGuard>
   ),
 },
