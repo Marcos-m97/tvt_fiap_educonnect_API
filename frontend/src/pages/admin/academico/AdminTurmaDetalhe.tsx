@@ -12,7 +12,8 @@ import {
   DialogActions,
   TextField,
   MenuItem,
-  Chip
+  Chip,
+  Pagination
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
@@ -68,6 +69,12 @@ export default function AdminTurmaDetalhe() {
   const [professores, setProfessores] = useState<Professor[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // 🔎 Paginação e busca
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const pageSize = 5;
+  const [totalCount, setTotalCount] = useState(0);
+
   const [openModal, setOpenModal] = useState(false);
   const [disciplinaId, setDisciplinaId] = useState<number | "">("");
   const [professorId, setProfessorId] = useState<number | "">("");
@@ -95,11 +102,22 @@ export default function AdminTurmaDetalhe() {
 
       const turmaResponse = await api.get(`/turma/${id}`);
       const vinculosResponse = await api.get(`/turmadisciplina/turma/${id}`);
-      const alunosResponse = await api.get(`/matricula/turma/${id}/alunos`);
+
+      const alunosResponse = await api.get(
+        `/matricula/turma/${id}/alunos`,
+        {
+          params: {
+            page,
+            pageSize,
+            search
+          }
+        }
+      );
 
       setTurma(turmaResponse.data);
       setVinculos(vinculosResponse.data);
-      setAlunos(alunosResponse.data);
+      setAlunos(alunosResponse.data.items);
+      setTotalCount(alunosResponse.data.totalCount);
 
     } catch (error) {
       console.error("Erro ao carregar turma:", error);
@@ -167,7 +185,7 @@ export default function AdminTurmaDetalhe() {
 
   useEffect(() => {
     carregarDados();
-  }, [id]);
+  }, [id, page, search]);
 
   useEffect(() => {
     if (openModal) {
@@ -197,21 +215,12 @@ export default function AdminTurmaDetalhe() {
     <AppLayout>
 
       {/* HEADER */}
-      <Box
-        mb={4}
-        display="flex"
-        justifyContent="space-between"
-        alignItems="flex-start"
-      >
+      <Box mb={4} display="flex" justifyContent="space-between" alignItems="flex-start">
         <Box>
-          <Typography variant="h4">
-            {turma.nome}
-          </Typography>
-
+          <Typography variant="h4">{turma.nome}</Typography>
           <Typography color="text.secondary">
             {turma.semestre} • {turma.periodo}
           </Typography>
-
           {!turma.ativo && (
             <Chip label="Inativa" color="error" sx={{ mt: 1 }} />
           )}
@@ -278,17 +287,9 @@ export default function AdminTurmaDetalhe() {
           )}
 
           {vinculos.map((v) => (
-            <Box
-              key={v.id}
-              py={1.5}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
+            <Box key={v.id} py={1.5} display="flex" justifyContent="space-between" alignItems="center">
               <Box>
-                <Typography fontWeight={600}>
-                  {v.disciplinaNome}
-                </Typography>
+                <Typography fontWeight={600}>{v.disciplinaNome}</Typography>
                 <Typography variant="body2" color="text.secondary">
                   Professor: {v.professorNome}
                 </Typography>
@@ -313,13 +314,25 @@ export default function AdminTurmaDetalhe() {
       <Card sx={{ mt: 4 }}>
         <CardContent>
 
-          <Typography variant="h6" mb={3}>
-            Alunos da Turma
-          </Typography>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+            <Typography variant="h6">
+              Alunos da Turma
+            </Typography>
+
+            <TextField
+              size="small"
+              placeholder="Buscar aluno..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+            />
+          </Box>
 
           {alunos.length === 0 && (
             <Typography variant="body2" color="text.secondary">
-              Nenhum aluno matriculado nesta turma.
+              Nenhum aluno encontrado.
             </Typography>
           )}
 
@@ -335,9 +348,7 @@ export default function AdminTurmaDetalhe() {
                 alignItems="center"
               >
                 <Box>
-                  <Typography fontWeight={600}>
-                    {aluno.nome}
-                  </Typography>
+                  <Typography fontWeight={600}>{aluno.nome}</Typography>
                   <Typography variant="body2" color="text.secondary">
                     {aluno.email}
                   </Typography>
@@ -364,6 +375,17 @@ export default function AdminTurmaDetalhe() {
             );
           })}
 
+          {totalCount > pageSize && (
+            <Box display="flex" justifyContent="center" mt={3}>
+              <Pagination
+                count={Math.ceil(totalCount / pageSize)}
+                page={page}
+                onChange={(_, value) => setPage(value)}
+                color="primary"
+              />
+            </Box>
+          )}
+
         </CardContent>
       </Card>
 
@@ -372,7 +394,6 @@ export default function AdminTurmaDetalhe() {
         <DialogTitle>Vincular Disciplina</DialogTitle>
 
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 2 }}>
-
           <TextField
             select
             label="Disciplina"
@@ -400,7 +421,6 @@ export default function AdminTurmaDetalhe() {
               </MenuItem>
             ))}
           </TextField>
-
         </DialogContent>
 
         <DialogActions>

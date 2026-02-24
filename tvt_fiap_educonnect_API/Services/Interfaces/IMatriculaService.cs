@@ -16,9 +16,11 @@ namespace EduConnect_API.Services.Interfaces
         Task<MatriculaDTO?> UploadComprovantePagamento(int id, IFormFile arquivo);
         Task<MatriculaDTO?> UploadDocumentosPessoais(int id, IFormFile arquivo);
         Task<MatriculaDTO?> UploadDocumentosEscolaridade(int id, IFormFile arquivo);
-        Task<IEnumerable<AlunoTurmaDTO>> ListarAlunosPorTurma(int turmaId);
-
-
+        Task<object> ListarAlunosPorTurma(
+            int turmaId,
+            int page,
+            int pageSize,
+            string? search);
         Task<byte[]?> BaixarComprovante(int id);
         Task<byte[]?> BaixarDocumentosPessoais(int id);
         Task<byte[]?> BaixarDocumentosEscolaridade(int id);

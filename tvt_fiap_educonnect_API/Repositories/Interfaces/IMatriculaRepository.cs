@@ -13,5 +13,12 @@ namespace EduConnect_API.Repositories.Interfaces
         Task<bool> Deletar(int id);
         Task<Matricula?> ObterAtivaPorAlunoId(int alunoId);
 
+        // NOVO MÉTODO PAGINADO
+        Task<(IEnumerable<Matricula> Items, int TotalCount)>
+            ListarAlunosPorTurmaPaginado(
+                int turmaId,
+                int page,
+                int pageSize,
+                string? search);
     }
 }

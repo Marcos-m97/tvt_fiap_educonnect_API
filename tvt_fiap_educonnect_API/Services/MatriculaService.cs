@@ -240,19 +240,31 @@ Bem-vindo(a) à EduConnect!
         // ==============================================================
         // LISTAR ALUNOS DA TURMA (PROFESSOR / ADM)
         // ==============================================================
-        public async Task<IEnumerable<AlunoTurmaDTO>> ListarAlunosPorTurma(int turmaId)
+        public async Task<object> ListarAlunosPorTurma(
+            int turmaId,
+            int page,
+            int pageSize,
+            string? search)
         {
-            var matriculas = await _repo.ListarPorTurma(turmaId);
+            var (items, totalCount) =
+                await _repo.ListarAlunosPorTurmaPaginado(
+                    turmaId, page, pageSize, search);
 
-            return matriculas
-                .Where(m => m.Status == MatriculaStatus.Efetivada)
-                .Select(m => new AlunoTurmaDTO
-                {
-                    AlunoId = m.AlunoId,
-                    Nome = m.Aluno.Usuario.Nome,
-                    Email = m.Aluno.Usuario.Email,
-                    Status = m.Status
-                });
+            var result = items.Select(m => new AlunoTurmaDTO
+            {
+                AlunoId = m.AlunoId,
+                Nome = m.Aluno.Usuario.Nome,
+                Email = m.Aluno.Usuario.Email,
+                Status = m.Status
+            });
+
+            return new
+            {
+                items = result,
+                totalCount,
+                page,
+                pageSize
+            };
         }
 
     }

@@ -163,14 +163,18 @@ namespace EduConnect_API.Controllers
             return File(bytes, "application/pdf", "documentos_escolaridade.pdf");
         }
 
-        // =========================================================
-        // 8. Listar alunos da turma (Professor / Admin)
-        // =========================================================
         [Authorize(Roles = "0,1,2")]
         [HttpGet("turma/{turmaId}/alunos")]
-        public async Task<IActionResult> ListarAlunosDaTurma(int turmaId)
+        public async Task<IActionResult> ListarAlunosDaTurma(
+            int turmaId,
+            int page = 1,
+            int pageSize = 5,
+            string? search = null)
         {
-            return Ok(await _service.ListarAlunosPorTurma(turmaId));
+            var result = await _service.ListarAlunosPorTurma(
+                turmaId, page, pageSize, search);
+
+            return Ok(result);
         }
 
     }
