@@ -21,6 +21,7 @@ namespace EduConnect_API.Repositories
             return turma;
         }
 
+        // 🔥 NÃO FILTRA MAIS POR ATIVO (igual Disciplina)
         public async Task<Turma?> ObterPorId(int id)
         {
             return await _context.Turmas
@@ -50,14 +51,33 @@ namespace EduConnect_API.Repositories
             return turma;
         }
 
+        // 🔥 SOFT DELETE
         public async Task<bool> Deletar(int id)
         {
             var turma = await _context.Turmas.FindAsync(id);
             if (turma == null)
                 return false;
 
-            _context.Turmas.Remove(turma);
+            turma.Ativo = false;
+
+            _context.Turmas.Update(turma);
             await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        // 🔥 REATIVAR
+        public async Task<bool> Reativar(int id)
+        {
+            var turma = await _context.Turmas.FindAsync(id);
+            if (turma == null)
+                return false;
+
+            turma.Ativo = true;
+
+            _context.Turmas.Update(turma);
+            await _context.SaveChangesAsync();
+
             return true;
         }
     }

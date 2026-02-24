@@ -9,6 +9,11 @@ namespace EduConnect_API.Repositories.Interfaces
         Task<IEnumerable<Turma>> Listar();
         Task<IEnumerable<Turma>> ListarPorCurso(int cursoId);
         Task<Turma> Atualizar(Turma turma);
+
+        // 🔥 SOFT DELETE
         Task<bool> Deletar(int id);
+
+        // 🔥 REATIVAR
+        Task<bool> Reativar(int id);
     }
 }

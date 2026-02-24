@@ -27,6 +27,7 @@ interface Turma {
   nome: string;
   periodo: string;
   semestre: string;
+  ativo: boolean; // 🔥 adicionamos
 }
 
 interface Disciplina {
@@ -154,26 +155,58 @@ export default function AdminCursoDetalhe() {
               py={1.5}
               display="flex"
               justifyContent="space-between"
+              alignItems="center"
+              sx={{
+                opacity: turma.ativo ? 1 : 0.4,
+                transition: "0.3s"
+              }}
             >
               <Box>
-                <Typography fontWeight={600}>
-                  {turma.nome}
-                </Typography>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Typography fontWeight={600}>
+                    {turma.nome}
+                  </Typography>
+
+                  {!turma.ativo && (
+                    <Chip
+                      label="Inativa"
+                      size="small"
+                      color="error"
+                    />
+                  )}
+                </Box>
+
                 <Typography variant="body2" color="text.secondary">
                   {turma.semestre} • {turma.periodo}
                 </Typography>
               </Box>
 
-              <Button
-                size="small"
-                onClick={() =>
-                  navigate(`/admin/academico/turmas/${turma.id}`)
-                }
-              >
-                Gerenciar
-              </Button>
+              <Box display="flex" gap={1}>
+                {turma.ativo ? (
+                  <Button
+                    size="small"
+                    onClick={() =>
+                      navigate(`/admin/academico/turmas/${turma.id}`)
+                    }
+                  >
+                    Gerenciar
+                  </Button>
+                ) : (
+                  <Button
+                    size="small"
+                    color="success"
+                    onClick={async () => {
+                      await api.put(`/turma/reativar/${turma.id}`);
+                      carregarDados();
+                    }}
+                  >
+                    Reativar
+                  </Button>
+                )}
+              </Box>
             </Box>
           ))}
+
         </CardContent>
       </Card>
 

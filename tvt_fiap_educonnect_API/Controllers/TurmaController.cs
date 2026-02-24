@@ -58,11 +58,23 @@ namespace EduConnect_API.Controllers
             return Ok(turma);
         }
 
+        // 🔥 SOFT DELETE
         [Authorize(Roles = "0,1")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Deletar(int id)
         {
             var ok = await _service.Deletar(id);
+            if (!ok) return NotFound();
+
+            return NoContent();
+        }
+
+        // 🔥 REATIVAR
+        [Authorize(Roles = "0,1")]
+        [HttpPut("reativar/{id}")]
+        public async Task<IActionResult> Reativar(int id)
+        {
+            var ok = await _service.Reativar(id);
             if (!ok) return NotFound();
 
             return NoContent();

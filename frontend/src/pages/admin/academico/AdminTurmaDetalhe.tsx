@@ -11,7 +11,8 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  MenuItem
+  MenuItem,
+  Chip
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
@@ -27,6 +28,7 @@ interface Turma {
   periodo: string;
   semestre: string;
   cursoId: number;
+  ativo: boolean;
 }
 
 interface TurmaDisciplina {
@@ -79,13 +81,13 @@ export default function AdminTurmaDetalhe() {
   }
 
   async function carregarSelects() {
+    if (!turma) return;
+
     try {
-      // Disciplinas do curso da turma
       const disciplinasResponse = await api.get(
-        `/disciplina/curso/${turma?.cursoId}`
+        `/disciplina/curso/${turma.cursoId}`
       );
 
-      // Professores (AGORA CORRETO)
       const professoresResponse = await api.get(`/professor`);
 
       setDisciplinas(disciplinasResponse.data);
@@ -115,14 +117,33 @@ export default function AdminTurmaDetalhe() {
   }
 
   async function removerVinculo(vinculoId: number) {
-    if (!confirm("Deseja remover esta disciplina da turma?"))
-      return;
+    if (!confirm("Deseja remover esta disciplina da turma?")) return;
 
     try {
       await api.delete(`/turmadisciplina/${vinculoId}`);
       carregarDados();
     } catch (error) {
       console.error("Erro ao remover vínculo:", error);
+    }
+  }
+
+  async function desativarTurma() {
+    if (!confirm("Deseja desativar esta turma?")) return;
+
+    try {
+      await api.delete(`/turma/${turma?.id}`);
+      carregarDados();
+    } catch (error) {
+      console.error("Erro ao desativar turma:", error);
+    }
+  }
+
+  async function reativarTurma() {
+    try {
+      await api.put(`/turma/reativar/${turma?.id}`);
+      carregarDados();
+    } catch (error) {
+      console.error("Erro ao reativar turma:", error);
     }
   }
 
@@ -151,7 +172,6 @@ export default function AdminTurmaDetalhe() {
   return (
     <AppLayout>
 
-      {/* BOTÃO VOLTAR */}
       <Box mb={3}>
         <Button
           variant="outlined"
@@ -164,15 +184,44 @@ export default function AdminTurmaDetalhe() {
 
       {/* HEADER */}
       <Box mb={4}>
-        <Typography variant="h4">{turma.nome}</Typography>
+        <Box display="flex" alignItems="center" gap={2}>
+          <Typography variant="h4">
+            {turma.nome}
+          </Typography>
+
+          {!turma.ativo && (
+            <Chip label="Inativa" color="error" />
+          )}
+        </Box>
+
         <Typography color="text.secondary">
           {turma.semestre} • {turma.periodo}
         </Typography>
+
+        <Box mt={2} display="flex" gap={2}>
+          {turma.ativo ? (
+            <Button
+              variant="contained"
+              color="error"
+              onClick={desativarTurma}
+            >
+              Desativar Turma
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="success"
+              onClick={reativarTurma}
+            >
+              Reativar Turma
+            </Button>
+          )}
+        </Box>
       </Box>
 
       <Divider sx={{ mb: 4 }} />
 
-      {/* DISCIPLINAS DA TURMA */}
+      {/* DISCIPLINAS */}
       <Card>
         <CardContent>
 
@@ -189,6 +238,7 @@ export default function AdminTurmaDetalhe() {
             <Button
               size="small"
               startIcon={<AddIcon />}
+              disabled={!turma.ativo}
               onClick={() => {
                 setOpenModal(true);
                 carregarSelects();
@@ -225,6 +275,7 @@ export default function AdminTurmaDetalhe() {
                 size="small"
                 color="error"
                 startIcon={<DeleteIcon />}
+                disabled={!turma.ativo}
                 onClick={() => removerVinculo(v.id)}
               >
                 Remover
@@ -235,7 +286,7 @@ export default function AdminTurmaDetalhe() {
         </CardContent>
       </Card>
 
-      {/* MODAL VINCULAR */}
+      {/* MODAL */}
       <Dialog
         open={openModal}
         onClose={() => setOpenModal(false)}

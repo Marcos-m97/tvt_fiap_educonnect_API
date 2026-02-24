@@ -16,14 +16,17 @@ namespace EduConnect_API.Models
         public string Semestre { get; set; } = string.Empty;
         // Ex: "2025/1", "2025/2"
 
-        // FK → Curso ao qual a turma pertence
+        // 🔗 FK → Curso ao qual a turma pertence
         public int CursoId { get; set; }
-        public Curso Curso { get; set; }
+        public Curso? Curso { get; set; }
 
         // Relacionamento com os alunos matriculados
         public ICollection<Matricula> Matriculas { get; set; } = new List<Matricula>();
 
         // Relação com disciplinas da turma
         public ICollection<TurmaDisciplina> TurmaDisciplinas { get; set; } = new List<TurmaDisciplina>();
+
+        // 🔥 SOFT DELETE
+        public bool Ativo { get; set; } = true;
     }
 }

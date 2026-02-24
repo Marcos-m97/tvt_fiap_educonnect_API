@@ -27,7 +27,8 @@ namespace EduConnect_API.Services
                 Nome = dto.Nome,
                 Periodo = dto.Periodo,
                 Semestre = dto.Semestre,
-                CursoId = dto.CursoId
+                CursoId = dto.CursoId,
+                Ativo = true
             };
 
             turma = await _repo.Criar(turma);
@@ -74,6 +75,11 @@ namespace EduConnect_API.Services
             return _repo.Deletar(id);
         }
 
+        public Task<bool> Reativar(int id)
+        {
+            return _repo.Reativar(id);
+        }
+
         private TurmaDTO MapToDTO(Turma t)
         {
             return new TurmaDTO
@@ -83,7 +89,8 @@ namespace EduConnect_API.Services
                 Periodo = t.Periodo,
                 Semestre = t.Semestre,
                 CursoId = t.CursoId,
-                CursoNome = t.Curso?.Nome ?? string.Empty
+                CursoNome = t.Curso?.Nome ?? string.Empty,
+                Ativo = t.Ativo
             };
         }
     }

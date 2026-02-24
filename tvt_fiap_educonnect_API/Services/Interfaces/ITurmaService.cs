@@ -9,6 +9,11 @@ namespace EduConnect_API.Services.Interfaces
         Task<IEnumerable<TurmaDTO>> Listar();
         Task<IEnumerable<TurmaDTO>> ListarPorCurso(int cursoId);
         Task<TurmaDTO?> Atualizar(int id, CriarTurmaDTO dto);
+
+        // 🔥 SOFT DELETE
         Task<bool> Deletar(int id);
+
+        // 🔥 REATIVAR
+        Task<bool> Reativar(int id);
     }
 }
