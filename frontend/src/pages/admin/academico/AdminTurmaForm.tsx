@@ -5,39 +5,72 @@ import {
   CardContent,
   TextField,
   Button,
-  CircularProgress
+  CircularProgress,
+  Autocomplete
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveIcon from "@mui/icons-material/Save";
 import AppLayout from "../../../components/layout/AppLayout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/api";
 
-export default function AdminCursoForm() {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+interface Curso {
+  id: number;
+  nome: string;
+}
 
-  const [curso, setCurso] = useState({
+export default function AdminTurmaForm() {
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const [cursos, setCursos] = useState<Curso[]>([]);
+  const [cursoSelecionado, setCursoSelecionado] = useState<Curso | null>(null);
+
+  const [turma, setTurma] = useState({
     nome: "",
-    descricao: "",
-    cargaHoraria: 0
+    periodo: "",
+    semestre: ""
   });
 
+  async function carregarCursos(search = "") {
+    try {
+      const response = await api.get("/curso", {
+        params: {
+          page: 1,
+          pageSize: 10,
+          search: search || undefined
+        }
+      });
+
+      setCursos(response.data.data);
+    } catch (error) {
+      console.error("Erro ao carregar cursos:", error);
+    }
+  }
+
   async function handleSubmit() {
+    if (!cursoSelecionado) return;
+
     try {
       setLoading(true);
 
-      await api.post("/curso", curso);
+      await api.post("/turma", {
+        ...turma,
+        cursoId: cursoSelecionado.id
+      });
 
-      navigate("/admin/academico/cursos");
-
+      navigate(-1);
     } catch (error) {
-      console.error("Erro ao criar curso:", error);
+      console.error("Erro ao criar turma:", error);
     } finally {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    carregarCursos();
+  }, []);
 
   return (
     <AppLayout>
@@ -45,11 +78,11 @@ export default function AdminCursoForm() {
       {/* HEADER */}
       <Box mb={6} textAlign="center">
         <Typography variant="h4" fontWeight={600} gutterBottom>
-          Criar Curso
+          Criar Turma
         </Typography>
 
         <Typography variant="body1" color="text.secondary">
-          Cadastre um novo curso na instituição.
+          Vincule a turma a um curso existente.
         </Typography>
       </Box>
 
@@ -75,39 +108,50 @@ export default function AdminCursoForm() {
               <Box display="flex" flexDirection="column" gap={4}>
 
                 <TextField
-                  label="Nome do Curso"
-                  value={curso.nome}
+                  label="Nome da Turma"
+                  value={turma.nome}
                   onChange={(e) =>
-                    setCurso({ ...curso, nome: e.target.value })
+                    setTurma({ ...turma, nome: e.target.value })
                   }
                   fullWidth
-                  required
                 />
 
                 <TextField
-                  label="Descrição"
-                  multiline
-                  rows={4}
-                  value={curso.descricao}
+                  label="Período"
+                  value={turma.periodo}
                   onChange={(e) =>
-                    setCurso({ ...curso, descricao: e.target.value })
+                    setTurma({ ...turma, periodo: e.target.value })
                   }
                   fullWidth
-                  required
                 />
 
                 <TextField
-                  label="Carga Horária"
-                  type="number"
-                  value={curso.cargaHoraria}
+                  label="Semestre"
+                  value={turma.semestre}
                   onChange={(e) =>
-                    setCurso({
-                      ...curso,
-                      cargaHoraria: Number(e.target.value)
-                    })
+                    setTurma({ ...turma, semestre: e.target.value })
                   }
                   fullWidth
-                  required
+                />
+
+                <Autocomplete
+                  options={cursos}
+                  getOptionLabel={(option) => option.nome}
+                  value={cursoSelecionado}
+                  onChange={(_, newValue) =>
+                    setCursoSelecionado(newValue)
+                  }
+                  onInputChange={(_, newInputValue) => {
+                    carregarCursos(newInputValue);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Curso"
+                      placeholder="Pesquisar curso..."
+                      fullWidth
+                    />
+                  )}
                 />
 
                 {/* BOTÕES CENTRALIZADOS */}
@@ -120,7 +164,7 @@ export default function AdminCursoForm() {
                   <Button
                     variant="outlined"
                     startIcon={<ArrowBackIcon />}
-                    onClick={() => navigate("/admin/academico/cursos")}
+                    onClick={() => navigate(-1)}
                     sx={{
                       px: 5,
                       borderRadius: 3
@@ -133,9 +177,10 @@ export default function AdminCursoForm() {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     disabled={
-                      !curso.nome ||
-                      !curso.descricao ||
-                      curso.cargaHoraria <= 0
+                      !turma.nome ||
+                      !turma.periodo ||
+                      !turma.semestre ||
+                      !cursoSelecionado
                     }
                     sx={{
                       px: 5,
@@ -147,7 +192,7 @@ export default function AdminCursoForm() {
                       }
                     }}
                   >
-                    Criar Curso
+                    Criar Turma
                   </Button>
                 </Box>
 

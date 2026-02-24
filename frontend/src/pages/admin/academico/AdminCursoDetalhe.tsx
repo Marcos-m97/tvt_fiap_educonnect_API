@@ -9,8 +9,7 @@ import {
   Chip
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -23,40 +22,68 @@ interface Curso {
   cargaHoraria: number;
 }
 
+interface Turma {
+  id: number;
+  nome: string;
+  periodo: string;
+  semestre: string;
+}
+
+interface Disciplina {
+  id: number;
+  nome: string;
+  cargaHoraria: number;
+}
+
 export default function AdminCursoDetalhe() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [curso, setCurso] = useState<Curso | null>(null);
+  const [turmas, setTurmas] = useState<Turma[]>([]);
+  const [disciplinas, setDisciplinas] = useState<Disciplina[]>([]);
   const [loading, setLoading] = useState(false);
 
-  async function carregarCurso() {
+  async function carregarDados() {
     try {
       setLoading(true);
-      const response = await api.get(`/curso/${id}`);
-      setCurso(response.data);
+
+      const cursoResponse = await api.get(`/curso/${id}`);
+      const turmasResponse = await api.get(`/turma/curso/${id}`);
+      const disciplinasResponse = await api.get(`/disciplina/curso/${id}`);
+
+      setCurso(cursoResponse.data);
+      setTurmas(turmasResponse.data);
+      setDisciplinas(disciplinasResponse.data);
+
     } catch (error) {
-      console.error("Erro ao carregar curso:", error);
+      console.error("Erro ao carregar dados do curso:", error);
     } finally {
       setLoading(false);
     }
   }
 
-  async function deletarCurso() {
-    if (!confirm("Tem certeza que deseja excluir este curso?"))
-      return;
+  useEffect(() => {
+    carregarDados();
+  }, [id]);
 
-    try {
-      await api.delete(`/curso/${id}`);
-      navigate("/admin/academico/cursos");
-    } catch (error) {
-      console.error("Erro ao deletar curso:", error);
-    }
+  if (loading) {
+    return (
+      <AppLayout>
+        <Box display="flex" justifyContent="center" py={6}>
+          <CircularProgress />
+        </Box>
+      </AppLayout>
+    );
   }
 
-  useEffect(() => {
-    carregarCurso();
-  }, []);
+  if (!curso) {
+    return (
+      <AppLayout>
+        <Typography>Curso não encontrado.</Typography>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -72,84 +99,143 @@ export default function AdminCursoDetalhe() {
         </Button>
       </Box>
 
-      {loading && (
-        <Box display="flex" justifyContent="center" py={5}>
-          <CircularProgress />
+      {/* INFORMAÇÕES DO CURSO */}
+      <Box mb={4}>
+        <Typography variant="h4" gutterBottom>
+          {curso.nome}
+        </Typography>
+
+        <Typography variant="body1" color="text.secondary">
+          {curso.descricao}
+        </Typography>
+
+        <Box mt={2}>
+          <Chip
+            label={`Carga Horária: ${curso.cargaHoraria}h`}
+            color="primary"
+          />
         </Box>
-      )}
+      </Box>
 
-      {!loading && curso && (
-        <>
-          {/* HEADER DO CURSO */}
-          <Box mb={4}>
-            <Typography variant="h4" gutterBottom>
-              {curso.nome}
+      <Divider sx={{ mb: 4 }} />
+
+      {/* TURMAS */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
+            <Typography variant="h6">
+              Turmas
             </Typography>
 
-            <Typography variant="body1" color="text.secondary">
-              {curso.descricao}
-            </Typography>
-
-            <Box mt={2}>
-              <Chip
-                label={`Carga Horária: ${curso.cargaHoraria}h`}
-                color="primary"
-              />
-            </Box>
-          </Box>
-
-          <Divider sx={{ mb: 4 }} />
-
-          {/* AÇÕES */}
-          <Box display="flex" gap={2} mb={4}>
             <Button
-              variant="contained"
-              startIcon={<EditIcon />}
+              size="small"
+              startIcon={<AddIcon />}
               onClick={() =>
-                navigate(`/admin/academico/cursos/${curso.id}/editar`)
+                navigate(`/admin/academico/turmas/novo?cursoId=${curso.id}`)
               }
             >
-              Editar
+              Adicionar Turma
             </Button>
+          </Box>
+
+          {turmas.length === 0 && (
+            <Typography variant="body2" color="text.secondary">
+              Nenhuma turma cadastrada.
+            </Typography>
+          )}
+
+          {turmas.map((turma) => (
+            <Box
+              key={turma.id}
+              py={1.5}
+              display="flex"
+              justifyContent="space-between"
+            >
+              <Box>
+                <Typography fontWeight={600}>
+                  {turma.nome}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {turma.semestre} • {turma.periodo}
+                </Typography>
+              </Box>
+
+              <Button
+                size="small"
+                onClick={() =>
+                  navigate(`/admin/academico/turmas/${turma.id}`)
+                }
+              >
+                Gerenciar
+              </Button>
+            </Box>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* DISCIPLINAS */}
+      <Card>
+        <CardContent>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
+            <Typography variant="h6">
+              Disciplinas
+            </Typography>
 
             <Button
-              variant="outlined"
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={deletarCurso}
+              size="small"
+              startIcon={<AddIcon />}
+              onClick={() =>
+                navigate(`/admin/academico/disciplinas/novo?cursoId=${curso.id}`)
+              }
             >
-              Excluir
+              Adicionar Disciplina
             </Button>
           </Box>
 
-          {/* ÁREA CONTEXTUAL (PRÓXIMO PASSO) */}
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Turmas
-              </Typography>
+          {disciplinas.length === 0 && (
+            <Typography variant="body2" color="text.secondary">
+              Nenhuma disciplina cadastrada.
+            </Typography>
+          )}
 
-              <Typography variant="body2" color="text.secondary">
-                Nenhuma turma cadastrada ainda.
-              </Typography>
-            </CardContent>
-          </Card>
-
-          <Box mt={3}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Disciplinas
+          {disciplinas.map((disciplina) => (
+            <Box
+              key={disciplina.id}
+              py={1.5}
+              display="flex"
+              justifyContent="space-between"
+            >
+              <Box>
+                <Typography fontWeight={600}>
+                  {disciplina.nome}
                 </Typography>
-
                 <Typography variant="body2" color="text.secondary">
-                  Nenhuma disciplina cadastrada ainda.
+                  Carga Horária: {disciplina.cargaHoraria}h
                 </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-        </>
-      )}
+              </Box>
+
+              <Button
+                size="small"
+                onClick={() =>
+                  navigate(`/admin/academico/disciplinas/${disciplina.id}`)
+                }
+              >
+                Gerenciar
+              </Button>
+            </Box>
+          ))}
+        </CardContent>
+      </Card>
 
     </AppLayout>
   );

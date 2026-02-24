@@ -8,8 +8,7 @@ import {
 } from "@mui/material";
 import AppLayout from "../../../components/layout/AppLayout";
 import SchoolIcon from "@mui/icons-material/School";
-import ClassIcon from "@mui/icons-material/Class";
-import GroupsIcon from "@mui/icons-material/Groups";
+import DescriptionIcon from "@mui/icons-material/Description";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 
@@ -19,39 +18,31 @@ export default function AdminAcademicoHome() {
   const cards = [
     {
       title: "Cursos",
-      description: "Gerencie os cursos da instituição.",
+      description: "Gerencie cursos, turmas e disciplinas.",
       icon: <SchoolIcon fontSize="large" />,
       route: "/admin/academico/cursos"
     },
     {
-      title: "Disciplinas",
-      description: "Gerencie as disciplinas vinculadas aos cursos.",
-      icon: <ClassIcon fontSize="large" />,
-      route: "/admin/academico/disciplinas"
-    },
-    {
-      title: "Turmas",
-      description: "Gerencie as turmas por curso e semestre.",
-      icon: <GroupsIcon fontSize="large" />,
-      route: "/admin/academico/turmas"
+      title: "Boletins",
+      description: "Gerencie boletins por aluno ou por turma.",
+      icon: <DescriptionIcon fontSize="large" />,
+      route: "/admin/academico/boletins"
     }
   ];
 
   return (
     <AppLayout>
 
-      {/* HEADER */}
       <Box mb={4} textAlign="center">
         <Typography variant="h4" gutterBottom>
           Estrutura Acadêmica
         </Typography>
 
         <Typography variant="body1" color="text.secondary">
-          Gerencie cursos, disciplinas e turmas da instituição.
+          Gerencie toda a organização acadêmica da instituição.
         </Typography>
       </Box>
 
-      {/* BOTÃO VOLTAR */}
       <Box mb={4}>
         <Button
           variant="outlined"
@@ -63,7 +54,6 @@ export default function AdminAcademicoHome() {
         </Button>
       </Box>
 
-      {/* CARDS */}
       <Box
         display="grid"
         gridTemplateColumns={{

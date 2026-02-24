@@ -25,7 +25,7 @@ export default function AdminHome() {
     },
     {
       title: "Estrutura Acadêmica",
-      description: "Gerenciar cursos, disciplinas e turmas.",
+      description: "Gerenciar cursos, disciplinas, turmas e Boletins.",
       icon: <SchoolIcon fontSize="large" />,
       route: "/admin/academico"
     },
@@ -36,8 +36,8 @@ export default function AdminHome() {
       route: "/admin/matriculas"
     },
     {
-      title: "Eventos e Boletins",
-      description: "Criar eventos acadêmicos e boletins.",
+      title: "Eventos",
+      description: "Criar e gerenciar eventos acadêmicos",
       icon: <EventIcon fontSize="large" />,
       route: "/admin/eventos"
     }

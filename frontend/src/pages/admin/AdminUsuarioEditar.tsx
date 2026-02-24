@@ -5,7 +5,8 @@ import {
   CardContent,
   TextField,
   Button,
-  CircularProgress
+  CircularProgress,
+  Divider
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveIcon from "@mui/icons-material/Save";
@@ -105,198 +106,234 @@ export default function AdminUsuarioEditar() {
     <AppLayout>
 
       {/* HEADER */}
-      <Box position="relative" mb={4}>
-        <Typography variant="h4" textAlign="center" fontWeight={600}>
+      <Box mb={6} textAlign="center">
+        <Typography variant="h4" fontWeight={600} gutterBottom>
           Editar Usuário
         </Typography>
 
-        <Box position="absolute" right={0} top={0}>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate(-1)}
-          >
-            Voltar
-          </Button>
-        </Box>
+        <Typography variant="body1" color="text.secondary">
+          Atualize os dados do usuário e seu perfil.
+        </Typography>
       </Box>
 
-      {loading && (
-        <Box display="flex" justifyContent="center">
-          <CircularProgress />
-        </Box>
-      )}
+      <Box maxWidth="1000px" mx="auto">
 
-      {!loading && usuario && (
-        <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-          <CardContent>
-            <Box display="flex" flexDirection="column" gap={3}>
+        {loading && (
+          <Box display="flex" justifyContent="center" py={6}>
+            <CircularProgress />
+          </Box>
+        )}
 
-              {/* ===== TÍTULO CENTRALIZADO ===== */}
-              <Typography
-                fontWeight={600}
-                textAlign="center"
-                variant="h6"
-              >
-                Dados do Usuário
-              </Typography>
+        {!loading && usuario && (
+          <Card
+            sx={{
+              borderRadius: 4,
+              boxShadow: 5,
+              px: 6,
+              py: 6
+            }}
+          >
+            <CardContent sx={{ p: 0 }}>
 
-              <TextField
-                label="Nome"
-                value={usuario.nome}
-                onChange={(e) =>
-                  setUsuario({ ...usuario, nome: e.target.value })
-                }
-                fullWidth
-              />
+              <Box display="flex" flexDirection="column" gap={4}>
 
-              <TextField
-                label="Email"
-                value={usuario.email}
-                disabled
-                fullWidth
-              />
-
-              {perfil && (
-                <>
-                  {/* ===== TÍTULO CENTRALIZADO ===== */}
-                  <Typography
-                    fontWeight={600}
-                    textAlign="center"
-                    variant="h6"
-                    mt={3}
-                  >
-                    Dados do Perfil
-                  </Typography>
-
-                  {usuario.tipo === 1 && (
-                    <>
-                      <TextField
-                        label="Departamento"
-                        value={perfil.departamento || ""}
-                        onChange={(e) =>
-                          setPerfil({
-                            ...perfil,
-                            departamento: e.target.value
-                          })
-                        }
-                        fullWidth
-                      />
-
-                      <TextField
-                        label="Cargo"
-                        value={perfil.cargo || ""}
-                        onChange={(e) =>
-                          setPerfil({
-                            ...perfil,
-                            cargo: e.target.value
-                          })
-                        }
-                        fullWidth
-                      />
-                    </>
-                  )}
-
-                  {usuario.tipo === 2 && (
-                    <>
-                      <TextField
-                        label="Especialidade"
-                        value={perfil.especialidade || ""}
-                        onChange={(e) =>
-                          setPerfil({
-                            ...perfil,
-                            especialidade: e.target.value
-                          })
-                        }
-                        fullWidth
-                      />
-
-                      <TextField
-                        label="Formação"
-                        value={perfil.formacao || ""}
-                        onChange={(e) =>
-                          setPerfil({
-                            ...perfil,
-                            formacao: e.target.value
-                          })
-                        }
-                        fullWidth
-                      />
-
-                      <TextField
-                        label="Currículo Lattes"
-                        multiline
-                        rows={3}
-                        value={perfil.curriculoLattes || ""}
-                        onChange={(e) =>
-                          setPerfil({
-                            ...perfil,
-                            curriculoLattes: e.target.value
-                          })
-                        }
-                        fullWidth
-                      />
-                    </>
-                  )}
-
-                  {usuario.tipo === 3 && (
-                    <>
-                      <TextField
-                        label="CPF"
-                        value={perfil.cpf || ""}
-                        onChange={(e) =>
-                          setPerfil({
-                            ...perfil,
-                            cpf: e.target.value
-                          })
-                        }
-                        fullWidth
-                      />
-
-                      <TextField
-                        label="Data de Nascimento"
-                        type="date"
-                        value={perfil.dataNascimento?.split("T")[0] || ""}
-                        onChange={(e) =>
-                          setPerfil({
-                            ...perfil,
-                            dataNascimento: e.target.value
-                          })
-                        }
-                        fullWidth
-                        InputLabelProps={{ shrink: true }}
-                      />
-
-                      <TextField
-                        label="Endereço"
-                        value={perfil.endereco || ""}
-                        onChange={(e) =>
-                          setPerfil({
-                            ...perfil,
-                            endereco: e.target.value
-                          })
-                        }
-                        fullWidth
-                      />
-                    </>
-                  )}
-                </>
-              )}
-
-              <Box display="flex" justifyContent="flex-end">
-                <Button
-                  variant="contained"
-                  startIcon={<SaveIcon />}
-                  onClick={handleSubmit}
+                {/* ===== DADOS DO USUÁRIO ===== */}
+                <Typography
+                  fontWeight={600}
+                  variant="h6"
+                  textAlign="center"
                 >
-                  Salvar Alterações
-                </Button>
+                  Dados do Usuário
+                </Typography>
+
+                <TextField
+                  label="Nome"
+                  value={usuario.nome}
+                  onChange={(e) =>
+                    setUsuario({ ...usuario, nome: e.target.value })
+                  }
+                  fullWidth
+                />
+
+                <TextField
+                  label="Email"
+                  value={usuario.email}
+                  disabled
+                  fullWidth
+                />
+
+                <Divider sx={{ my: 2 }} />
+
+                {/* ===== DADOS DO PERFIL ===== */}
+                {perfil && (
+                  <Box display="flex" flexDirection="column" gap={4}>
+
+                    <Typography
+                      fontWeight={600}
+                      variant="h6"
+                      textAlign="center"
+                    >
+                      Dados do Perfil
+                    </Typography>
+
+                    {usuario.tipo === 1 && (
+                      <>
+                        <TextField
+                          label="Departamento"
+                          value={perfil.departamento || ""}
+                          onChange={(e) =>
+                            setPerfil({
+                              ...perfil,
+                              departamento: e.target.value
+                            })
+                          }
+                          fullWidth
+                        />
+
+                        <TextField
+                          label="Cargo"
+                          value={perfil.cargo || ""}
+                          onChange={(e) =>
+                            setPerfil({
+                              ...perfil,
+                              cargo: e.target.value
+                            })
+                          }
+                          fullWidth
+                        />
+                      </>
+                    )}
+
+                    {usuario.tipo === 2 && (
+                      <>
+                        <TextField
+                          label="Especialidade"
+                          value={perfil.especialidade || ""}
+                          onChange={(e) =>
+                            setPerfil({
+                              ...perfil,
+                              especialidade: e.target.value
+                            })
+                          }
+                          fullWidth
+                        />
+
+                        <TextField
+                          label="Formação"
+                          value={perfil.formacao || ""}
+                          onChange={(e) =>
+                            setPerfil({
+                              ...perfil,
+                              formacao: e.target.value
+                            })
+                          }
+                          fullWidth
+                        />
+
+                        <TextField
+                          label="Currículo Lattes"
+                          multiline
+                          rows={3}
+                          value={perfil.curriculoLattes || ""}
+                          onChange={(e) =>
+                            setPerfil({
+                              ...perfil,
+                              curriculoLattes: e.target.value
+                            })
+                          }
+                          fullWidth
+                        />
+                      </>
+                    )}
+
+                    {usuario.tipo === 3 && (
+                      <>
+                        <TextField
+                          label="CPF"
+                          value={perfil.cpf || ""}
+                          onChange={(e) =>
+                            setPerfil({
+                              ...perfil,
+                              cpf: e.target.value
+                            })
+                          }
+                          fullWidth
+                        />
+
+                        <TextField
+                          label="Data de Nascimento"
+                          type="date"
+                          value={perfil.dataNascimento?.split("T")[0] || ""}
+                          onChange={(e) =>
+                            setPerfil({
+                              ...perfil,
+                              dataNascimento: e.target.value
+                            })
+                          }
+                          fullWidth
+                          InputLabelProps={{ shrink: true }}
+                        />
+
+                        <TextField
+                          label="Endereço"
+                          value={perfil.endereco || ""}
+                          onChange={(e) =>
+                            setPerfil({
+                              ...perfil,
+                              endereco: e.target.value
+                            })
+                          }
+                          fullWidth
+                        />
+                      </>
+                    )}
+
+                  </Box>
+                )}
+
+                {/* BOTÕES CENTRALIZADOS */}
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  gap={3}
+                  mt={3}
+                >
+                  <Button
+                    variant="outlined"
+                    startIcon={<ArrowBackIcon />}
+                    onClick={() => navigate(-1)}
+                    sx={{
+                      px: 5,
+                      borderRadius: 3
+                    }}
+                  >
+                    Voltar
+                  </Button>
+
+                  <Button
+                    startIcon={<SaveIcon />}
+                    onClick={handleSubmit}
+                    sx={{
+                      px: 5,
+                      borderRadius: 3,
+                      background: "linear-gradient(90deg, #1976d2, #26c6da)",
+                      color: "#fff",
+                      "&:hover": {
+                        background: "linear-gradient(90deg, #1565c0, #00acc1)"
+                      }
+                    }}
+                  >
+                    Salvar Alterações
+                  </Button>
+                </Box>
+
               </Box>
 
-            </Box>
-          </CardContent>
-        </Card>
-      )}
+            </CardContent>
+          </Card>
+        )}
+
+      </Box>
 
     </AppLayout>
   );

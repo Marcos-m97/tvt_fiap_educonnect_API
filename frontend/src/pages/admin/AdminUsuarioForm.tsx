@@ -6,7 +6,8 @@ import {
   TextField,
   Button,
   MenuItem,
-  CircularProgress
+  CircularProgress,
+  Divider
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveIcon from "@mui/icons-material/Save";
@@ -74,59 +75,42 @@ export default function AdminUsuarioForm() {
     <AppLayout>
 
       {/* HEADER */}
-      <Box mb={4}>
-        <Typography
-          variant="h3"
-          fontWeight={550}
-          textAlign="center"
-          gutterBottom
-        >
+      <Box mb={6} textAlign="center">
+        <Typography variant="h4" fontWeight={600} gutterBottom>
           Criar Usuário
         </Typography>
 
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          textAlign="center"
-        >
+        <Typography variant="body1" color="text.secondary">
           O usuário receberá um e-mail para redefinir a senha.
         </Typography>
       </Box>
 
-      <Box maxWidth="900px" mx="auto">
-
-        <Box mb={2}>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate("/admin/usuarios")}
-          >
-            Voltar
-          </Button>
-        </Box>
+      <Box maxWidth="1000px" mx="auto">
 
         <Card
           sx={{
-            borderRadius: 3,
-            boxShadow: 3
+            borderRadius: 4,
+            boxShadow: 5,
+            px: 6,
+            py: 6
           }}
         >
-          <CardContent>
+          <CardContent sx={{ p: 0 }}>
 
             {loading && (
-              <Box display="flex" justifyContent="center" py={3}>
+              <Box display="flex" justifyContent="center" py={4}>
                 <CircularProgress />
               </Box>
             )}
 
             {!loading && (
-              <Box display="flex" flexDirection="column" gap={3}>
+              <Box display="flex" flexDirection="column" gap={4}>
 
-                {/* DADOS USUARIO */}
+                {/* DADOS DO USUÁRIO */}
                 <Typography
                   fontWeight={600}
-                  textAlign="center"
                   variant="h6"
+                  textAlign="center"
                 >
                   Dados do Usuário
                 </Typography>
@@ -165,14 +149,15 @@ export default function AdminUsuarioForm() {
                   <MenuItem value={2}>Professor</MenuItem>
                 </TextField>
 
+                <Divider sx={{ my: 2 }} />
+
                 {/* ADMIN */}
                 {usuario.tipo === 1 && (
-                  <>
+                  <Box display="flex" flexDirection="column" gap={4}>
                     <Typography
                       fontWeight={600}
-                      textAlign="center"
                       variant="h6"
-                      mt={2}
+                      textAlign="center"
                     >
                       Dados do Administrador
                     </Typography>
@@ -200,17 +185,16 @@ export default function AdminUsuarioForm() {
                       }
                       fullWidth
                     />
-                  </>
+                  </Box>
                 )}
 
                 {/* PROFESSOR */}
                 {usuario.tipo === 2 && (
-                  <>
+                  <Box display="flex" flexDirection="column" gap={4}>
                     <Typography
                       fontWeight={600}
-                      textAlign="center"
                       variant="h6"
-                      mt={2}
+                      textAlign="center"
                     >
                       Dados do Professor
                     </Typography>
@@ -252,16 +236,42 @@ export default function AdminUsuarioForm() {
                       }
                       fullWidth
                     />
-                  </>
+                  </Box>
                 )}
 
-                <Box display="flex" justifyContent="flex-end">
+                {/* BOTÕES CENTRALIZADOS */}
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  gap={3}
+                  mt={3}
+                >
                   <Button
-                    variant="contained"
+                    variant="outlined"
+                    startIcon={<ArrowBackIcon />}
+                    onClick={() => navigate("/admin/usuarios")}
+                    sx={{
+                      px: 5,
+                      borderRadius: 3
+                    }}
+                  >
+                    Voltar
+                  </Button>
+
+                  <Button
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
+                    sx={{
+                      px: 5,
+                      borderRadius: 3,
+                      background: "linear-gradient(90deg, #1976d2, #26c6da)",
+                      color: "#fff",
+                      "&:hover": {
+                        background: "linear-gradient(90deg, #1565c0, #00acc1)"
+                      }
+                    }}
                   >
-                    Criar
+                    Criar Usuário
                   </Button>
                 </Box>
 
