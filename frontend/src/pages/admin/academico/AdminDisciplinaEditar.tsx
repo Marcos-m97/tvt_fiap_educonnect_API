@@ -7,106 +7,66 @@ import {
   Button,
   CircularProgress,
   Divider,
-  Autocomplete,
   Chip
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveIcon from "@mui/icons-material/Save";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import RestoreIcon from "@mui/icons-material/Restore";
 import AppLayout from "../../../components/layout/AppLayout";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
 
-interface Curso {
+interface Turma {
   id: number;
   nome: string;
+  periodo: string;
+  semestre: string;
+  cursoId: string;
+  ativo: boolean;
 }
 
-export default function AdminDisciplinaEditar() {
+export default function AdminTurmaEditar() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [disciplina, setDisciplina] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const [turma, setTurma] = useState<Turma | null>(null);
 
-  const [cursos, setCursos] = useState<Curso[]>([]);
-  const [cursoSelecionado, setCursoSelecionado] = useState<Curso | null>(null);
-
-  async function carregarDados() {
+  async function carregarTurma() {
     try {
       setLoading(true);
-
-      const response = await api.get(`/disciplina/${id}`);
-      setDisciplina(response.data);
-
-      const cursosResponse = await api.get("/curso", {
-        params: { page: 1, pageSize: 50 }
-      });
-
-      setCursos(cursosResponse.data.data);
-
-      const cursoAtual = cursosResponse.data.data.find(
-        (c: Curso) => c.id === response.data.cursoId
-      );
-
-      setCursoSelecionado(cursoAtual || null);
-
+      const response = await api.get(`/turma/${id}`);
+      setTurma(response.data);
     } catch (error) {
-      console.error("Erro ao carregar disciplina:", error);
+      console.error("Erro ao carregar turma:", error);
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    carregarDados();
+    carregarTurma();
   }, [id]);
 
   async function handleSalvar() {
-    try {
-      setLoading(true);
+    if (!turma) return;
 
-      await api.put(`/disciplina/${id}`, {
-        nome: disciplina.nome,
-        descricao: disciplina.descricao,
-        cargaHoraria: disciplina.cargaHoraria,
-        cursoId: cursoSelecionado?.id
+    try {
+      setSaving(true);
+
+      await api.put(`/turma/${id}`, {
+        nome: turma.nome,
+        periodo: turma.periodo,
+        semestre: turma.semestre,
+        cursoId: turma.cursoId
       });
 
       navigate(-1);
 
     } catch (error) {
-      console.error("Erro ao atualizar disciplina:", error);
+      console.error("Erro ao atualizar turma:", error);
     } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleDesativar() {
-    if (!window.confirm("Deseja realmente desativar esta disciplina?")) return;
-
-    try {
-      setLoading(true);
-      await api.delete(`/disciplina/${id}`);
-      await carregarDados();
-    } catch (error) {
-      console.error("Erro ao desativar disciplina:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleReativar() {
-    try {
-      setLoading(true);
-      await api.put(`/disciplina/reativar/${id}`);
-      await carregarDados();
-    } catch (error) {
-      console.error("Erro ao reativar disciplina:", error);
-    } finally {
-      setLoading(false);
+      setSaving(false);
     }
   }
 
@@ -115,12 +75,12 @@ export default function AdminDisciplinaEditar() {
 
       <Box mb={6} textAlign="center">
         <Typography variant="h4" fontWeight={600} gutterBottom>
-          Gerenciar Disciplina
+          Gerenciar Turma
         </Typography>
 
-        {disciplina && (
+        {turma && (
           <Box mt={2}>
-            {disciplina.ativo ? (
+            {turma.ativo ? (
               <Chip label="Ativa" color="success" />
             ) : (
               <Chip label="Inativa" color="error" />
@@ -137,64 +97,47 @@ export default function AdminDisciplinaEditar() {
           </Box>
         )}
 
-        {!loading && disciplina && (
+        {!loading && turma && (
           <Card
             sx={{
               borderRadius: 4,
               boxShadow: 5,
               px: 6,
               py: 6,
-              opacity: disciplina.ativo ? 1 : 0.6 // 🔥 visual apagado
+              opacity: turma.ativo ? 1 : 0.6
             }}
           >
             <CardContent sx={{ p: 0 }}>
               <Box display="flex" flexDirection="column" gap={4}>
 
                 <TextField
-                  label="Nome da Disciplina"
-                  value={disciplina.nome}
+                  label="Nome da Turma"
+                  value={turma.nome}
                   onChange={(e) =>
-                    setDisciplina({ ...disciplina, nome: e.target.value })
+                    setTurma({ ...turma, nome: e.target.value })
                   }
                   fullWidth
-                  disabled={!disciplina.ativo}
+                  disabled={!turma.ativo}
                 />
 
                 <TextField
-                  label="Descrição"
-                  multiline
-                  rows={4}
-                  value={disciplina.descricao}
+                  label="Período"
+                  value={turma.periodo}
                   onChange={(e) =>
-                    setDisciplina({ ...disciplina, descricao: e.target.value })
+                    setTurma({ ...turma, periodo: e.target.value })
                   }
                   fullWidth
-                  disabled={!disciplina.ativo}
+                  disabled={!turma.ativo}
                 />
 
                 <TextField
-                  label="Carga Horária"
-                  type="number"
-                  value={disciplina.cargaHoraria}
+                  label="Semestre"
+                  value={turma.semestre}
                   onChange={(e) =>
-                    setDisciplina({
-                      ...disciplina,
-                      cargaHoraria: Number(e.target.value)
-                    })
+                    setTurma({ ...turma, semestre: e.target.value })
                   }
                   fullWidth
-                  disabled={!disciplina.ativo}
-                />
-
-                <Autocomplete
-                  options={cursos}
-                  getOptionLabel={(option) => option.nome}
-                  value={cursoSelecionado}
-                  onChange={(_, newValue) => setCursoSelecionado(newValue)}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Curso" fullWidth />
-                  )}
-                  disabled={!disciplina.ativo}
+                  disabled={!turma.ativo}
                 />
 
                 <Divider sx={{ my: 2 }} />
@@ -203,59 +146,30 @@ export default function AdminDisciplinaEditar() {
 
                   <Button
                     variant="outlined"
-                    startIcon={<ArrowBackIcon />}
                     onClick={() => navigate(-1)}
                   >
-                    Voltar
+                    Cancelar
                   </Button>
 
-                  {disciplina.ativo && (
-                    <>
-                      <Button
-                        startIcon={<SaveIcon />}
-                        onClick={handleSalvar}
-                        sx={{
-                          background:
-                            "linear-gradient(90deg, #1976d2, #26c6da)",
-                          color: "#fff",
-                          "&:hover": {
-                            background:
-                              "linear-gradient(90deg, #1565c0, #00acc1)"
-                          }
-                        }}
-                      >
-                        Salvar Alterações
-                      </Button>
-
-                      <Button
-                        startIcon={<DeleteOutlineIcon />}
-                        onClick={handleDesativar}
-                        sx={{
-                          background: "#d32f2f",
-                          color: "#fff",
-                          "&:hover": { background: "#b71c1c" }
-                        }}
-                      >
-                        Desativar
-                      </Button>
-                    </>
-                  )}
-
-                  {!disciplina.ativo && (
-                    <Button
-                      startIcon={<RestoreIcon />}
-                      onClick={handleReativar}
-                      sx={{
-                        background: "#2e7d32",
-                        color: "#fff",
-                        "&:hover": { background: "#1b5e20" }
-                      }}
-                    >
-                      Reativar
-                    </Button>
-                  )}
+                  <Button
+                    startIcon={<SaveIcon />}
+                    onClick={handleSalvar}
+                    disabled={!turma.ativo || saving}
+                    sx={{
+                      background:
+                        "linear-gradient(90deg, #1976d2, #26c6da)",
+                      color: "#fff",
+                      "&:hover": {
+                        background:
+                          "linear-gradient(90deg, #1565c0, #00acc1)"
+                      }
+                    }}
+                  >
+                    Salvar Alterações
+                  </Button>
 
                 </Box>
+
               </Box>
             </CardContent>
           </Card>

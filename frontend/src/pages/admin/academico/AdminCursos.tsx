@@ -84,11 +84,11 @@ export default function AdminCursos() {
       {/* HEADER */}
       <Box textAlign="center" mb={4}>
         <Typography variant="h4" gutterBottom>
-          Gestão de Cursos
+          Gestão Acadêmica
         </Typography>
 
         <Typography variant="body1" color="text.secondary">
-          Crie e gerencie os cursos da instituição.
+          Busque um curso para gerenciar turmas, disciplinas e vínculos acadêmicos.
         </Typography>
       </Box>
 
@@ -128,7 +128,7 @@ export default function AdminCursos() {
         <Button
           variant="outlined"
           startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/admin/academico")}
+          onClick={() => navigate("/admin")}
           sx={{ textTransform: "none" }}
         >
           Voltar
@@ -198,7 +198,7 @@ export default function AdminCursos() {
                             navigate(`/admin/academico/cursos/${curso.id}`)
                           }
                         >
-                          Detalhes
+                          Gerenciar
                         </Button>
 
                         <Button

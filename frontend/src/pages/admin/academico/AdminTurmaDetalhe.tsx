@@ -81,29 +81,72 @@ export default function AdminTurmaDetalhe() {
     }
   }
 
-  async function desativarTurma() {
-    if (!confirm("Deseja desativar esta turma?")) return;
+  async function carregarSelects() {
+    if (!turma) return;
 
     try {
-      await api.delete(`/turma/${turma?.id}`);
-      carregarDados();
+      const disciplinasResponse = await api.get(
+        `/disciplina/curso/${turma.cursoId}`
+      );
+
+      const professoresResponse = await api.get(`/professor`);
+
+      setDisciplinas(disciplinasResponse.data);
+      setProfessores(professoresResponse.data);
+
     } catch (error) {
-      console.error("Erro ao desativar turma:", error);
+      console.error("Erro ao carregar selects:", error);
     }
   }
 
-  async function reativarTurma() {
+  async function vincularDisciplina() {
     try {
-      await api.put(`/turma/reativar/${turma?.id}`);
+      await api.post(`/turmadisciplina`, {
+        turmaId: Number(id),
+        disciplinaId: Number(disciplinaId),
+        professorId: Number(professorId)
+      });
+
+      setOpenModal(false);
+      setDisciplinaId("");
+      setProfessorId("");
       carregarDados();
     } catch (error) {
-      console.error("Erro ao reativar turma:", error);
+      console.error("Erro ao vincular disciplina:", error);
     }
+  }
+
+  async function removerVinculo(vinculoId: number) {
+    if (!confirm("Deseja remover esta disciplina da turma?")) return;
+
+    try {
+      await api.delete(`/turmadisciplina/${vinculoId}`);
+      carregarDados();
+    } catch (error) {
+      console.error("Erro ao remover vínculo:", error);
+    }
+  }
+
+  async function desativarTurma() {
+    if (!confirm("Deseja desativar esta turma?")) return;
+    await api.delete(`/turma/${turma?.id}`);
+    carregarDados();
+  }
+
+  async function reativarTurma() {
+    await api.put(`/turma/reativar/${turma?.id}`);
+    carregarDados();
   }
 
   useEffect(() => {
     carregarDados();
   }, [id]);
+
+  useEffect(() => {
+    if (openModal) {
+      carregarSelects();
+    }
+  }, [openModal]);
 
   if (loading) {
     return (
@@ -126,7 +169,7 @@ export default function AdminTurmaDetalhe() {
   return (
     <AppLayout>
 
-      {/* HEADER PADRONIZADO */}
+      {/* HEADER PADRÃO */}
       <Box
         mb={4}
         display="flex"
@@ -141,6 +184,10 @@ export default function AdminTurmaDetalhe() {
           <Typography color="text.secondary">
             {turma.semestre} • {turma.periodo}
           </Typography>
+
+          {!turma.ativo && (
+            <Chip label="Inativa" color="error" sx={{ mt: 1 }} />
+          )}
         </Box>
 
         <Box display="flex" gap={2}>
@@ -164,21 +211,13 @@ export default function AdminTurmaDetalhe() {
         </Box>
       </Box>
 
-      <Box mt={2} mb={4}>
+      <Box mb={4}>
         {turma.ativo ? (
-          <Button
-            variant="contained"
-            color="error"
-            onClick={desativarTurma}
-          >
+          <Button variant="contained" color="error" onClick={desativarTurma}>
             Desativar Turma
           </Button>
         ) : (
-          <Button
-            variant="contained"
-            color="success"
-            onClick={reativarTurma}
-          >
+          <Button variant="contained" color="success" onClick={reativarTurma}>
             Reativar Turma
           </Button>
         )}
@@ -238,6 +277,7 @@ export default function AdminTurmaDetalhe() {
                 color="error"
                 startIcon={<DeleteIcon />}
                 disabled={!turma.ativo}
+                onClick={() => removerVinculo(v.id)}
               >
                 Remover
               </Button>
@@ -246,6 +286,57 @@ export default function AdminTurmaDetalhe() {
 
         </CardContent>
       </Card>
+
+      {/* MODAL */}
+      <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth>
+        <DialogTitle>Vincular Disciplina</DialogTitle>
+
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 2 }}>
+
+          <TextField
+            select
+            label="Disciplina"
+            value={disciplinaId}
+            onChange={(e) => setDisciplinaId(Number(e.target.value))}
+            fullWidth
+          >
+            {disciplinas.map((d) => (
+              <MenuItem key={d.id} value={d.id}>
+                {d.nome}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            select
+            label="Professor"
+            value={professorId}
+            onChange={(e) => setProfessorId(Number(e.target.value))}
+            fullWidth
+          >
+            {professores.map((p) => (
+              <MenuItem key={p.id} value={p.id}>
+                {p.nome}
+              </MenuItem>
+            ))}
+          </TextField>
+
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setOpenModal(false)}>
+            Cancelar
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={vincularDisciplina}
+            disabled={!disciplinaId || !professorId}
+          >
+            Vincular
+          </Button>
+        </DialogActions>
+      </Dialog>
 
     </AppLayout>
   );
