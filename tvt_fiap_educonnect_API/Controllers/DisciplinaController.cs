@@ -67,5 +67,14 @@ namespace EduConnect_API.Controllers
 
             return NoContent();
         }
+        [Authorize(Roles = "0,1")]
+        [HttpPut("reativar/{id}")]
+        public async Task<IActionResult> Reativar(int id)
+        {
+            var ok = await _service.Reativar(id);
+            if (!ok) return NotFound();
+
+            return NoContent();
+        }
     }
 }

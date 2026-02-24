@@ -27,7 +27,8 @@ namespace EduConnect_API.Services
                 Nome = dto.Nome,
                 Descricao = dto.Descricao,
                 CargaHoraria = dto.CargaHoraria,
-                CursoId = dto.CursoId
+                CursoId = dto.CursoId,
+                Ativo = true
             };
 
             disciplina = await _repo.Criar(disciplina);
@@ -69,9 +70,24 @@ namespace EduConnect_API.Services
             return MapToDTO(disciplina);
         }
 
-        public Task<bool> Deletar(int id)
+        // 🔥 SOFT DELETE
+        public async Task<bool> Deletar(int id)
         {
-            return _repo.Deletar(id);
+            return await _repo.Deletar(id);
+        }
+
+        // 🔥 REATIVAR
+        public async Task<bool> Reativar(int id)
+        {
+            var disciplina = await _repo.ObterPorId(id);
+            if (disciplina == null)
+                return false;
+
+            disciplina.Ativo = true;
+
+            await _repo.Atualizar(disciplina);
+
+            return true;
         }
 
         private DisciplinaDTO MapToDTO(Disciplina d)
@@ -83,7 +99,8 @@ namespace EduConnect_API.Services
                 Descricao = d.Descricao,
                 CargaHoraria = d.CargaHoraria,
                 CursoId = d.CursoId,
-                CursoNome = d.Curso?.Nome ?? string.Empty
+                CursoNome = d.Curso?.Nome ?? string.Empty,
+                Ativo = d.Ativo
             };
         }
     }

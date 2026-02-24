@@ -1,19 +1,16 @@
-﻿using System;
+﻿using EduConnect_API.Models;
 
-namespace EduConnect_API.Models
+public class Disciplina
 {
-    public class Disciplina
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string Nome { get; set; } = string.Empty;
-        public string Descricao { get; set; } = string.Empty;
+    public string Nome { get; set; } = string.Empty;
+    public string Descricao { get; set; } = string.Empty;
 
-        // Carga horária da disciplina (ex: 40h, 80h)
-        public int CargaHoraria { get; set; }
+    public int CargaHoraria { get; set; }
 
-        // FK → Curso ao qual esta disciplina pertence
-        public int CursoId { get; set; }
-        public Curso Curso { get; set; }
-    }
+    public int CursoId { get; set; }
+    public Curso Curso { get; set; }
+
+    public bool Ativo { get; set; } = true;
 }

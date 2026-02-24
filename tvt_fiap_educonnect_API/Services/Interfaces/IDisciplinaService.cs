@@ -10,5 +10,6 @@ namespace EduConnect_API.Services.Interfaces
         Task<DisciplinaDTO?> ObterPorId(int id);
         Task<DisciplinaDTO?> Atualizar(int id, CriarDisciplinaDTO dto);
         Task<bool> Deletar(int id);
+        Task<bool> Reativar(int id);
     }
 }

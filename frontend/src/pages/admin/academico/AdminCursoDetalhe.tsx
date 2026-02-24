@@ -33,6 +33,7 @@ interface Disciplina {
   id: number;
   nome: string;
   cargaHoraria: number;
+  ativo: boolean;
 }
 
 export default function AdminCursoDetalhe() {
@@ -88,7 +89,6 @@ export default function AdminCursoDetalhe() {
   return (
     <AppLayout>
 
-      {/* BOTÃO VOLTAR */}
       <Box mb={3}>
         <Button
           variant="outlined"
@@ -99,7 +99,6 @@ export default function AdminCursoDetalhe() {
         </Button>
       </Box>
 
-      {/* INFORMAÇÕES DO CURSO */}
       <Box mb={4}>
         <Typography variant="h4" gutterBottom>
           {curso.nome}
@@ -214,26 +213,58 @@ export default function AdminCursoDetalhe() {
               py={1.5}
               display="flex"
               justifyContent="space-between"
+              alignItems="center"
+              sx={{
+                opacity: disciplina.ativo ? 1 : 0.4,
+                transition: "0.3s"
+              }}
             >
               <Box>
-                <Typography fontWeight={600}>
-                  {disciplina.nome}
-                </Typography>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Typography fontWeight={600}>
+                    {disciplina.nome}
+                  </Typography>
+
+                  {!disciplina.ativo && (
+                    <Chip
+                      label="Inativa"
+                      size="small"
+                      color="error"
+                    />
+                  )}
+                </Box>
+
                 <Typography variant="body2" color="text.secondary">
                   Carga Horária: {disciplina.cargaHoraria}h
                 </Typography>
               </Box>
 
-              <Button
-                size="small"
-                onClick={() =>
-                  navigate(`/admin/academico/disciplinas/${disciplina.id}`)
-                }
-              >
-                Gerenciar
-              </Button>
+              <Box display="flex" gap={1}>
+                {disciplina.ativo ? (
+                  <Button
+                    size="small"
+                    onClick={() =>
+                      navigate(`/admin/academico/disciplinas/${disciplina.id}`)
+                    }
+                  >
+                    Gerenciar
+                  </Button>
+                ) : (
+                  <Button
+                    size="small"
+                    color="success"
+                    onClick={async () => {
+                      await api.put(`/disciplina/reativar/${disciplina.id}`);
+                      carregarDados();
+                    }}
+                  >
+                    Reativar
+                  </Button>
+                )}
+              </Box>
             </Box>
           ))}
+
         </CardContent>
       </Card>
 

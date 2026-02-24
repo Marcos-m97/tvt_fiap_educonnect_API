@@ -21,6 +21,7 @@ namespace EduConnect_API.Repositories
             return disciplina;
         }
 
+        // 🔥 RETORNA TODAS (ativas e inativas)
         public async Task<IEnumerable<Disciplina>> Listar()
         {
             return await _context.Disciplinas
@@ -28,6 +29,7 @@ namespace EduConnect_API.Repositories
                 .ToListAsync();
         }
 
+        // 🔥 NÃO FILTRA MAIS POR ATIVO
         public async Task<Disciplina?> ObterPorId(int id)
         {
             return await _context.Disciplinas
@@ -35,6 +37,7 @@ namespace EduConnect_API.Repositories
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
 
+        // 🔥 NÃO FILTRA MAIS POR ATIVO
         public async Task<IEnumerable<Disciplina>> ListarPorCurso(int cursoId)
         {
             return await _context.Disciplinas
@@ -50,14 +53,18 @@ namespace EduConnect_API.Repositories
             return disciplina;
         }
 
+        // 🔥 SOFT DELETE
         public async Task<bool> Deletar(int id)
         {
             var disciplina = await _context.Disciplinas.FindAsync(id);
             if (disciplina == null)
                 return false;
 
-            _context.Disciplinas.Remove(disciplina);
+            disciplina.Ativo = false;
+
+            _context.Disciplinas.Update(disciplina);
             await _context.SaveChangesAsync();
+
             return true;
         }
     }
