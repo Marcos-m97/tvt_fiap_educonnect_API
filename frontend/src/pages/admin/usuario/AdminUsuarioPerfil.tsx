@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
-import AppLayout from "../../components/layout/AppLayout";
+import AppLayout from "../../../components/layout/AppLayout";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { api } from "../../services/api";
+import { api } from "../../../services/api";
 
 interface Usuario {
   id: number;

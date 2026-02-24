@@ -2,15 +2,15 @@ import { createBrowserRouter } from "react-router-dom";
 
 import Login from "../pages/login/Login";
 import AdminHome from "../pages/admin/AdminHome";
-import AdminUsuarios from "../pages/admin/AdminUsuarios";
+import AdminUsuarios from "../pages/admin/usuario/AdminUsuarios";
 import ProfessorHome from "../pages/professor/ProfessorHome";
 import AlunoHome from "../pages/aluno/AlunoHome";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
-import AdminUsuarioPerfil from "../pages/admin/AdminUsuarioPerfil";
-import AdminUsuarioForm from "../pages/admin/AdminUsuarioForm";
-import AdminUsuarioEditar from "../pages/admin/AdminUsuarioEditar";
-import AdminAcademicoHome from "../pages/admin/academico/AdminAcademicoHome";
+import AdminUsuarioPerfil from "../pages/admin/usuario/AdminUsuarioPerfil";
+import AdminUsuarioForm from "../pages/admin/usuario/AdminUsuarioForm";
+import AdminUsuarioEditar from "../pages/admin/usuario/AdminUsuarioEditar";
+// import AdminAcademicoHome from "../pages/admin/academico/AdminAcademicoHome";
 import AdminCursos from "../pages/admin/academico/AdminCursos";
 import AdminCursoForm from "../pages/admin/academico/AdminCursoForm";
 import AdminCursoDetalhe from "../pages/admin/academico/AdminCursoDetalhe";
@@ -84,14 +84,14 @@ export const router = createBrowserRouter([
     ),
   },
 // 🔐 ADMIN - ESTRUTURA ACADÊMICA
-{
-  path: "/admin/academico",
-  element: (
-    <RoleGuard allowed={[0, 1]}>
-      <AdminAcademicoHome />
-    </RoleGuard>
-  ),
-},
+// {
+//   path: "/admin/academico",
+//   element: (
+//     <RoleGuard allowed={[0, 1]}>
+//       <AdminAcademicoHome />
+//     </RoleGuard>
+//   ),
+// },
 {
   path: "/admin/academico/cursos",
   element: (

@@ -24,10 +24,10 @@ export default function AdminHome() {
       route: "/admin/usuarios"
     },
     {
-      title: "Estrutura Acadêmica",
-      description: "Gerenciar cursos, disciplinas, turmas e Boletins.",
+      title: "Gestão Acadêmica",
+      description: "Gerenciar cursos, turmas e disciplinas.",
       icon: <SchoolIcon fontSize="large" />,
-      route: "/admin/academico"
+      route: "/admin/academico/cursos"
     },
     {
       title: "Matrículas",
@@ -37,7 +37,7 @@ export default function AdminHome() {
     },
     {
       title: "Eventos",
-      description: "Criar e gerenciar eventos acadêmicos",
+      description: "Criar e gerenciar eventos acadêmicos.",
       icon: <EventIcon fontSize="large" />,
       route: "/admin/eventos"
     }

@@ -13,9 +13,9 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import AppLayout from "../../components/layout/AppLayout";
+import AppLayout from "../../../components/layout/AppLayout";
 import { useEffect, useState } from "react";
-import { api } from "../../services/api";
+import { api } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
 
 interface Usuario {

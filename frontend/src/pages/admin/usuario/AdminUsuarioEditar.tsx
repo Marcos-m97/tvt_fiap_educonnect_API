@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveIcon from "@mui/icons-material/Save";
-import AppLayout from "../../components/layout/AppLayout";
+import AppLayout from "../../../components/layout/AppLayout";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { api } from "../../services/api";
+import { api } from "../../../services/api";
 
 export default function AdminUsuarioEditar() {
   const { id } = useParams();
