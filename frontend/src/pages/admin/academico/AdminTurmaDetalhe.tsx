@@ -69,7 +69,6 @@ export default function AdminTurmaDetalhe() {
   const [professores, setProfessores] = useState<Professor[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔎 Paginação e busca
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -80,12 +79,10 @@ export default function AdminTurmaDetalhe() {
   const [disciplinaId, setDisciplinaId] = useState<number | "">("");
   const [professorId, setProfessorId] = useState<number | "">("");
 
-  // ✅ Debounce para evitar perda de foco
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
     }, 500);
-
     return () => clearTimeout(timer);
   }, [search]);
 
@@ -369,7 +366,9 @@ export default function AdminTurmaDetalhe() {
                     size="small"
                     variant="outlined"
                     onClick={() =>
-                      navigate(`/admin/academico/alunos/${aluno.alunoId}`)
+                      navigate(`/admin/academico/alunos/${aluno.alunoId}`, {
+                        state: { nome: aluno.nome }
+                      })
                     }
                   >
                     Ver Detalhes
@@ -393,7 +392,7 @@ export default function AdminTurmaDetalhe() {
         </CardContent>
       </Card>
 
-      {/* MODAL (inalterado) */}
+      {/* MODAL */}
       <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth>
         <DialogTitle>Vincular Disciplina</DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 2 }}>

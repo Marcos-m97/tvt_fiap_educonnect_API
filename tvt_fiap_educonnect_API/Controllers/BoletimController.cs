@@ -40,5 +40,11 @@ namespace EduConnect_API.Controllers
             var pdf = await _service.GerarPdf(id);
             return File(pdf, "application/pdf", $"boletim-{id}.pdf");
         }
+
+        [HttpGet("preview/{alunoId}/{turmaId}")]
+        public async Task<IActionResult> Preview(int alunoId, int turmaId)
+        {
+            return Ok(await _service.Preview(alunoId, turmaId));
+        }
     }
 }

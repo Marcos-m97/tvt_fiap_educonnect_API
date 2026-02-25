@@ -8,5 +8,6 @@ namespace EduConnect_API.Services.Interfaces
         Task<BoletimDTO?> Obter(int boletimId);
         Task<IEnumerable<BoletimDTO>> ListarPorAluno(int alunoId);
         Task<byte[]> GerarPdf(int boletimId);
+        Task<BoletimDTO> Preview(int alunoId, int turmaId);
     }
 }

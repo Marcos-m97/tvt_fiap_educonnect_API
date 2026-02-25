@@ -16,7 +16,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import AppLayout from "../../../components/layout/AppLayout";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
 
@@ -40,35 +40,60 @@ interface DisciplinaBoletim {
 interface AtividadeBoletim {
   atividadeId: number;
   titulo: string;
-  nota: number;
+  nota: number | null;
   entregue: boolean;
 }
 
 export default function AdminAlunoDetalhe() {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
 
+  const nomeAluno = location.state?.nome || "";
+
   const [boletins, setBoletins] = useState<Boletim[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState<Boletim | null>(null);
+  const [loading, setLoading] = useState(true);
   const [gerando, setGerando] = useState(false);
 
   async function carregarBoletins() {
     try {
-      setLoading(true);
+      if (!id) return;
+
       const response = await api.get(`/boletins/aluno/${id}`);
       setBoletins(response.data);
     } catch (error) {
       console.error("Erro ao carregar boletins:", error);
-    } finally {
-      setLoading(false);
+    }
+  }
+
+  async function carregarPreview() {
+    try {
+      if (!id) return;
+
+      const matriculaResponse = await api.get(
+        `/matricula/aluno/${id}/ativa`
+      );
+
+      const turmaId = matriculaResponse.data.turmaId;
+
+      const response = await api.post(`/boletins`, {
+        alunoId: Number(id),
+        turmaId: turmaId
+      });
+
+      setPreview(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar preview:", error);
     }
   }
 
   async function gerarBoletim() {
     try {
+      if (!id) return;
+
       setGerando(true);
 
-      // 🔥 Buscar matrícula ativa primeiro
       const matriculaResponse = await api.get(
         `/matricula/aluno/${id}/ativa`
       );
@@ -81,6 +106,7 @@ export default function AdminAlunoDetalhe() {
       });
 
       await carregarBoletins();
+      setPreview(null);
 
     } catch (error) {
       console.error("Erro ao gerar boletim:", error);
@@ -98,7 +124,15 @@ export default function AdminAlunoDetalhe() {
   }
 
   useEffect(() => {
-    carregarBoletins();
+    async function init() {
+      await carregarBoletins();
+      if (boletins.length === 0) {
+        await carregarPreview();
+      }
+      setLoading(false);
+    }
+
+    init();
   }, [id]);
 
   if (loading) {
@@ -116,13 +150,13 @@ export default function AdminAlunoDetalhe() {
 
       {/* HEADER */}
       <Box
-        mb={4}
+        mb={2}
         display="flex"
         justifyContent="space-between"
         alignItems="center"
       >
         <Typography variant="h4">
-          Detalhes do Aluno
+          {nomeAluno}
         </Typography>
 
         <Button
@@ -134,33 +168,79 @@ export default function AdminAlunoDetalhe() {
         </Button>
       </Box>
 
-      {/* GERAR BOLETIM */}
-      <Box mb={4}>
-        <Button
-          variant="contained"
-          startIcon={<AutoFixHighIcon />}
-          onClick={gerarBoletim}
-          disabled={gerando || boletins.length > 0}
-        >
-          {gerando ? "Gerando..." : "Gerar Boletim"}
-        </Button>
-
-        {boletins.length > 0 && (
-          <Typography variant="body2" color="text.secondary" mt={1}>
-            Boletim já gerado para esta turma.
-          </Typography>
-        )}
-      </Box>
-
+      {/* LINHA LOGO APÓS O NOME */}
       <Divider sx={{ mb: 4 }} />
 
-      {/* HISTÓRICO DE BOLETINS */}
-      {boletins.length === 0 && (
-        <Typography color="text.secondary">
-          Nenhum boletim gerado para este aluno.
-        </Typography>
+      {/* PREVIEW */}
+      {preview && boletins.length === 0 && (
+        <Card sx={{ mb: 4 }}>
+          <CardContent>
+
+            <Typography variant="h6" mb={3}>
+              Notas Parciais
+            </Typography>
+
+            {preview.disciplinas.map((disciplina, index) => (
+              <Accordion key={index}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    width="100%"
+                    alignItems="center"
+                  >
+                    <Typography fontWeight={600}>
+                      {disciplina.nomeDisciplina}
+                    </Typography>
+
+                    <Chip
+                      label={`Média atual: ${disciplina.media.toFixed(1)}`}
+                      color="primary"
+                      size="small"
+                    />
+                  </Box>
+                </AccordionSummary>
+
+                <AccordionDetails>
+                  {disciplina.atividades.map((atividade) => (
+                    <Box
+                      key={atividade.atividadeId}
+                      display="flex"
+                      justifyContent="space-between"
+                      mb={1}
+                    >
+                      <Typography>
+                        {atividade.titulo}
+                      </Typography>
+
+                      <Typography>
+                        Nota: {atividade.nota ?? "-"}
+                      </Typography>
+                    </Box>
+                  ))}
+                </AccordionDetails>
+              </Accordion>
+            ))}
+
+          </CardContent>
+        </Card>
       )}
 
+      {/* BOTÃO GERAR */}
+      {boletins.length === 0 && (
+        <Box mb={4}>
+          <Button
+            variant="contained"
+            startIcon={<AutoFixHighIcon />}
+            onClick={gerarBoletim}
+            disabled={gerando}
+          >
+            {gerando ? "Gerando..." : "Gerar Boletim"}
+          </Button>
+        </Box>
+      )}
+
+      {/* BOLETIM GERADO */}
       {boletins.map((boletim) => (
         <Card key={boletim.id} sx={{ mb: 4 }}>
           <CardContent>
@@ -173,7 +253,7 @@ export default function AdminAlunoDetalhe() {
             >
               <Box>
                 <Typography fontWeight={600}>
-                  Boletim - Turma {boletim.turmaId}
+                  Boletim {nomeAluno}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Gerado em {new Date(boletim.geradoEm).toLocaleString()}
@@ -202,7 +282,7 @@ export default function AdminAlunoDetalhe() {
                       {disciplina.nomeDisciplina}
                     </Typography>
 
-                    <Box display="flex" gap={2} alignItems="center">
+                    <Box display="flex" gap={2}>
                       <Chip
                         label={`Média: ${disciplina.media}`}
                         color="primary"

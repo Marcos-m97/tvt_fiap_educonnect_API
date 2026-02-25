@@ -1,13 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import Login from "../pages/login/Login";
-import AdminHome from "../pages/admin/AdminHome";
-import AdminUsuarios from "../pages/admin/usuario/AdminUsuarios";
-import ProfessorHome from "../pages/professor/ProfessorHome";
-import AlunoHome from "../pages/aluno/AlunoHome";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 
+import AdminHome from "../pages/admin/AdminHome";
+import AdminUsuarios from "../pages/admin/usuario/AdminUsuarios";
 import AdminUsuarioPerfil from "../pages/admin/usuario/AdminUsuarioPerfil";
 import AdminUsuarioForm from "../pages/admin/usuario/AdminUsuarioForm";
 import AdminUsuarioEditar from "../pages/admin/usuario/AdminUsuarioEditar";
@@ -29,13 +27,18 @@ import AdminAlunoDetalhe from "../pages/admin/academico/AdminAlunoDetalhe";
 import AdminMatriculas from "../pages/admin/matriculas/AdminMatriculas";
 import AdminMatriculaDetalhe from "../pages/admin/matriculas/AdminMatriculaDetalhe";
 
+import ProfessorHome from "../pages/professor/ProfessorHome";
+import AlunoHome from "../pages/aluno/AlunoHome";
+
 import EventosPage from "../pages/eventos/EventosPage";
 
 import RoleGuard from "../guards/RoleGuard";
 
 export const router = createBrowserRouter([
 
+  // =========================
   // 🔓 ROTAS PÚBLICAS
+  // =========================
   {
     path: "/login",
     element: <Login />,
@@ -49,7 +52,9 @@ export const router = createBrowserRouter([
     element: <ResetPassword />,
   },
 
-  // 🔐 ADMIN (roles 0 e 1)
+  // =========================
+  // 🔐 ADMIN (0 = SuperAdmin | 1 = Admin)
+  // =========================
   {
     path: "/admin",
     element: (
@@ -67,8 +72,6 @@ export const router = createBrowserRouter([
       </RoleGuard>
     ),
   },
-
-  // 🔹 Usuários (rotas mais específicas primeiro)
   {
     path: "/admin/usuarios/novo",
     element: (
@@ -94,7 +97,7 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // 🔹 Acadêmico - Cursos
+  // Acadêmico
   {
     path: "/admin/academico/cursos",
     element: (
@@ -128,7 +131,6 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // 🔹 Acadêmico - Turmas
   {
     path: "/admin/academico/turmas/novo",
     element: (
@@ -154,7 +156,6 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // 🔹 Acadêmico - Disciplinas
   {
     path: "/admin/academico/disciplinas/novo",
     element: (
@@ -172,7 +173,6 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // 🔹 Acadêmico - Aluno Detalhe
   {
     path: "/admin/academico/alunos/:id",
     element: (
@@ -181,7 +181,8 @@ export const router = createBrowserRouter([
       </RoleGuard>
     ),
   },
-    // 🔹 Matrículas
+
+  // Matrículas
   {
     path: "/admin/matriculas",
     element: (
@@ -191,44 +192,51 @@ export const router = createBrowserRouter([
     ),
   },
   {
-  path: "/admin/matriculas/:id",
-  element: (
-    <RoleGuard allowed={[0, 1]}>
-      <AdminMatriculaDetalhe />
-    </RoleGuard>
-  ),
-  
-},
-// 🔐 EVENTOS - ADMIN
-{
-  path: "/admin/eventos",
-  element: (
-    <RoleGuard allowed={[0, 1]}>
-      <EventosPage />
-    </RoleGuard>
-  ),
-},
+    path: "/admin/matriculas/:id",
+    element: (
+      <RoleGuard allowed={[0, 1]}>
+        <AdminMatriculaDetalhe />
+      </RoleGuard>
+    ),
+  },
 
-// 🔐 EVENTOS - PROFESSOR
-{
-  path: "/professor/eventos",
-  element: (
-    <RoleGuard allowed={[2]}>
-      <EventosPage />
-    </RoleGuard>
-  ),
-},
+  // =========================
+  // 📅 EVENTOS
+  // =========================
 
-// 🔐 EVENTOS - ALUNO
-{
-  path: "/aluno/eventos",
-  element: (
-    <RoleGuard allowed={[3]}>
-      <EventosPage />
-    </RoleGuard>
-  ),
-},
-  // 🔐 PROFESSOR (role 2)
+  // Admin
+  {
+    path: "/admin/eventos",
+    element: (
+      <RoleGuard allowed={[0, 1]}>
+        <EventosPage />
+      </RoleGuard>
+    ),
+  },
+
+  // Professor
+  {
+    path: "/professor/eventos",
+    element: (
+      <RoleGuard allowed={[2]}>
+        <EventosPage />
+      </RoleGuard>
+    ),
+  },
+
+  // Aluno
+  {
+    path: "/aluno/eventos",
+    element: (
+      <RoleGuard allowed={[3]}>
+        <EventosPage />
+      </RoleGuard>
+    ),
+  },
+
+  // =========================
+  // 🔐 PROFESSOR
+  // =========================
   {
     path: "/professor",
     element: (
@@ -238,7 +246,9 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // 🔐 ALUNO (role 3)
+  // =========================
+  // 🔐 ALUNO
+  // =========================
   {
     path: "/aluno",
     element: (
@@ -248,7 +258,9 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // fallback
+  // =========================
+  // Fallback
+  // =========================
   {
     path: "*",
     element: <Login />,

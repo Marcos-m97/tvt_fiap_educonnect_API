@@ -189,5 +189,91 @@ namespace EduConnect_API.Services
                 }).ToList()
             };
         }
+        public async Task<BoletimDTO> Preview(int alunoId, int turmaId)
+        {
+            var turmaDisciplinas = await _context.TurmaDisciplinas
+                .Where(td => td.TurmaId == turmaId)
+                .Include(td => td.Disciplina)
+                .ToListAsync();
+
+            if (!turmaDisciplinas.Any())
+                throw new Exception("Nenhuma disciplina vinculada a esta turma.");
+
+            var boletim = new Boletim
+            {
+                AlunoId = alunoId,
+                TurmaId = turmaId,
+                GeradoEm = DateTime.Now
+            };
+
+            foreach (var td in turmaDisciplinas)
+            {
+                var atividades = await _context.Atividades
+                    .Where(a => a.TurmaDisciplinaId == td.Id)
+                    .ToListAsync();
+
+                double somaNotas = 0;
+                int totalAtividades = atividades.Count;
+                int atividadesComEntrega = 0;
+
+                var boletimDisciplina = new BoletimDisciplina
+                {
+                    NomeDisciplina = td.Disciplina.Nome,
+                    TotalAtividades = totalAtividades
+                };
+
+                foreach (var atv in atividades)
+                {
+                    var entrega = await _context.EntregasAtividades
+                        .FirstOrDefaultAsync(e =>
+                            e.AtividadeId == atv.Id &&
+                            e.AlunoId == alunoId
+                        );
+
+                    if (entrega != null)
+                    {
+                        somaNotas += (double)(entrega.Nota ?? 0);
+                        atividadesComEntrega++;
+                    }
+
+                    boletimDisciplina.Atividades.Add(new BoletimAtividade
+                    {
+                        AtividadeId = atv.Id,
+                        Titulo = atv.Titulo,
+                        Nota = entrega?.Nota.HasValue == true
+                    ? (double?)entrega.Nota.Value
+                    : null,
+                                    Entregue = entrega != null
+                                });
+                }
+
+                double media = 0;
+                string situacao;
+
+                if (totalAtividades == 0)
+                {
+                    situacao = "Sem Avaliação";
+                }
+                else
+                {
+                    media = somaNotas / totalAtividades;
+
+                    if (atividadesComEntrega == 0)
+                        situacao = "Cursando";
+                    else if (media >= 6)
+                        situacao = "Aprovado";
+                    else
+                        situacao = "Reprovado";
+                }
+
+                boletimDisciplina.Nota = somaNotas;
+                boletimDisciplina.Media = media;
+                boletimDisciplina.Situacao = situacao;
+
+                boletim.Disciplinas.Add(boletimDisciplina);
+            }
+
+            return MapToDTO(boletim);
+        }
     }
 }
