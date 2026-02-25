@@ -29,6 +29,8 @@ import AdminAlunoDetalhe from "../pages/admin/academico/AdminAlunoDetalhe";
 import AdminMatriculas from "../pages/admin/matriculas/AdminMatriculas";
 import AdminMatriculaDetalhe from "../pages/admin/matriculas/AdminMatriculaDetalhe";
 
+import EventosPage from "../pages/eventos/EventosPage";
+
 import RoleGuard from "../guards/RoleGuard";
 
 export const router = createBrowserRouter([
@@ -193,6 +195,36 @@ export const router = createBrowserRouter([
   element: (
     <RoleGuard allowed={[0, 1]}>
       <AdminMatriculaDetalhe />
+    </RoleGuard>
+  ),
+  
+},
+// 🔐 EVENTOS - ADMIN
+{
+  path: "/admin/eventos",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <EventosPage />
+    </RoleGuard>
+  ),
+},
+
+// 🔐 EVENTOS - PROFESSOR
+{
+  path: "/professor/eventos",
+  element: (
+    <RoleGuard allowed={[2]}>
+      <EventosPage />
+    </RoleGuard>
+  ),
+},
+
+// 🔐 EVENTOS - ALUNO
+{
+  path: "/aluno/eventos",
+  element: (
+    <RoleGuard allowed={[3]}>
+      <EventosPage />
     </RoleGuard>
   ),
 },

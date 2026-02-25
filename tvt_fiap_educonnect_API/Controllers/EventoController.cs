@@ -17,17 +17,22 @@ namespace EduConnect_API.Controllers
             _service = service;
         }
 
-        // Criar evento (professores, admins, superadmin)
+        // =========================================================
+        // CRIAR EVENTO
+        // =========================================================
         [Authorize(Roles = "0,1,2")]
         [HttpPost]
         public async Task<IActionResult> Criar(CriarEventoDTO dto)
         {
             var criadorId = int.Parse(User.FindFirst("id")!.Value);
+
             var evento = await _service.Criar(criadorId, dto);
             return Ok(evento);
         }
 
-        // Listar todos
+        // =========================================================
+        // LISTAR TODOS
+        // =========================================================
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Listar()
@@ -35,7 +40,9 @@ namespace EduConnect_API.Controllers
             return Ok(await _service.Listar());
         }
 
-        // Obter por ID
+        // =========================================================
+        // OBTER POR ID
+        // =========================================================
         [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> Obter(int id)
@@ -44,7 +51,9 @@ namespace EduConnect_API.Controllers
             return evento == null ? NotFound() : Ok(evento);
         }
 
-        // Listar eventos por turma
+        // =========================================================
+        // LISTAR POR TURMA
+        // =========================================================
         [Authorize]
         [HttpGet("turma/{turmaId}")]
         public async Task<IActionResult> ListarPorTurma(int turmaId)
@@ -52,32 +61,45 @@ namespace EduConnect_API.Controllers
             return Ok(await _service.ListarPorTurma(turmaId));
         }
 
-        // Atualizar
+        // =========================================================
+        // ATUALIZAR
+        // =========================================================
         [Authorize(Roles = "0,1,2")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Atualizar(int id, CriarEventoDTO dto)
         {
-            var evento = await _service.Atualizar(id, dto);
+            var usuarioId = int.Parse(User.FindFirst("id")!.Value);
+            var role = User.FindFirst(ClaimTypes.Role)!.Value;
+
+            var evento = await _service.Atualizar(id, usuarioId, role, dto);
+
             return evento == null ? NotFound() : Ok(evento);
         }
 
         // =========================================================
-        // EVENTOS DO ALUNO (via token)
+        // EVENTOS DO ALUNO
         // =========================================================
         [Authorize]
         [HttpGet("meus")]
         public async Task<IActionResult> ListarMeusEventos()
         {
             var usuarioId = int.Parse(User.FindFirst("id")!.Value);
+
             return Ok(await _service.ListarMeusEventos(usuarioId));
         }
 
-        // Deletar
-        [Authorize(Roles = "0,1")]
+        // =========================================================
+        // DELETAR
+        // =========================================================
+        [Authorize(Roles = "0,1,2")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Deletar(int id)
         {
-            var ok = await _service.Deletar(id);
+            var usuarioId = int.Parse(User.FindFirst("id")!.Value);
+            var role = User.FindFirst(ClaimTypes.Role)!.Value;
+
+            var ok = await _service.Deletar(id, usuarioId, role);
+
             return ok ? NoContent() : NotFound();
         }
     }

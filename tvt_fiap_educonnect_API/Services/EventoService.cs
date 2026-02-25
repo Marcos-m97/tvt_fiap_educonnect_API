@@ -35,13 +35,15 @@ namespace EduConnect_API.Services
             if (dto.TurmaId != null)
             {
                 var turma = await _turmas.ObterPorId(dto.TurmaId.Value);
-                if (turma == null) throw new Exception("Turma não encontrada.");
+                if (turma == null)
+                    throw new Exception("Turma não encontrada.");
             }
 
             if (dto.TurmaDisciplinaId != null)
             {
                 var td = await _tdRepo.ObterPorId(dto.TurmaDisciplinaId.Value);
-                if (td == null) throw new Exception("TurmaDisciplina não encontrada.");
+                if (td == null)
+                    throw new Exception("TurmaDisciplina não encontrada.");
             }
 
             var evento = new Evento
@@ -61,7 +63,7 @@ namespace EduConnect_API.Services
         }
 
         // =========================================================
-        // EVENTOS DO ALUNO (PAINEL / CALENDÁRIO)
+        // EVENTOS DO ALUNO
         // =========================================================
         public async Task<IEnumerable<EventoDTO>> ListarMeusEventos(int usuarioId)
         {
@@ -95,12 +97,31 @@ namespace EduConnect_API.Services
         }
 
         // =========================================================
-        // ATUALIZAR
+        // ATUALIZAR (COM VALIDAÇÃO DE PERMISSÃO)
         // =========================================================
-        public async Task<EventoDTO?> Atualizar(int id, CriarEventoDTO dto)
+        public async Task<EventoDTO?> Atualizar(int id, int usuarioId, string role, CriarEventoDTO dto)
         {
             var e = await _repo.Obter(id);
-            if (e == null) return null;
+            if (e == null)
+                return null;
+
+            // Se for professor (role 2), só pode editar o próprio evento
+            if (role == "2" && e.CriadoPorId != usuarioId)
+                throw new Exception("Você não tem permissão para editar este evento.");
+
+            if (dto.TurmaId != null)
+            {
+                var turma = await _turmas.ObterPorId(dto.TurmaId.Value);
+                if (turma == null)
+                    throw new Exception("Turma não encontrada.");
+            }
+
+            if (dto.TurmaDisciplinaId != null)
+            {
+                var td = await _tdRepo.ObterPorId(dto.TurmaDisciplinaId.Value);
+                if (td == null)
+                    throw new Exception("TurmaDisciplina não encontrada.");
+            }
 
             e.Titulo = dto.Titulo;
             e.Descricao = dto.Descricao;
@@ -114,7 +135,21 @@ namespace EduConnect_API.Services
             return MapToDTO(e);
         }
 
-        public Task<bool> Deletar(int id) => _repo.Deletar(id);
+        // =========================================================
+        // DELETAR (COM VALIDAÇÃO DE PERMISSÃO)
+        // =========================================================
+        public async Task<bool> Deletar(int id, int usuarioId, string role)
+        {
+            var e = await _repo.Obter(id);
+            if (e == null)
+                return false;
+
+            // Professor só pode deletar o próprio
+            if (role == "2" && e.CriadoPorId != usuarioId)
+                throw new Exception("Você não tem permissão para deletar este evento.");
+
+            return await _repo.Deletar(id);
+        }
 
         // =========================================================
         // MAP
