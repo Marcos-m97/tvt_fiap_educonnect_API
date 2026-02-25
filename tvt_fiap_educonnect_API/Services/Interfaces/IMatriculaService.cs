@@ -8,6 +8,11 @@ namespace EduConnect_API.Services.Interfaces
         Task<MatriculaDTO> Criar(int alunoId, CriarMatriculaDTO dto);
         Task<MatriculaDTO?> ObterPorId(int id);
         Task<IEnumerable<MatriculaDTO>> Listar();
+        Task<PagedResultCommonDTO<MatriculaDTO>> ListarPaginado(
+        int page,
+        int pageSize,
+        string? search,
+        MatriculaStatus? status);
         Task<IEnumerable<MatriculaDTO>> ListarPorAluno(int alunoId);
         Task<IEnumerable<MatriculaDTO>> ListarPorTurma(int turmaId);
         Task<MatriculaDTO?> AtualizarStatus(int id, MatriculaStatus novoStatus);
@@ -24,5 +29,6 @@ namespace EduConnect_API.Services.Interfaces
         Task<byte[]?> BaixarComprovante(int id);
         Task<byte[]?> BaixarDocumentosPessoais(int id);
         Task<byte[]?> BaixarDocumentosEscolaridade(int id);
+        Task<MatriculaDTO?> ObterAtivaPorAlunoId(int alunoId);
     }
 }

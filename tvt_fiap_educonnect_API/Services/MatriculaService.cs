@@ -2,6 +2,7 @@
 using EduConnect_API.Models.DTOs;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduConnect_API.Services
 {
@@ -264,6 +265,39 @@ Bem-vindo(a) à EduConnect!
                 totalCount,
                 page,
                 pageSize
+            };
+        }
+        // ==============================================================
+        // LISTAR MATRICULAS ATIVAS (PROFESSOR / ADM)
+        // ==============================================================
+        public async Task<MatriculaDTO?> ObterAtivaPorAlunoId(int alunoId)
+        {
+            var m = await _repo.ObterAtivaPorAlunoId(alunoId);
+            if (m == null) return null;
+
+            return MapToDTO(m, m.Aluno.Usuario.Nome, m.Turma.Nome);
+        }
+        // ==============================================================
+        // LISTAR PAGINADO (PROFESSOR / ADM)
+        // ==============================================================
+        public async Task<PagedResultCommonDTO<MatriculaDTO>> ListarPaginado(
+      int page,
+      int pageSize,
+      string? search,
+      MatriculaStatus? status)
+        {
+            var (items, totalCount) =
+                await _repo.ListarPaginado(page, pageSize, search, status);
+
+            var data = items.Select(m =>
+                MapToDTO(m, m.Aluno.Usuario.Nome, m.Turma.Nome));
+
+            return new PagedResultCommonDTO<MatriculaDTO>
+            {
+                Data = data,
+                Total = totalCount,
+                Page = page,
+                PageSize = pageSize
             };
         }
 

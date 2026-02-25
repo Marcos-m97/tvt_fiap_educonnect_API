@@ -120,5 +120,37 @@ namespace EduConnect_API.Repositories
                     m.AlunoId == alunoId &&
                     m.Status == MatriculaStatus.Efetivada);
         }
+        public async Task<(IEnumerable<Matricula> Items, int TotalCount)>
+    ListarPaginado(int page, int pageSize, string? search, MatriculaStatus? status)
+        {
+            var query = _context.Matriculas
+                .Include(m => m.Aluno)
+                    .ThenInclude(a => a.Usuario)
+                .Include(m => m.Turma)
+                .AsQueryable();
+
+            // 🔎 filtro por nome do aluno
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(m =>
+                    m.Aluno.Usuario.Nome.Contains(search));
+            }
+
+            // 🔎 filtro por status
+            if (status.HasValue)
+            {
+                query = query.Where(m => m.Status == status.Value);
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(m => m.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
     }
 }

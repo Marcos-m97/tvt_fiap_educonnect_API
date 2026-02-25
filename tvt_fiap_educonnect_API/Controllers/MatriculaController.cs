@@ -45,13 +45,24 @@ namespace EduConnect_API.Controllers
         }
 
         // =========================================================
-        // 3. Listar todas as matrículas (somente Admin ou SuperAdmin)
+        // 3. Listar matrículas paginado com filtros (Admin)
         // =========================================================
         [Authorize(Roles = "0,1")]
         [HttpGet]
-        public async Task<IActionResult> Listar()
+        public async Task<IActionResult> Listar(
+            int page = 1,
+            int pageSize = 10,
+            string? search = null,
+            MatriculaStatus? status = null)
         {
-            return Ok(await _service.Listar());
+            var result = await _service.ListarPaginado(
+                page,
+                pageSize,
+                search,
+                status
+            );
+
+            return Ok(result);
         }
 
         // =========================================================
@@ -175,6 +186,16 @@ namespace EduConnect_API.Controllers
                 turmaId, page, pageSize, search);
 
             return Ok(result);
+        }
+        [Authorize(Roles = "0,1")]
+        [HttpGet("aluno/{alunoId}/ativa")]
+        public async Task<IActionResult> ObterMatriculaAtiva(int alunoId)
+        {
+            var matricula = await _service.ObterAtivaPorAlunoId(alunoId);
+            if (matricula == null)
+                return NotFound();
+
+            return Ok(matricula);
         }
 
     }

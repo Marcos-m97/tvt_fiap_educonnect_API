@@ -72,12 +72,22 @@ export default function AdminTurmaDetalhe() {
   // 🔎 Paginação e busca
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const pageSize = 5;
   const [totalCount, setTotalCount] = useState(0);
 
   const [openModal, setOpenModal] = useState(false);
   const [disciplinaId, setDisciplinaId] = useState<number | "">("");
   const [professorId, setProfessorId] = useState<number | "">("");
+
+  // ✅ Debounce para evitar perda de foco
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   function getStatusLabel(status: number) {
     switch (status) {
@@ -109,7 +119,7 @@ export default function AdminTurmaDetalhe() {
           params: {
             page,
             pageSize,
-            search
+            search: debouncedSearch
           }
         }
       );
@@ -185,23 +195,13 @@ export default function AdminTurmaDetalhe() {
 
   useEffect(() => {
     carregarDados();
-  }, [id, page, search]);
+  }, [id, page, debouncedSearch]);
 
   useEffect(() => {
     if (openModal) {
       carregarSelects();
     }
   }, [openModal]);
-
-  if (loading) {
-    return (
-      <AppLayout>
-        <Box display="flex" justifyContent="center" py={6}>
-          <CircularProgress />
-        </Box>
-      </AppLayout>
-    );
-  }
 
   if (!turma) {
     return (
@@ -264,7 +264,6 @@ export default function AdminTurmaDetalhe() {
       {/* DISCIPLINAS */}
       <Card>
         <CardContent>
-
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
             <Typography variant="h6">
               Disciplinas da Turma
@@ -306,7 +305,6 @@ export default function AdminTurmaDetalhe() {
               </Button>
             </Box>
           ))}
-
         </CardContent>
       </Card>
 
@@ -330,13 +328,19 @@ export default function AdminTurmaDetalhe() {
             />
           </Box>
 
-          {alunos.length === 0 && (
+          {loading && (
+            <Box display="flex" justifyContent="center" py={3}>
+              <CircularProgress size={24} />
+            </Box>
+          )}
+
+          {!loading && alunos.length === 0 && (
             <Typography variant="body2" color="text.secondary">
               Nenhum aluno encontrado.
             </Typography>
           )}
 
-          {alunos.map((aluno) => {
+          {!loading && alunos.map((aluno) => {
             const statusInfo = getStatusLabel(aluno.status);
 
             return (
@@ -389,10 +393,9 @@ export default function AdminTurmaDetalhe() {
         </CardContent>
       </Card>
 
-      {/* MODAL */}
+      {/* MODAL (inalterado) */}
       <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth>
         <DialogTitle>Vincular Disciplina</DialogTitle>
-
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 2 }}>
           <TextField
             select
