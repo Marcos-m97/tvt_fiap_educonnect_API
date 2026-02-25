@@ -28,6 +28,8 @@ import AdminMatriculas from "../pages/admin/matriculas/AdminMatriculas";
 import AdminMatriculaDetalhe from "../pages/admin/matriculas/AdminMatriculaDetalhe";
 
 import ProfessorHome from "../pages/professor/ProfessorHome";
+import ProfessorAcademico from "../pages/professor/academico/ProfessorAcademico";
+
 import AlunoHome from "../pages/aluno/AlunoHome";
 
 import EventosPage from "../pages/eventos/EventosPage";
@@ -97,7 +99,9 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // Acadêmico
+  // =========================
+  // 🎓 ADMIN ACADÊMICO
+  // =========================
   {
     path: "/admin/academico/cursos",
     element: (
@@ -182,7 +186,9 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // Matrículas
+  // =========================
+  // 📄 MATRÍCULAS
+  // =========================
   {
     path: "/admin/matriculas",
     element: (
@@ -204,7 +210,6 @@ export const router = createBrowserRouter([
   // 📅 EVENTOS
   // =========================
 
-  // Admin
   {
     path: "/admin/eventos",
     element: (
@@ -214,7 +219,6 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // Professor
   {
     path: "/professor/eventos",
     element: (
@@ -224,7 +228,6 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // Aluno
   {
     path: "/aluno/eventos",
     element: (
@@ -237,6 +240,7 @@ export const router = createBrowserRouter([
   // =========================
   // 🔐 PROFESSOR
   // =========================
+
   {
     path: "/professor",
     element: (
@@ -246,9 +250,31 @@ export const router = createBrowserRouter([
     ),
   },
 
+  {
+    path: "/professor/academico",
+    element: (
+      <RoleGuard allowed={[2]}>
+        <ProfessorAcademico />
+      </RoleGuard>
+    ),
+  },
+
+  // FUTURA TELA DETALHE DA TURMA
+  /*
+  {
+    path: "/professor/turma/:turmaDisciplinaId",
+    element: (
+      <RoleGuard allowed={[2]}>
+        <ProfessorTurmaDetalhe />
+      </RoleGuard>
+    ),
+  },
+  */
+
   // =========================
   // 🔐 ALUNO
   // =========================
+
   {
     path: "/aluno",
     element: (
@@ -261,6 +287,7 @@ export const router = createBrowserRouter([
   // =========================
   // Fallback
   // =========================
+
   {
     path: "*",
     element: <Login />,
