@@ -27,6 +27,7 @@ import AdminDisciplinaEditar from "../pages/admin/academico/AdminDisciplinaEdita
 import AdminAlunoDetalhe from "../pages/admin/academico/AdminAlunoDetalhe";
 
 import AdminMatriculas from "../pages/admin/matriculas/AdminMatriculas";
+import AdminMatriculaDetalhe from "../pages/admin/matriculas/AdminMatriculaDetalhe";
 
 import RoleGuard from "../guards/RoleGuard";
 
@@ -187,6 +188,14 @@ export const router = createBrowserRouter([
       </RoleGuard>
     ),
   },
+  {
+  path: "/admin/matriculas/:id",
+  element: (
+    <RoleGuard allowed={[0, 1]}>
+      <AdminMatriculaDetalhe />
+    </RoleGuard>
+  ),
+},
   // 🔐 PROFESSOR (role 2)
   {
     path: "/professor",
