@@ -45,54 +45,83 @@ export default function AdminHome() {
 
   return (
     <AppLayout>
-      <Typography variant="h4" gutterBottom>
-        Painel do Administrador
-      </Typography>
+      <Box maxWidth="1000px" mx="auto">
 
-      <Box
-        mt={3}
-        display="grid"
-        gridTemplateColumns={{
-          xs: "1fr",
-          md: "1fr 1fr"
-        }}
-        gap={3}
-      >
-        {cards.map((card, index) => (
-          <Card
-            key={index}
+        {/* HEADER CENTRALIZADO */}
+        <Box textAlign="center" mb={6}>
+          <Typography
+            variant="h3"
             sx={{
-              height: "100%",
-              transition: "0.2s",
-              "&:hover": {
-                boxShadow: 6,
-                transform: "translateY(-4px)"
-              }
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+              mb: 2
             }}
           >
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={2}>
-                {card.icon}
-                <Typography variant="h6">
-                  {card.title}
+            Painel do{" "}
+            <Box component="span" sx={{ color: "primary.main" }}>
+              Administrador
+            </Box>
+          </Typography>
+
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{
+              fontWeight: 400,
+              maxWidth: "600px",
+              mx: "auto"
+            }}
+          >
+            Gerencie usuários, cursos, matrículas e eventos acadêmicos.
+          </Typography>
+        </Box>
+
+        {/* GRID DE CARDS */}
+        <Box
+          display="grid"
+          gridTemplateColumns={{
+            xs: "1fr",
+            md: "1fr 1fr"
+          }}
+          gap={3}
+        >
+          {cards.map((card, index) => (
+            <Card
+              key={index}
+              sx={{
+                height: "100%",
+                transition: "0.2s",
+                "&:hover": {
+                  boxShadow: 6,
+                  transform: "translateY(-4px)"
+                }
+              }}
+            >
+              <CardContent>
+                <Box display="flex" alignItems="center" gap={2}>
+                  {card.icon}
+                  <Typography variant="h6">
+                    {card.title}
+                  </Typography>
+                </Box>
+
+                <Typography variant="body2" mt={2}>
+                  {card.description}
                 </Typography>
-              </Box>
+              </CardContent>
 
-              <Typography variant="body2" mt={2}>
-                {card.description}
-              </Typography>
-            </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  onClick={() => navigate(card.route)}
+                >
+                  Acessar
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </Box>
 
-            <CardActions>
-              <Button
-                size="small"
-                onClick={() => navigate(card.route)}
-              >
-                Acessar
-              </Button>
-            </CardActions>
-          </Card>
-        ))}
       </Box>
     </AppLayout>
   );

@@ -67,6 +67,7 @@ export default function AdminAlunoDetalhe() {
     }
   }
 
+  // ✅ CORREÇÃO AQUI
   async function carregarPreview() {
     try {
       if (!id) return;
@@ -77,10 +78,10 @@ export default function AdminAlunoDetalhe() {
 
       const turmaId = matriculaResponse.data.turmaId;
 
-      const response = await api.post(`/boletins`, {
-        alunoId: Number(id),
-        turmaId: turmaId
-      });
+      // 🔥 AGORA USA GET /preview
+      const response = await api.get(
+        `/boletins/preview/${id}/${turmaId}`
+      );
 
       setPreview(response.data);
     } catch (error) {
@@ -126,9 +127,13 @@ export default function AdminAlunoDetalhe() {
   useEffect(() => {
     async function init() {
       await carregarBoletins();
-      if (boletins.length === 0) {
+
+      // 🔥 pequena melhoria para evitar dependência stale
+      const lista = await api.get(`/boletins/aluno/${id}`);
+      if (lista.data.length === 0) {
         await carregarPreview();
       }
+
       setLoading(false);
     }
 
@@ -147,7 +152,6 @@ export default function AdminAlunoDetalhe() {
 
   return (
     <AppLayout>
-
       {/* HEADER */}
       <Box
         mb={2}
@@ -168,14 +172,12 @@ export default function AdminAlunoDetalhe() {
         </Button>
       </Box>
 
-      {/* LINHA LOGO APÓS O NOME */}
       <Divider sx={{ mb: 4 }} />
 
       {/* PREVIEW */}
       {preview && boletins.length === 0 && (
         <Card sx={{ mb: 4 }}>
           <CardContent>
-
             <Typography variant="h6" mb={3}>
               Notas Parciais
             </Typography>
@@ -221,7 +223,6 @@ export default function AdminAlunoDetalhe() {
                 </AccordionDetails>
               </Accordion>
             ))}
-
           </CardContent>
         </Card>
       )}
@@ -244,7 +245,6 @@ export default function AdminAlunoDetalhe() {
       {boletins.map((boletim) => (
         <Card key={boletim.id} sx={{ mb: 4 }}>
           <CardContent>
-
             <Box
               display="flex"
               justifyContent="space-between"
@@ -321,11 +321,9 @@ export default function AdminAlunoDetalhe() {
                 </AccordionDetails>
               </Accordion>
             ))}
-
           </CardContent>
         </Card>
       ))}
-
     </AppLayout>
   );
 }

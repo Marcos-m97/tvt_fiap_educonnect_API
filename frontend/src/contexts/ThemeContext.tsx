@@ -1,7 +1,7 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState, useEffect } from "react";
 import { ThemeProvider } from "@mui/material";
 import { darkTheme } from "../app/theme";
-import { lightTheme } from "../app/theme.light"; // criaremos já
+import { lightTheme } from "../app/theme.light";
 
 type ThemeMode = "light" | "dark";
 
@@ -25,6 +25,12 @@ export function ThemeProviderApp({ children }: { children: React.ReactNode }) {
     });
   };
 
+  // 👇 ADICIONADO — aplica classe no body
+  useEffect(() => {
+    document.body.classList.remove("light", "dark");
+    document.body.classList.add(mode);
+  }, [mode]);
+
   const theme = useMemo(
     () => (mode === "dark" ? darkTheme : lightTheme),
     [mode]
@@ -39,6 +45,7 @@ export function ThemeProviderApp({ children }: { children: React.ReactNode }) {
 
 export const useThemeApp = () => {
   const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error("useThemeApp must be used within ThemeProviderApp");
+  if (!ctx)
+    throw new Error("useThemeApp must be used within ThemeProviderApp");
   return ctx;
 };

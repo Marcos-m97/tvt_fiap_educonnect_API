@@ -8,3 +8,83 @@ html, body, #root {
   height: 100%;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ==========================================
+   FULLCALENDAR - PADRÃO VISUAL EDUCONNECT
+   ========================================== */
+
+/* Remove fundo padrão */
+.fc {
+  background: transparent;
+}
+
+/* Arredondamento da grade */
+.fc .fc-scrollgrid {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* =========================
+   BOTÕES PADRÃO DA APP
+   ========================= */
+
+.fc .fc-button {
+  border-radius: 12px;
+  padding: 6px 14px;
+  font-weight: 600;
+  text-transform: none;
+  border: none;
+  transition: 0.2s ease;
+}
+
+/* Light */
+body.light .fc .fc-button {
+  background: linear-gradient(135deg, #3b82f6, #2dd4bf);
+  color: white;
+}
+
+body.light .fc .fc-button:hover {
+  opacity: 0.9;
+}
+
+/* Dark */
+body.dark .fc .fc-button {
+  background: linear-gradient(135deg, #5ea3ff, #22d3ee);
+  color: #020617;
+}
+
+body.dark .fc .fc-button:hover {
+  opacity: 0.9;
+}
+
+/* Botão ativo */
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  filter: brightness(1.1);
+}
+
+/* Bordas mais suaves */
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+body.dark .fc-theme-standard td,
+body.dark .fc-theme-standard th {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+/* =========================
+   DARK MODE - HEADER DIAS
+   ========================= */
+
+body.dark .fc .fc-col-header {
+  background-color: #1a2040; /* mesmo background.paper do dark */
+}
+
+body.dark .fc .fc-col-header-cell {
+  background-color: #1a2040;
+}
+
+body.dark .fc .fc-col-header-cell-cushion {
+  color: #9aa3c7; /* muted text do tema dark */
+  font-weight: 600;
+}

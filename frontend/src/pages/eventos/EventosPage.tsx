@@ -66,7 +66,6 @@ export default function EventosPage() {
   const [tab, setTab] = useState(0);
   const [busca, setBusca] = useState("");
   const [createModalOpen, setCreateModalOpen] = useState(false);
-
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedEventoId, setSelectedEventoId] = useState<number | null>(null);
 
@@ -146,36 +145,38 @@ export default function EventosPage() {
         <>
           {/* CALENDÁRIO */}
           {tab === 0 && (
-            <FullCalendar
-              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              locale={ptBrLocale}
-              initialView="dayGridMonth"
-              height="auto"
-              headerToolbar={{
-                left: "prev,next today",
-                center: "title",
-                right:
-                  (podeCriar ? "customNovoEvento " : "") +
-                  "dayGridMonth,timeGridWeek,timeGridDay",
-              }}
-              customButtons={{
-                customNovoEvento: {
-                  text: "Novo Evento",
-                  click: () => setCreateModalOpen(true),
-                },
-              }}
-              buttonText={{
-                today: "Hoje",
-                month: "Mês",
-                week: "Semana",
-                day: "Dia",
-              }}
-              events={eventosFormatados}
-              eventClick={(info) => {
-                setSelectedEventoId(Number(info.event.id));
-                setViewModalOpen(true);
-              }}
-            />
+            <Paper sx={{ p: 2 }}>
+              <FullCalendar
+                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                locale={ptBrLocale}
+                initialView="dayGridMonth"
+                height="auto"
+                headerToolbar={{
+                  left: "prev,next today",
+                  center: "title",
+                  right:
+                    (podeCriar ? "customNovoEvento " : "") +
+                    "dayGridMonth,timeGridWeek,timeGridDay",
+                }}
+                customButtons={{
+                  customNovoEvento: {
+                    text: "Novo Evento",
+                    click: () => setCreateModalOpen(true),
+                  },
+                }}
+                buttonText={{
+                  today: "Hoje",
+                  month: "Mês",
+                  week: "Semana",
+                  day: "Dia",
+                }}
+                events={eventosFormatados}
+                eventClick={(info) => {
+                  setSelectedEventoId(Number(info.event.id));
+                  setViewModalOpen(true);
+                }}
+              />
+            </Paper>
           )}
 
           {/* LISTA */}

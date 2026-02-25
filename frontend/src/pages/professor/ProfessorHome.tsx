@@ -17,14 +17,36 @@ export default function ProfessorHome() {
 
   return (
     <AppLayout>
-      <Box maxWidth="700px" mx="auto">
-        <Typography variant="h4" gutterBottom>
-          Painel do Professor
-        </Typography>
+      <Box maxWidth="800px" mx="auto">
 
-        <Typography variant="body1" color="text.secondary" mb={4}>
-          Gerencie suas turmas, aulas, atividades e eventos acadêmicos.
-        </Typography>
+        {/* HEADER CENTRALIZADO */}
+        <Box textAlign="center" mb={6}>
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+              mb: 2
+            }}
+          >
+            Painel do{" "}
+            <Box component="span" sx={{ color: "primary.main" }}>
+              Professor
+            </Box>
+          </Typography>
+
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{
+              fontWeight: 400,
+              maxWidth: "600px",
+              mx: "auto"
+            }}
+          >
+            Gerencie suas turmas, aulas, atividades e eventos acadêmicos.
+          </Typography>
+        </Box>
 
         {/* Card Acadêmico */}
         <Card
@@ -94,6 +116,7 @@ export default function ProfessorHome() {
             </Button>
           </CardActions>
         </Card>
+
       </Box>
     </AppLayout>
   );
