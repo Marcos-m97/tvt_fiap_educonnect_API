@@ -33,6 +33,7 @@ import ProfessorNovaAtividade from "../pages/professor/academico/ProfessorNovaAt
 import ProfessorGerenciarAtividade from "../pages/professor/academico/ProfessorGerenciarAtividade";
 import ProfessorNovaAula from "../pages/professor/academico/ProfessorNovaAula";
 import ProfessorGerenciarAula from "../pages/professor/academico/ProfessorGerenciarAula";
+import ProfessorAlunoDetalhe from "../pages/professor/academico/ProfessorAlunoDetalhe";
 
 import AlunoHome from "../pages/aluno/AlunoHome";
 
@@ -300,6 +301,14 @@ export const router = createBrowserRouter([
   element: (
     <RoleGuard allowed={[2]}>
       <ProfessorGerenciarAula />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/professor/academico/:turmaDisciplinaId/aluno/:alunoId",
+  element: (
+    <RoleGuard allowed={[2]}>
+      <ProfessorAlunoDetalhe />
     </RoleGuard>
   ),
 },

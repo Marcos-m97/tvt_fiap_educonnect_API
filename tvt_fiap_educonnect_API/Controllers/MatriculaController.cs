@@ -187,7 +187,7 @@ namespace EduConnect_API.Controllers
 
             return Ok(result);
         }
-        [Authorize(Roles = "0,1")]
+        [Authorize(Roles = "0,1,2")]
         [HttpGet("aluno/{alunoId}/ativa")]
         public async Task<IActionResult> ObterMatriculaAtiva(int alunoId)
         {
