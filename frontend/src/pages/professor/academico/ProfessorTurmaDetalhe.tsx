@@ -23,20 +23,33 @@ interface Atividade {
   dataEntrega?: string;
 }
 
+interface Aula {
+  id: number;
+  turmaDisciplinaId: number;
+  titulo: string;
+  descricao: string;
+  urlVideo?: string;
+  materialApoio?: string;
+  criadoEm: string;
+}
+
 export default function ProfessorTurmaDetalhe() {
   const { turmaDisciplinaId } = useParams();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [atividades, setAtividades] = useState<Atividade[]>([]);
+  const [aulas, setAulas] = useState<Aula[]>([]);
   const [tab, setTab] = useState(0);
 
   async function carregarAtividades() {
     try {
       setLoading(true);
+
       const response = await api.get(
-        `/Atividade/turma-disciplina/${turmaDisciplinaId}`
+        `/atividade/turma-disciplina/${turmaDisciplinaId}`
       );
+
       setAtividades(response.data);
     } catch (error) {
       console.error("Erro ao carregar atividades:", error);
@@ -45,9 +58,30 @@ export default function ProfessorTurmaDetalhe() {
     }
   }
 
+  async function carregarAulas() {
+    try {
+      setLoading(true);
+
+      const response = await api.get(
+        `/aulas/turma-disciplina/${turmaDisciplinaId}`
+      );
+
+      setAulas(response.data);
+
+    } catch (error) {
+      console.error("Erro ao carregar aulas:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (tab === 0) {
       carregarAtividades();
+    }
+
+    if (tab === 1) {
+      carregarAulas();
     }
   }, [turmaDisciplinaId, tab]);
 
@@ -86,6 +120,20 @@ export default function ProfessorTurmaDetalhe() {
           </Button>
         )}
 
+        {tab === 1 && (
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() =>
+              navigate(
+                `/professor/academico/${turmaDisciplinaId}/nova-aula`
+              )
+            }
+          >
+            Criar Aula
+          </Button>
+        )}
+
         <Button
           variant="outlined"
           startIcon={<ArrowBackIcon />}
@@ -108,7 +156,9 @@ export default function ProfessorTurmaDetalhe() {
         <Tab label="Alunos" />
       </Tabs>
 
-      {/* CONTEÚDO */}
+      {/* ========================= */}
+      {/* ABA ATIVIDADES */}
+      {/* ========================= */}
       {tab === 0 && (
         <Card sx={{ borderRadius: 4 }}>
           <CardContent>
@@ -126,13 +176,12 @@ export default function ProfessorTurmaDetalhe() {
             )}
 
             {!loading &&
-              atividades.map((atividade, index) => (
-                <Box key={atividade.id}>
+              atividades.map((atividade) => (
+                <Box key={atividade.id} mb={3}>
                   <Box
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
-                    py={3}
                   >
                     <Box maxWidth="80%">
                       <Typography fontWeight={600}>
@@ -162,8 +211,6 @@ export default function ProfessorTurmaDetalhe() {
                       Gerenciar
                     </Button>
                   </Box>
-
-                  {index !== atividades.length - 1 && <Divider />}
                 </Box>
               ))}
 
@@ -171,16 +218,69 @@ export default function ProfessorTurmaDetalhe() {
         </Card>
       )}
 
+      {/* ========================= */}
+      {/* ABA AULAS */}
+      {/* ========================= */}
       {tab === 1 && (
         <Card sx={{ borderRadius: 4 }}>
           <CardContent>
-            <Typography variant="body2" color="text.secondary">
-              Área de Aulas em construção.
-            </Typography>
+
+            {loading && (
+              <Box display="flex" justifyContent="center" py={4}>
+                <CircularProgress size={24} />
+              </Box>
+            )}
+
+            {!loading && aulas.length === 0 && (
+              <Typography variant="body2" color="text.secondary">
+                Nenhuma aula cadastrada.
+              </Typography>
+            )}
+
+            {!loading &&
+              aulas.map((aula) => (
+                <Box key={aula.id} mb={3}>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Box maxWidth="80%">
+                      <Typography fontWeight={600}>
+                        {aula.titulo}
+                      </Typography>
+
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        mt={1}
+                      >
+                        Criado em: {new Date(aula.criadoEm).toLocaleDateString()}
+                      </Typography>
+                    </Box>
+
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() =>
+                        navigate(
+                          `/professor/academico/${turmaDisciplinaId}/aula/${aula.id}`
+                        )
+                      }
+                    >
+                      Gerenciar
+                    </Button>
+                  </Box>
+                </Box>
+              ))}
+
           </CardContent>
         </Card>
       )}
 
+      {/* ========================= */}
+      {/* ABA ALUNOS */}
+      {/* ========================= */}
       {tab === 2 && (
         <Card sx={{ borderRadius: 4 }}>
           <CardContent>
