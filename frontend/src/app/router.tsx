@@ -29,6 +29,9 @@ import AdminMatriculaDetalhe from "../pages/admin/matriculas/AdminMatriculaDetal
 
 import ProfessorHome from "../pages/professor/ProfessorHome";
 import ProfessorAcademico from "../pages/professor/academico/ProfessorAcademico";
+import ProfessorTurmaDetalhe from "../pages/professor/academico/ProfessorTurmaDetalhe";
+import ProfessorNovaAtividade from "../pages/professor/academico/ProfessorNovaAtividade";
+import ProfessorGerenciarAtividade from "../pages/professor/academico/ProfessorGerenciarAtividade";
 
 import AlunoHome from "../pages/aluno/AlunoHome";
 
@@ -259,8 +262,6 @@ export const router = createBrowserRouter([
     ),
   },
 
-  // FUTURA TELA DETALHE DA TURMA
-  /*
   {
     path: "/professor/turma/:turmaDisciplinaId",
     element: (
@@ -269,7 +270,22 @@ export const router = createBrowserRouter([
       </RoleGuard>
     ),
   },
-  */
+  {
+  path: "/professor/academico/:turmaDisciplinaId/nova-atividade",
+  element: (
+    <RoleGuard allowed={[2]}>
+      <ProfessorNovaAtividade />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/professor/academico/:turmaDisciplinaId/atividade/:atividadeId",
+  element: (
+    <RoleGuard allowed={[2]}>
+      <ProfessorGerenciarAtividade />
+    </RoleGuard>
+  ),
+},
 
   // =========================
   // 🔐 ALUNO
