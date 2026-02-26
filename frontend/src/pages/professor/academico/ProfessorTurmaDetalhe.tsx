@@ -49,7 +49,6 @@ export default function ProfessorTurmaDetalhe() {
   const [atividades, setAtividades] = useState<Atividade[]>([]);
   const [aulas, setAulas] = useState<Aula[]>([]);
   const [alunos, setAlunos] = useState<AlunoDisciplina[]>([]);
-
   const [tab, setTab] = useState(0);
 
   // Alunos
@@ -92,14 +91,12 @@ export default function ProfessorTurmaDetalhe() {
 
       if (!turmaDisciplinaId) return;
 
-      // 1️⃣ Descobrir turmaId a partir da turmaDisciplina
       const turmaDisciplinaResponse = await api.get(
         `/turmadisciplina/${turmaDisciplinaId}`
       );
 
       const turmaId = turmaDisciplinaResponse.data.turmaId;
 
-      // 2️⃣ Buscar alunos da turma
       const response = await api.get(
         `/matricula/turma/${turmaId}/alunos`,
         {
@@ -130,81 +127,70 @@ export default function ProfessorTurmaDetalhe() {
   return (
     <AppLayout>
 
-      {/* HEADER */}
       <Box textAlign="center" mb={3}>
         <Typography variant="h3" fontWeight={700} gutterBottom>
           Gestão da Disciplina
         </Typography>
-
         <Typography variant="body1" color="text.secondary">
           Gerencie atividades, aulas e alunos.
         </Typography>
       </Box>
 
-      {/* BOTÕES SUPERIORES */}
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
-      >
-        {tab === 0 && (
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() =>
-              navigate(
-                `/professor/academico/${turmaDisciplinaId}/nova-atividade`
-              )
-            }
-          >
-            Criar Atividade
-          </Button>
-        )}
+<Box
+  display="flex"
+  justifyContent={tab === 2 ? "flex-end" : "space-between"}
+  alignItems="center"
+  mb={3}
+>
+  {tab === 0 && (
+    <Button
+      variant="contained"
+      startIcon={<AddIcon />}
+      onClick={() =>
+        navigate(
+          `/professor/academico/${turmaDisciplinaId}/nova-atividade`
+        )
+      }
+    >
+      Criar Atividade
+    </Button>
+  )}
 
-        {tab === 1 && (
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() =>
-              navigate(
-                `/professor/academico/${turmaDisciplinaId}/nova-aula`
-              )
-            }
-          >
-            Criar Aula
-          </Button>
-        )}
+  {tab === 1 && (
+    <Button
+      variant="contained"
+      startIcon={<AddIcon />}
+      onClick={() =>
+        navigate(
+          `/professor/academico/${turmaDisciplinaId}/nova-aula`
+        )
+      }
+    >
+      Criar Aula
+    </Button>
+  )}
 
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/professor/academico")}
-        >
-          Voltar
-        </Button>
-      </Box>
+  <Button
+    variant="outlined"
+    startIcon={<ArrowBackIcon />}
+    onClick={() => navigate("/professor/academico")}
+  >
+    Voltar
+  </Button>
+</Box>
 
       <Divider sx={{ mb: 3 }} />
 
-      {/* TABS */}
-      <Tabs
-        value={tab}
-        onChange={(_, newValue) => setTab(newValue)}
-        sx={{ mb: 3 }}
-      >
+      <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 3 }}>
         <Tab label="Atividades" />
         <Tab label="Aulas" />
         <Tab label="Alunos" />
       </Tabs>
 
-      {/* ========================= */}
       {/* ATIVIDADES */}
-      {/* ========================= */}
       {tab === 0 && (
-        <Card sx={{ borderRadius: 4 }}>
-          <CardContent>
-
+        <Card sx={{ borderRadius: 1, boxShadow: 2, p: 3 }}>
+          <CardContent sx={{ p: 0 }}>
             {loading && (
               <Box display="flex" justifyContent="center" py={4}>
                 <CircularProgress size={24} />
@@ -219,44 +205,40 @@ export default function ProfessorTurmaDetalhe() {
 
             {!loading &&
               atividades.map((atividade) => (
-                <Box key={atividade.id} mb={3}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Box maxWidth="80%">
-                      <Typography fontWeight={600}>
-                        {atividade.titulo}
-                      </Typography>
-                    </Box>
-
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() =>
-                        navigate(
-                          `/professor/academico/${turmaDisciplinaId}/atividade/${atividade.id}`
-                        )
-                      }
-                    >
-                      Gerenciar
-                    </Button>
+                <Box
+                  key={atividade.id}
+                  py={2}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  borderBottom="1px solid #eee"
+                >
+                  <Box pr={2} maxWidth="80%">
+                    <Typography fontWeight={600}>
+                      {atividade.titulo}
+                    </Typography>
                   </Box>
+
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    sx={{ minWidth: 110 }}
+                    onClick={() =>
+                      navigate(`/professor/academico/${turmaDisciplinaId}/atividade/${atividade.id}`)
+                    }
+                  >
+                    Gerenciar
+                  </Button>
                 </Box>
               ))}
-
           </CardContent>
         </Card>
       )}
 
-      {/* ========================= */}
       {/* AULAS */}
-      {/* ========================= */}
       {tab === 1 && (
-        <Card sx={{ borderRadius: 4 }}>
-          <CardContent>
-
+        <Card sx={{ borderRadius: 1, boxShadow: 2, p: 3 }}>
+          <CardContent sx={{ p: 0 }}>
             {loading && (
               <Box display="flex" justifyContent="center" py={4}>
                 <CircularProgress size={24} />
@@ -271,58 +253,46 @@ export default function ProfessorTurmaDetalhe() {
 
             {!loading &&
               aulas.map((aula) => (
-                <Box key={aula.id} mb={3}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Box maxWidth="80%">
-                      <Typography fontWeight={600}>
-                        {aula.titulo}
-                      </Typography>
+                <Box
+                  key={aula.id}
+                  py={2}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  borderBottom="1px solid #eee"
+                >
+                  <Box pr={2} maxWidth="80%">
+                    <Typography fontWeight={600}>
+                      {aula.titulo}
+                    </Typography>
 
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        mt={1}
-                      >
-                        Criado em: {new Date(aula.criadoEm).toLocaleDateString()}
-                      </Typography>
-                    </Box>
-
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() =>
-                        navigate(
-                          `/professor/academico/${turmaDisciplinaId}/aula/${aula.id}`
-                        )
-                      }
-                    >
-                      Gerenciar
-                    </Button>
+                    <Typography variant="body2" color="text.secondary" mt={1}>
+                      Criado em: {new Date(aula.criadoEm).toLocaleDateString()}
+                    </Typography>
                   </Box>
+
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    sx={{ minWidth: 110 }}
+                    onClick={() =>
+                      navigate(`/professor/academico/${turmaDisciplinaId}/aula/${aula.id}`)
+                    }
+                  >
+                    Gerenciar
+                  </Button>
                 </Box>
               ))}
-
           </CardContent>
         </Card>
       )}
 
-      {/* ========================= */}
       {/* ALUNOS */}
-      {/* ========================= */}
       {tab === 2 && (
-        <Card sx={{ borderRadius: 4 }}>
-          <CardContent>
+        <Card sx={{ borderRadius: 1, boxShadow: 2, p: 3 }}>
+          <CardContent sx={{ p: 0 }}>
 
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              mb={3}
-            >
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
               <Typography variant="h6">
                 Alunos da Disciplina
               </Typography>
@@ -354,10 +324,11 @@ export default function ProfessorTurmaDetalhe() {
               alunos.map((aluno) => (
                 <Box
                   key={aluno.alunoId}
-                  py={1.5}
+                  py={2}
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
+                  borderBottom="1px solid #eee"
                 >
                   <Box>
                     <Typography fontWeight={600}>
@@ -371,6 +342,7 @@ export default function ProfessorTurmaDetalhe() {
                   <Button
                     size="small"
                     variant="outlined"
+                    sx={{ minWidth: 130 }}
                     onClick={() =>
                       navigate(
                         `/professor/academico/${turmaDisciplinaId}/aluno/${aluno.alunoId}`,
