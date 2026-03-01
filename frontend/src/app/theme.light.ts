@@ -12,7 +12,7 @@ import { createTheme } from "@mui/material/styles";
 // };
 
 const tokens = {
-  bg: "#f3f3f3",        
+  bg: "#eeeeee",        
   bgSoft: "#f3f3f3",
   card: "hsl(201, 26%, 89%)",
   primary: "#3b82f6",

@@ -1,5 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 
+import LandingPage from "../pages/public/LandingPage";
+import Register from "../pages/public/register";
+
 import Login from "../pages/login/Login";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
@@ -42,6 +45,19 @@ import EventosPage from "../pages/eventos/EventosPage";
 import RoleGuard from "../guards/RoleGuard";
 
 export const router = createBrowserRouter([
+
+
+// =========================
+// 🌎 LANDING PÚBLICA
+// =========================
+{
+  path: "/",
+  element: <LandingPage />,
+},
+{
+  path: "/register",
+  element: <Register />,
+},
 
   // =========================
   // 🔓 ROTAS PÚBLICAS
@@ -332,6 +348,6 @@ export const router = createBrowserRouter([
 
   {
     path: "*",
-    element: <Login />,
+    element: <LandingPage />,
   },
 ]);
