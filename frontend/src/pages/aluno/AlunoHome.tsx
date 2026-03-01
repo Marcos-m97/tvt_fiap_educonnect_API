@@ -4,102 +4,187 @@ import {
   Card,
   CardContent,
   CardActions,
-  Button
+  Button,
+  CircularProgress
 } from "@mui/material";
 import AppLayout from "../../components/layout/AppLayout";
 import SchoolIcon from "@mui/icons-material/School";
 import EventIcon from "@mui/icons-material/Event";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import DescriptionIcon from "@mui/icons-material/Description";
-import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { api } from "../../services/api";
+
+interface UsuarioResponse {
+  usuario: {
+    id: number;
+    nome: string;
+    email: string;
+    tipo: number;
+  };
+}
+
+interface ContextoResponse {
+  tipoUsuario: string;
+  alunoId: number;
+  turmaId: number;
+  turmaNome: string;
+  cursoNome: string;
+  disciplinas: {
+    disciplinaId: number;
+    nome: string;
+  }[];
+}
 
 export default function AlunoHome() {
   const navigate = useNavigate();
 
+  const [usuario, setUsuario] = useState<UsuarioResponse["usuario"] | null>(null);
+  const [contexto, setContexto] = useState<ContextoResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function carregarDados() {
+      try {
+        const me = await api.get<UsuarioResponse>("/account/me");
+        const contextoRes = await api.get<ContextoResponse>("/account/me/contexto");
+
+        setUsuario(me.data.usuario);
+        setContexto(contextoRes.data);
+      } catch (error) {
+        console.error("Erro ao carregar dados do aluno:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    carregarDados();
+  }, []);
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <Box display="flex" justifyContent="center" mt={10}>
+          <CircularProgress />
+        </Box>
+      </AppLayout>
+    );
+  }
+
   const cards = [
     {
-      title: "Aulas e Atividades",
-      description: "Visualizar aulas, conteúdos e atividades pendentes.",
-      icon: <SchoolIcon fontSize="large" />,
-      route: "/aluno/aulas"
-    },
-    {
-      title: "Eventos e Calendário",
-      description: "Consultar eventos acadêmicos e datas importantes.",
-      icon: <EventIcon fontSize="large" />,
-      route: "/aluno/eventos"
+      title: "Acadêmico",
+      description:
+        "Acesse suas disciplinas, aulas, atividades e visualize suas notas.",
+      icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+      route: "/aluno/academico"
     },
     {
       title: "Boletim",
-      description: "Visualizar notas, médias e desempenho.",
-      icon: <AssignmentIcon fontSize="large" />,
+      description:
+        "Visualize seu boletim completo e acompanhe seu desempenho geral.",
+      icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
       route: "/aluno/boletim"
     },
     {
-      title: "Matrícula",
-      description: "Consultar situação da matrícula e comprovantes.",
-      icon: <DescriptionIcon fontSize="large" />,
-      route: "/aluno/matricula"
+      title: "Eventos",
+      description:
+        "Consulte eventos acadêmicos e datas importantes.",
+      icon: <EventIcon sx={{ fontSize: 40 }} />,
+      route: "/aluno/eventos"
     },
     {
-      title: "Meu Perfil",
-      description: "Visualizar seus dados e informações acadêmicas.",
-      icon: <PersonIcon fontSize="large" />,
-      route: "/aluno/perfil"
+      title: "Matrícula",
+      description:
+        "Consulte a situação da sua matrícula e documentos enviados.",
+      icon: <DescriptionIcon sx={{ fontSize: 40 }} />,
+      route: "/aluno/matricula"
     }
   ];
 
   return (
     <AppLayout>
-      <Typography variant="h4" gutterBottom>
-        Painel do Aluno
-      </Typography>
+      <Box maxWidth="1000px" mx="auto">
 
-      <Box
-        mt={3}
-        display="grid"
-        gridTemplateColumns={{
-          xs: "1fr",
-          md: "1fr 1fr"
-        }}
-        gap={3}
-      >
-        {cards.map((card, index) => (
-          <Card
-            key={index}
+        {/* HEADER */}
+        <Box textAlign="center" mb={6}>
+          <Typography
+            variant="h3"
             sx={{
-              height: "100%",
-              transition: "0.2s",
-              "&:hover": {
-                boxShadow: 6,
-                transform: "translateY(-4px)"
-              }
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+              mb: 2
             }}
           >
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={2}>
-                {card.icon}
-                <Typography variant="h6">
-                  {card.title}
+            Painel do{" "}
+            <Box component="span" sx={{ color: "primary.main" }}>
+              Aluno
+            </Box>
+          </Typography>
+
+          <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+            Bem-vindo{usuario ? `, ${usuario.nome}` : ""}.
+          </Typography>
+
+          {contexto && (
+            <Typography variant="body1" color="text.secondary">
+              {contexto.cursoNome} • {contexto.turmaNome} •{" "}
+              {contexto.disciplinas?.length || 0} disciplinas
+            </Typography>
+          )}
+        </Box>
+
+        {/* GRID DE CARDS */}
+        <Box
+          display="grid"
+          gridTemplateColumns={{
+            xs: "1fr",
+            md: "1fr 1fr"
+          }}
+          gap={4}
+        >
+          {cards.map((card, index) => (
+            <Card
+              key={index}
+              sx={{
+                p: 2,
+                borderRadius: 3,
+                border: "1px solid",
+                borderColor: "divider",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  boxShadow: 6,
+                  transform: "translateY(-4px)"
+                }
+              }}
+            >
+              <CardContent>
+                <Box display="flex" alignItems="center" gap={2} mb={2}>
+                  {card.icon}
+                  <Typography variant="h6" fontWeight={600}>
+                    {card.title}
+                  </Typography>
+                </Box>
+
+                <Typography variant="body2" color="text.secondary">
+                  {card.description}
                 </Typography>
-              </Box>
+              </CardContent>
 
-              <Typography variant="body2" mt={2}>
-                {card.description}
-              </Typography>
-            </CardContent>
+              <CardActions sx={{ justifyContent: "flex-end", pr: 2 }}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={() => navigate(card.route)}
+                >
+                  Acessar
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </Box>
 
-            <CardActions>
-              <Button
-                size="small"
-                onClick={() => navigate(card.route)}
-              >
-                Acessar
-              </Button>
-            </CardActions>
-          </Card>
-        ))}
       </Box>
     </AppLayout>
   );

@@ -20,25 +20,25 @@ export default function AdminHome() {
     {
       title: "Gestão de Usuários",
       description: "Administrar administradores, professores e alunos.",
-      icon: <PeopleIcon fontSize="large" />,
+      icon: <PeopleIcon sx={{ fontSize: 40 }} />,
       route: "/admin/usuarios"
     },
     {
       title: "Gestão Acadêmica",
       description: "Gerenciar cursos, turmas e disciplinas.",
-      icon: <SchoolIcon fontSize="large" />,
+      icon: <SchoolIcon sx={{ fontSize: 40 }} />,
       route: "/admin/academico/cursos"
     },
     {
       title: "Matrículas",
       description: "Aprovar, alterar status e baixar comprovantes.",
-      icon: <AssignmentIcon fontSize="large" />,
+      icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
       route: "/admin/matriculas"
     },
     {
       title: "Eventos",
       description: "Criar e gerenciar eventos acadêmicos.",
-      icon: <EventIcon fontSize="large" />,
+      icon: <EventIcon sx={{ fontSize: 40 }} />,
       route: "/admin/eventos"
     }
   ];
@@ -47,7 +47,7 @@ export default function AdminHome() {
     <AppLayout>
       <Box maxWidth="1000px" mx="auto">
 
-        {/* HEADER CENTRALIZADO */}
+        {/* HEADER */}
         <Box textAlign="center" mb={6}>
           <Typography
             variant="h3"
@@ -76,21 +76,24 @@ export default function AdminHome() {
           </Typography>
         </Box>
 
-        {/* GRID DE CARDS */}
+        {/* GRID PROFISSIONAL */}
         <Box
           display="grid"
           gridTemplateColumns={{
             xs: "1fr",
             md: "1fr 1fr"
           }}
-          gap={3}
+          gap={4}
         >
           {cards.map((card, index) => (
             <Card
               key={index}
               sx={{
-                height: "100%",
-                transition: "0.2s",
+                p: 2,
+                borderRadius: 3,
+                border: "1px solid",
+                borderColor: "divider",
+                transition: "all 0.2s ease",
                 "&:hover": {
                   boxShadow: 6,
                   transform: "translateY(-4px)"
@@ -98,20 +101,21 @@ export default function AdminHome() {
               }}
             >
               <CardContent>
-                <Box display="flex" alignItems="center" gap={2}>
+                <Box display="flex" alignItems="center" gap={2} mb={2}>
                   {card.icon}
-                  <Typography variant="h6">
+                  <Typography variant="h6" fontWeight={600}>
                     {card.title}
                   </Typography>
                 </Box>
 
-                <Typography variant="body2" mt={2}>
+                <Typography variant="body2" color="text.secondary">
                   {card.description}
                 </Typography>
               </CardContent>
 
-              <CardActions>
+              <CardActions sx={{ justifyContent: "flex-end", pr: 2 }}>
                 <Button
+                  variant="contained"
                   size="small"
                   onClick={() => navigate(card.route)}
                 >

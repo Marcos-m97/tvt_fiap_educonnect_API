@@ -4,8 +4,7 @@ import {
   Card,
   CardContent,
   CardActions,
-  Button,
-  Divider
+  Button
 } from "@mui/material";
 import AppLayout from "../../components/layout/AppLayout";
 import SchoolIcon from "@mui/icons-material/School";
@@ -15,11 +14,28 @@ import { useNavigate } from "react-router-dom";
 export default function ProfessorHome() {
   const navigate = useNavigate();
 
+  const cards = [
+    {
+      title: "Acadêmico",
+      description:
+        "Acesse suas turmas, gerencie aulas, atividades, alunos e notas.",
+      icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+      route: "/professor/academico"
+    },
+    {
+      title: "Eventos",
+      description:
+        "Criar e gerenciar eventos acadêmicos e comunicados.",
+      icon: <EventIcon sx={{ fontSize: 40 }} />,
+      route: "/professor/eventos"
+    }
+  ];
+
   return (
     <AppLayout>
-      <Box maxWidth="800px" mx="auto">
+      <Box maxWidth="1000px" mx="auto">
 
-        {/* HEADER CENTRALIZADO */}
+        {/* HEADER */}
         <Box textAlign="center" mb={6}>
           <Typography
             variant="h3"
@@ -48,74 +64,55 @@ export default function ProfessorHome() {
           </Typography>
         </Box>
 
-        {/* Card Acadêmico */}
-        <Card
-          sx={{
-            mb: 4,
-            transition: "0.2s",
-            "&:hover": {
-              boxShadow: 6,
-              transform: "translateY(-4px)"
-            }
+        {/* GRID PADRONIZADO */}
+        <Box
+          display="grid"
+          gridTemplateColumns={{
+            xs: "1fr",
+            md: "1fr 1fr"
           }}
+          gap={4}
         >
-          <CardContent>
-            <Box display="flex" alignItems="center" gap={2}>
-              <SchoolIcon fontSize="large" />
-              <Typography variant="h6">
-                Acadêmico
-              </Typography>
-            </Box>
-
-            <Typography variant="body2" mt={2}>
-              Acesse suas turmas, gerencie aulas, atividades, alunos e notas.
-            </Typography>
-          </CardContent>
-
-          <CardActions>
-            <Button
-              size="small"
-              onClick={() => navigate("/professor/academico")}
+          {cards.map((card, index) => (
+            <Card
+              key={index}
+              sx={{
+                p: 2,
+                borderRadius: 3,
+                border: "1px solid",
+                borderColor: "divider",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  boxShadow: 6,
+                  transform: "translateY(-4px)"
+                }
+              }}
             >
-              Acessar
-            </Button>
-          </CardActions>
-        </Card>
+              <CardContent>
+                <Box display="flex" alignItems="center" gap={2} mb={2}>
+                  {card.icon}
+                  <Typography variant="h6" fontWeight={600}>
+                    {card.title}
+                  </Typography>
+                </Box>
 
-        <Divider sx={{ mb: 4 }} />
+                <Typography variant="body2" color="text.secondary">
+                  {card.description}
+                </Typography>
+              </CardContent>
 
-        {/* Card Eventos */}
-        <Card
-          sx={{
-            transition: "0.2s",
-            "&:hover": {
-              boxShadow: 6,
-              transform: "translateY(-4px)"
-            }
-          }}
-        >
-          <CardContent>
-            <Box display="flex" alignItems="center" gap={2}>
-              <EventIcon fontSize="large" />
-              <Typography variant="h6">
-                Eventos
-              </Typography>
-            </Box>
-
-            <Typography variant="body2" mt={2}>
-              Criar e gerenciar eventos acadêmicos e comunicados.
-            </Typography>
-          </CardContent>
-
-          <CardActions>
-            <Button
-              size="small"
-              onClick={() => navigate("/professor/eventos")}
-            >
-              Acessar
-            </Button>
-          </CardActions>
-        </Card>
+              <CardActions sx={{ justifyContent: "flex-end", pr: 2 }}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={() => navigate(card.route)}
+                >
+                  Acessar
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </Box>
 
       </Box>
     </AppLayout>
