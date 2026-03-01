@@ -69,17 +69,29 @@ export default function Register() {
       setLoading(true);
 
       // 1️⃣ Criar usuário
-      const registerResponse = await api.post("/usuario/register", {
+      await api.post("/usuario/register", {
         nome: form.nome,
         email: form.email,
         senha: form.senha
       });
 
-      const usuarioId = registerResponse.data.usuario.id;
+      // 2️⃣ Login automático
+      const loginResponse = await api.post("/usuario/login", {
+        email: form.email,
+        senha: form.senha
+      });
 
-      // 2️⃣ Criar perfil aluno
+      const { token, usuario } = loginResponse.data;
+
+      // 3️⃣ Salvar token
+      localStorage.setItem("token", token);
+
+      // Garantir envio do token nas próximas requisições
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      // 4️⃣ Criar perfil aluno
       await api.post("/aluno", {
-        usuarioId,
+        usuarioId: usuario.id,
         cpf: form.cpf,
         dataNascimento: form.dataNascimento,
         endereco: form.endereco
@@ -93,6 +105,7 @@ export default function Register() {
       }, 4000);
 
     } catch (error) {
+      console.error(error);
       alert("Erro ao criar conta.");
     } finally {
       setLoading(false);
@@ -119,6 +132,7 @@ export default function Register() {
 
   return (
     <Box display="flex" minHeight="100vh">
+
       {/* LADO ESQUERDO */}
       <Box
         sx={{
@@ -133,9 +147,13 @@ export default function Register() {
         }}
       >
         <Typography variant="h3" fontWeight={800} mb={2}>
-        🎓 EduConnect
+          🎓 EduConnect
         </Typography>
-        <Typography variant="h6" sx={{ opacity: 0.9, maxWidth: 400, textAlign: "center" }}>
+
+        <Typography
+          variant="h6"
+          sx={{ opacity: 0.9, maxWidth: 400, textAlign: "center" }}
+        >
           Comece sua jornada acadêmica conosco.
           Crie sua conta e inicie sua matrícula agora mesmo.
         </Typography>
@@ -151,12 +169,25 @@ export default function Register() {
           p: 4,
         }}
       >
-        <Paper sx={{ width: "100%", maxWidth: 520, p: 5, borderRadius: 3 }}>
-          <Typography variant="h4" fontWeight={700} mb={3} textAlign="center">
+        <Paper
+          sx={{
+            width: "100%",
+            maxWidth: 520,
+            p: 5,
+            borderRadius: 3
+          }}
+        >
+          <Typography
+            variant="h4"
+            fontWeight={700}
+            mb={3}
+            textAlign="center"
+          >
             Criar Conta
           </Typography>
 
           <Stack spacing={3}>
+
             <TextField
               label="Nome completo"
               name="nome"
@@ -176,7 +207,7 @@ export default function Register() {
               disabled={success}
             />
 
-            {/* 🔐 Senha */}
+            {/* Senha */}
             <TextField
               label="Senha"
               name="senha"
@@ -188,7 +219,9 @@ export default function Register() {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)}>
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
@@ -205,7 +238,6 @@ export default function Register() {
               {renderItem(validations.special, "1 caractere especial")}
             </Box>
 
-            {/* Confirmar senha */}
             <TextField
               label="Confirmar senha"
               name="confirmarSenha"
@@ -260,12 +292,10 @@ export default function Register() {
               {loading ? <CircularProgress size={24} /> : "Criar Conta"}
             </Button>
 
-            {/* ✅ Mensagem de sucesso */}
             {success && (
               <Alert severity="success" sx={{ mt: 2 }}>
                 Conta criada com sucesso!
                 <br />
-                Verifique seu e-mail para confirmar sua conta.
                 Você será redirecionado para o login.
               </Alert>
             )}
@@ -277,6 +307,7 @@ export default function Register() {
             >
               Já tenho conta
             </Button>
+
           </Stack>
         </Paper>
       </Box>

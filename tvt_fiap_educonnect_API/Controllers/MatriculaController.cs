@@ -144,7 +144,7 @@ namespace EduConnect_API.Controllers
         // =============================
         // DOWNLOADS
         // =============================
-        [Authorize(Roles = "0,1")]
+        [Authorize(Roles = "0,1,3")]
         [HttpGet("{id}/download/comprovante")]
         public async Task<IActionResult> DownloadComprovante(int id)
         {
@@ -154,7 +154,7 @@ namespace EduConnect_API.Controllers
             return File(bytes, "application/pdf", "comprovante.pdf");
         }
 
-        [Authorize(Roles = "0,1")]
+        [Authorize(Roles = "0,1,3")]
         [HttpGet("{id}/download/documentos-pessoais")]
         public async Task<IActionResult> DownloadDocumentosPessoais(int id)
         {
@@ -164,7 +164,7 @@ namespace EduConnect_API.Controllers
             return File(bytes, "application/pdf", "documentos_pessoais.pdf");
         }
 
-        [Authorize(Roles = "0,1")]
+        [Authorize(Roles = "0,1,3")]
         [HttpGet("{id}/download/documentos-escolaridade")]
         public async Task<IActionResult> DownloadDocumentosEscolaridade(int id)
         {

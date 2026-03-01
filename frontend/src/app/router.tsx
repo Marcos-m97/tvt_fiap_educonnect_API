@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import LandingPage from "../pages/public/LandingPage";
 import Register from "../pages/public/register";
+import CursoPage from "../pages/public/CursoPage";
 
 import Login from "../pages/login/Login";
 import ForgotPassword from "../pages/auth/ForgotPassword";
@@ -39,10 +40,13 @@ import ProfessorGerenciarAula from "../pages/professor/academico/ProfessorGerenc
 import ProfessorAlunoDetalhe from "../pages/professor/academico/ProfessorAlunoDetalhe";
 
 import AlunoHome from "../pages/aluno/AlunoHome";
+import AlunoMatricula from "../pages/aluno/matriculas/AlunoMatricula";
+
 
 import EventosPage from "../pages/eventos/EventosPage";
 
 import RoleGuard from "../guards/RoleGuard";
+import AlunoRouteGuard from "../guards/AlunoRouteGuard";
 
 export const router = createBrowserRouter([
 
@@ -57,6 +61,10 @@ export const router = createBrowserRouter([
 {
   path: "/register",
   element: <Register />,
+},
+{
+  path: "/curso/:id",
+  element: <CursoPage />,
 },
 
   // =========================
@@ -333,14 +341,24 @@ export const router = createBrowserRouter([
   // 🔐 ALUNO
   // =========================
 
-  {
-    path: "/aluno",
-    element: (
-      <RoleGuard allowed={[3]}>
+{
+  path: "/aluno",
+  element: (
+    <RoleGuard allowed={[3]}>
+      <AlunoRouteGuard>
         <AlunoHome />
-      </RoleGuard>
-    ),
-  },
+      </AlunoRouteGuard>
+    </RoleGuard>
+  ),
+},
+  {
+  path: "/aluno/matricula",
+  element: (
+    <RoleGuard allowed={[3]}>
+      <AlunoMatricula />
+    </RoleGuard>
+  ),
+},
 
   // =========================
   // Fallback

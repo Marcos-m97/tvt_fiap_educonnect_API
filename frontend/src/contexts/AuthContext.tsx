@@ -1,4 +1,9 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState
+} from "react";
 import { api } from "../services/api";
 
 /* =========================
@@ -9,12 +14,12 @@ export type Usuario = {
   id: number;
   nome: string;
   email: string;
-  tipo: number; // 0=Admin | 1=Professor | 2=Aluno (ajuste se necessário)
+  tipo: number; // 0=Admin | 1=Professor | 2=Aluno
 };
 
 type Perfil = {
-  departamento: string;
-  cargo: string;
+  departamento?: string;
+  cargo?: string;
 };
 
 type LoginResponse = {
@@ -37,16 +42,20 @@ type AuthContextType = {
 };
 
 /* =========================
-   CONTEXT
+   CONTEXT (EXPORTADO)
 ========================= */
 
-const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 /* =========================
    PROVIDER
 ========================= */
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({
+  children
+}: {
+  children: React.ReactNode;
+}) {
   const [user, setUser] = useState<Usuario | null>(null);
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -83,15 +92,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      LOGIN
   ========================= */
   async function login(email: string, senha: string) {
-    const { data } = await api.post<LoginResponse>("/usuario/login", {
-      email,
-      senha,
-    });
+    const { data } = await api.post<LoginResponse>(
+      "/usuario/login",
+      {
+        email,
+        senha
+      }
+    );
 
     localStorage.setItem("token", data.token);
     setToken(data.token);
 
     const me = await api.get<MeResponse>("/account/me");
+
     setUser(me.data.usuario);
     setPerfil(me.data.perfil);
   }
@@ -118,7 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         isAuthenticated: !!token && !!user,
         login,
-        logout,
+        logout
       }}
     >
       {children}
@@ -127,13 +140,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 /* =========================
-   HOOK
+   HOOK PERSONALIZADO
 ========================= */
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("useAuth deve ser usado dentro de AuthProvider");
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error(
+      "useAuth deve ser usado dentro de AuthProvider"
+    );
   }
-  return ctx;
+
+  return context;
 }

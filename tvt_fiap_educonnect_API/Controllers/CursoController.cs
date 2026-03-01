@@ -26,7 +26,7 @@ namespace EduConnect_API.Controllers
         }
 
         // Listar cursos (com paginação)
-        [Authorize(Roles = "0,1")]
+        [Authorize(Roles = "0,1,2,3")]
         [HttpGet]
         public async Task<IActionResult> Listar(
             [FromQuery] int page = 1,
@@ -37,7 +37,7 @@ namespace EduConnect_API.Controllers
         }
 
         // Obter por ID
-        [Authorize(Roles = "0,1,2")]
+        [Authorize(Roles = "0,1,2,3")]
         [HttpGet("{id}")]
         public async Task<IActionResult> Obter(int id)
         {

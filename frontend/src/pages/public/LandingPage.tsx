@@ -34,9 +34,9 @@ export default function LandingPage() {
     },
     {
       id: 3,
-      nome: "Administração",
+      nome: "Sistemas de Informação",
       descricao:
-        "Gestão empresarial, estratégia, finanças e liderança organizacional.",
+        "Formação voltada à integração entre tecnologia e negócios, preparando profissionais para desenvolver soluções digitais e transformar dados em decisões estratégicas.",
       icon: <BusinessIcon fontSize="large" />
     },
     {
@@ -50,6 +50,7 @@ export default function LandingPage() {
 
   return (
     <Box>
+
       {/* ================= HERO ================= */}
       <Box
         sx={{
@@ -62,7 +63,6 @@ export default function LandingPage() {
       >
         <Container maxWidth="md">
           <Box textAlign="center">
-            {/* Logo */}
             <Box
               display="flex"
               justifyContent="center"
@@ -76,7 +76,6 @@ export default function LandingPage() {
               </Typography>
             </Box>
 
-            {/* Headline */}
             <Typography variant="h4" fontWeight={700} mb={2}>
               Conectando alunos, professores e conhecimento.
             </Typography>
@@ -86,7 +85,6 @@ export default function LandingPage() {
               acompanhamento de desempenho.
             </Typography>
 
-            {/* Botões */}
             <Stack
               direction={{ xs: "column", sm: "row" }}
               spacing={3}
@@ -95,11 +93,7 @@ export default function LandingPage() {
               <Button
                 variant="contained"
                 size="large"
-                sx={{
-                  px: 5,
-                  py: 1.5,
-                  fontWeight: 600
-                }}
+                sx={{ px: 5, py: 1.5, fontWeight: 600 }}
                 onClick={() => navigate("/login")}
               >
                 Entrar
@@ -128,20 +122,18 @@ export default function LandingPage() {
         </Container>
       </Box>
 
-      {/* ================= SEÇÃO CURSOS ================= */}
+      {/* ================= CURSOS ================= */}
       <Box py={10} bgcolor="#f5f7fb">
         <Container maxWidth="lg">
           <Box textAlign="center" mb={6}>
             <Typography variant="h4" fontWeight={800} mb={2}>
               Nossos Cursos
             </Typography>
-
             <Typography variant="body1" color="text.secondary">
               Escolha a formação ideal para sua jornada acadêmica.
             </Typography>
           </Box>
 
-          {/* GRID DE CURSOS */}
           <Box
             display="grid"
             gridTemplateColumns={{
@@ -192,6 +184,116 @@ export default function LandingPage() {
           </Box>
         </Container>
       </Box>
+
+      {/* ================= DIFERENCIAIS ================= */}
+      <Box py={10}>
+        <Container maxWidth="lg">
+          <Box textAlign="center" mb={6}>
+            <Typography variant="h4" fontWeight={800} mb={2}>
+              Por que escolher a EduConnect?
+            </Typography>
+
+            <Typography variant="body1" color="text.secondary">
+              Tecnologia, inovação e acompanhamento acadêmico em um só lugar.
+            </Typography>
+          </Box>
+
+          <Box
+            display="grid"
+            gridTemplateColumns={{
+              xs: "1fr",
+              md: "1fr 1fr 1fr"
+            }}
+            gap={4}
+          >
+            <Card sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight={700} mb={2}>
+                Plataforma 100% Digital
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Acesso completo a aulas, materiais, atividades e boletim online.
+              </Typography>
+            </Card>
+
+            <Card sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight={700} mb={2}>
+                Professores Experientes
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Corpo docente com experiência acadêmica e de mercado.
+              </Typography>
+            </Card>
+
+            <Card sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight={700} mb={2}>
+                Acompanhamento de Desempenho
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Visualize notas, médias e evolução em tempo real.
+              </Typography>
+            </Card>
+          </Box>
+        </Container>
+      </Box>
+
+      {/* ================= NOTÍCIAS ================= */}
+      <Box py={10} bgcolor="#f5f7fb">
+        <Container maxWidth="lg">
+          <Box textAlign="center" mb={6}>
+            <Typography variant="h4" fontWeight={800} mb={2}>
+              Últimas Notícias
+            </Typography>
+
+            <Typography variant="body1" color="text.secondary">
+              Fique por dentro das novidades acadêmicas.
+            </Typography>
+          </Box>
+
+          <Box
+            display="grid"
+            gridTemplateColumns={{
+              xs: "1fr",
+              md: "1fr 1fr 1fr"
+            }}
+            gap={4}
+          >
+            <Card sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight={700} mb={1}>
+                Semana Acadêmica 2026
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Palestras com profissionais do mercado de tecnologia.
+              </Typography>
+            </Card>
+
+            <Card sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight={700} mb={1}>
+                Novo Laboratório de TI
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Infraestrutura modernizada para práticas de desenvolvimento.
+              </Typography>
+            </Card>
+
+            <Card sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight={700} mb={1}>
+                Programa de Iniciação Científica
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Projetos de pesquisa aplicada para alunos.
+              </Typography>
+            </Card>
+          </Box>
+        </Container>
+      </Box>
+
+      {/* ================= FOOTER ================= */}
+      <Box py={4} bgcolor="#1e3c72" color="white" textAlign="center">
+        <Typography variant="body2">
+          © {new Date().getFullYear()} EduConnect — Todos os direitos reservados.
+        </Typography>
+      </Box>
+
     </Box>
   );
 }
