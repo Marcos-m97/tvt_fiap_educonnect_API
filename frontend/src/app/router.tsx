@@ -41,6 +41,11 @@ import ProfessorAlunoDetalhe from "../pages/professor/academico/ProfessorAlunoDe
 
 import AlunoHome from "../pages/aluno/AlunoHome";
 import AlunoMatricula from "../pages/aluno/matriculas/AlunoMatricula";
+import AlunoAcademico from "../pages/aluno/academico/AlunoAcademico";
+import AlunoDisciplinaDetalhe from "../pages/aluno/academico/AlunoDisciplinaDetalhe";
+import AlunoAtividadeDetalhe from "../pages/aluno/academico/AlunoAtividadeDetalhe";
+import AlunoAulaDetalhe from "../pages/aluno/academico/AlunoAulaDetalhe";
+import AlunoBoletim from "../pages/aluno/academico/AlunoBoletim";
 
 
 import EventosPage from "../pages/eventos/EventosPage";
@@ -359,7 +364,46 @@ export const router = createBrowserRouter([
     </RoleGuard>
   ),
 },
-
+{
+  path: "/aluno/academico",
+  element: (
+    <RoleGuard allowed={[3]}>
+      <AlunoAcademico />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/aluno/disciplina/:disciplinaId",
+  element: (
+    <RoleGuard allowed={[3]}>
+      <AlunoDisciplinaDetalhe />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/aluno/atividade/:atividadeId",
+  element: (
+    <RoleGuard allowed={[3]}>
+      <AlunoAtividadeDetalhe />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/aluno/aula/:aulaId",
+  element: (
+    <RoleGuard allowed={[3]}>
+      <AlunoAulaDetalhe />
+    </RoleGuard>
+  ),
+},
+{
+  path: "/aluno/academico/boletim",
+  element: (
+    <RoleGuard allowed={[3]}>
+      <AlunoBoletim />
+    </RoleGuard>
+  ),
+},
   // =========================
   // Fallback
   // =========================

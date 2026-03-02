@@ -85,7 +85,7 @@ export default function AlunoHome() {
       description:
         "Visualize seu boletim completo e acompanhe seu desempenho geral.",
       icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
-      route: "/aluno/boletim"
+      route: "/aluno/academico/boletim"
     },
     {
       title: "Eventos",
