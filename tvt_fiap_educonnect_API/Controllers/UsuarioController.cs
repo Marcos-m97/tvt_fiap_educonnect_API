@@ -108,16 +108,7 @@ namespace EduConnect_API.Controllers
             });
         }
 
-        //// ============================================================
-        //// 5. LISTAR TODOS (SUPERADMIN = 0 | ADMIN = 1)
-        //// ============================================================
-        //[Authorize(Roles = "0,1")]
-        //[HttpGet]
-        //public async Task<IActionResult> Listar()
-        //{
-        //    var lista = await _service.ListarTodos();
-        //    return Ok(lista);
-        //}
+
         // ============================================================
         // 5. LISTAR PAGINADO (SUPERADMIN = 0 | ADMIN = 1)
         // ============================================================
@@ -158,7 +149,7 @@ namespace EduConnect_API.Controllers
         // ============================================================
         // 7. ATUALIZAR (SUPERADMIN = 0 | ADMIN = 1)
         // ============================================================
-        [Authorize(Roles = "0,1")]
+        [Authorize(Roles = "0,1,2,3")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Atualizar(int id, [FromBody] AtualizarUsuarioDTO dto)
         {

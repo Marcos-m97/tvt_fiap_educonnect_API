@@ -42,7 +42,7 @@ namespace EduConnect_API.Controllers
             return Ok(admin);
         }
 
-        [Authorize(Roles = "0")]
+        [Authorize(Roles = "0,1")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Atualizar(int id, CriarAdminDTO dto)
         {

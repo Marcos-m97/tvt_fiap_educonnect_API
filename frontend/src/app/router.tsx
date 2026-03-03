@@ -9,12 +9,10 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 
 import AdminHome from "../pages/admin/AdminHome";
-
 import AdminUsuarios from "../pages/admin/usuario/AdminUsuarios";
 import AdminUsuarioPerfil from "../pages/admin/usuario/AdminUsuarioPerfil";
 import AdminUsuarioForm from "../pages/admin/usuario/AdminUsuarioForm";
 import AdminUsuarioEditar from "../pages/admin/usuario/AdminUsuarioEditar";
-
 import AdminCursos from "../pages/admin/academico/AdminCursos";
 import AdminCursoForm from "../pages/admin/academico/AdminCursoForm";
 import AdminCursoDetalhe from "../pages/admin/academico/AdminCursoDetalhe";
@@ -25,12 +23,10 @@ import AdminTurmaEditar from "../pages/admin/academico/AdminTurmaEditar";
 import AdminDisciplinaForm from "../pages/admin/academico/AdminDisciplinaForm";
 import AdminDisciplinaEditar from "../pages/admin/academico/AdminDisciplinaEditar";
 import AdminAlunoDetalhe from "../pages/admin/academico/AdminAlunoDetalhe";
-
 import AdminMatriculas from "../pages/admin/matriculas/AdminMatriculas";
 import AdminMatriculaDetalhe from "../pages/admin/matriculas/AdminMatriculaDetalhe";
 
 import ProfessorHome from "../pages/professor/ProfessorHome";
-
 import ProfessorAcademico from "../pages/professor/academico/ProfessorAcademico";
 import ProfessorTurmaDetalhe from "../pages/professor/academico/ProfessorTurmaDetalhe";
 import ProfessorNovaAtividade from "../pages/professor/academico/ProfessorNovaAtividade";
@@ -47,8 +43,8 @@ import AlunoAtividadeDetalhe from "../pages/aluno/academico/AlunoAtividadeDetalh
 import AlunoAulaDetalhe from "../pages/aluno/academico/AlunoAulaDetalhe";
 import AlunoBoletim from "../pages/aluno/academico/AlunoBoletim";
 
-
 import EventosPage from "../pages/eventos/EventosPage";
+import MeuPerfil from "../pages/conta/meuPerfil";
 
 import RoleGuard from "../guards/RoleGuard";
 import AlunoRouteGuard from "../guards/AlunoRouteGuard";
@@ -401,6 +397,17 @@ export const router = createBrowserRouter([
   element: (
     <RoleGuard allowed={[3]}>
       <AlunoBoletim />
+    </RoleGuard>
+  ),
+},
+// =========================
+// 👤 MEU PERFIL
+// =========================
+{
+  path: "/perfil",
+  element: (
+    <RoleGuard allowed={[0, 1, 2, 3]}>
+      <MeuPerfil />
     </RoleGuard>
   ),
 },

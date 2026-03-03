@@ -35,7 +35,7 @@ namespace EduConnect_API.Controllers
             return Ok(await _service.Listar());
         }
 
-        [Authorize(Roles = "0,1,2")]
+        [Authorize(Roles = "0,1,2,3")]
         [HttpGet("{usuarioId}")]
         public async Task<IActionResult> Obter(int usuarioId)
         {
@@ -45,7 +45,7 @@ namespace EduConnect_API.Controllers
             return Ok(aluno);
         }
 
-        [Authorize(Roles = "0,1")]
+        [Authorize(Roles = "0,1,3")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Atualizar(int id, CriarAlunoDTO dto)
         {

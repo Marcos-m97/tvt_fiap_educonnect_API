@@ -44,7 +44,7 @@ namespace EduConnect_API.Controllers
             return Ok(prof);
         }
 
-        [Authorize(Roles = "0,1")]
+        [Authorize(Roles = "0,1,2")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Atualizar(int id, CriarProfessorDTO dto)
         {
@@ -53,7 +53,7 @@ namespace EduConnect_API.Controllers
 
             return Ok(prof);
         }
-        [Authorize(Roles = "0,1")] // apenas ADM
+        [Authorize(Roles = "0,1,2")] // apenas ADM
         [HttpGet("{id}/contexto")]
         public async Task<IActionResult> Contexto(int id)
         {
