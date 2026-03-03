@@ -114,6 +114,20 @@ namespace EduConnect_API.Controllers
             return ok ? NoContent() : NotFound();
         }
 
+        [Authorize(Roles = "0,1,2")] // sysADM, ADM, Professor
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Atualizar(int id, AtualizarAulaDTO dto)
+        {
+            var usuarioId = int.Parse(User.FindFirst("id")!.Value);
+
+            var aula = await _service.Atualizar(id, usuarioId, dto);
+
+            if (aula == null)
+                return NotFound("Aula não encontrada.");
+
+            return Ok(aula);
+        }
+
         // Minhas Aulas
         [HttpGet("minhas")]
         [Authorize(Roles = "3")] // aluno

@@ -128,6 +128,31 @@ namespace EduConnect_API.Services
         public Task<bool> Deletar(int id) => _repo.Deletar(id);
 
         // =========================================================
+        // ATUALIZAR AULA (ADMIN OU PROFESSOR)
+        // =========================================================
+        public async Task<AulaDTO?> Atualizar(int aulaId, int usuarioId, AtualizarAulaDTO dto)
+        {
+            var usuario = await _usuarios.ObterPorId(usuarioId)
+                ?? throw new Exception("Usuário não encontrado.");
+
+            if (usuario.Tipo != 0 && usuario.Tipo != 1 && usuario.Tipo != 2)
+                throw new Exception("Usuário não autorizado a atualizar aulas.");
+
+            var aula = await _repo.ObterPorId(aulaId);
+            if (aula == null)
+                return null;
+
+            aula.Titulo = dto.Titulo;
+            aula.Descricao = dto.Descricao;
+            aula.UrlVideo = dto.UrlVideo;
+            aula.Observacoes = dto.Observacoes;
+
+            aula = await _repo.Atualizar(aula);
+
+            return MapToDTO(aula);
+        }
+
+        // =========================================================
         // MAP
         // =========================================================
         private AulaDTO MapToDTO(Aula a)

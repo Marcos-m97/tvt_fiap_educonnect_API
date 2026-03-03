@@ -7,7 +7,9 @@ public interface IAulaService
     Task<IEnumerable<AulaDTO>> ListarPorTurmaDisciplina(int turmaDisciplinaId);
     Task<IEnumerable<AulaDTO>> ListarMinhasAulas(int usuarioId); // 👈 NOVO
     Task<IEnumerable<AulaDTO>> Listar();
+    Task<AulaDTO?> Atualizar(int aulaId, int usuarioId, AtualizarAulaDTO dto);
     Task<AulaDTO?> UploadMaterialApoio(int aulaId, IFormFile arquivo);
     Task<byte[]?> BaixarMaterialApoio(int aulaId);
     Task<bool> Deletar(int id);
+
 }

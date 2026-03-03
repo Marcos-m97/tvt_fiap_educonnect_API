@@ -56,6 +56,11 @@ namespace EduConnect_API.Repositories
                 .Include(a => a.Entregas)
                 .ToListAsync();
         }
-
+        public async Task<Atividade> Atualizar(Atividade atividade)
+        {
+            _context.Atividades.Update(atividade);
+            await _context.SaveChangesAsync();
+            return atividade;
+        }
     }
 }

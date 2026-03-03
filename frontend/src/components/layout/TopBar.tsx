@@ -6,6 +6,7 @@ import {
   Box,
   Tooltip
 } from "@mui/material";
+import SchoolIcon from "@mui/icons-material/School";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
@@ -52,47 +53,60 @@ export default function TopBar() {
   return (
     <AppBar position="static">
       <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Typography
+       <Typography
           variant="h6"
-          sx={{ cursor: "pointer" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            cursor: "pointer",
+            fontWeight: 600
+          }}
           onClick={handleHome}
         >
-          EduConnect 🎓
+          <SchoolIcon sx={{ fontSize: 22 }} />
+          EduConnect
         </Typography>
 
         <Box display="flex" alignItems="center" gap={1}>
-          {/* 🏠 HOME */}
+
+          {/* HOME */}
           <Tooltip title="Home">
             <IconButton color="inherit" onClick={handleHome}>
               <HomeIcon />
             </IconButton>
           </Tooltip>
 
-          {/* 👤 PERFIL */}
+          {/* PERFIL + EMAIL */}
           <Tooltip title="Meu Perfil">
-            <IconButton color="inherit" onClick={handlePerfil}>
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={1}
+              sx={{ cursor: "pointer" }}
+              onClick={handlePerfil}
+            >
               <AccountCircleIcon />
-            </IconButton>
+              <Typography variant="body2">
+                {user?.email}
+              </Typography>
+            </Box>
           </Tooltip>
 
-          {/* Email */}
-          <Typography variant="body2">
-            👩‍💻 {user?.email}
-          </Typography>
-
-          {/* Tema */}
+          {/* TEMA */}
           <Tooltip title="Alternar tema">
             <IconButton color="inherit" onClick={toggle}>
               {mode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
           </Tooltip>
 
-          {/* Logout */}
+          {/* LOGOUT */}
           <Tooltip title="Sair">
             <IconButton color="inherit" onClick={handleLogout}>
               <LogoutIcon />
             </IconButton>
           </Tooltip>
+
         </Box>
       </Toolbar>
     </AppBar>

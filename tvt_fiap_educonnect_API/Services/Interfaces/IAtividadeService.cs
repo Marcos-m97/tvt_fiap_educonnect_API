@@ -7,8 +7,9 @@ namespace EduConnect_API.Services.Interfaces
         Task<AtividadeDTO> Criar(CriarAtividadeDTO dto);
         Task<IEnumerable<AtividadeDTO>> ListarPorTurmaDisciplina(int turmaDisciplinaId);
         Task<IEnumerable<AtividadeAlunoDTO>> ListarMinhasAtividades(int usuarioId);
+        Task<AtividadeDTO> Atualizar(int id, AtualizarAtividadeDTO dto);
         Task<AtividadeDTO> ObterPorId(int id);
 
-    }
+    } 
 }
 

@@ -6,6 +6,7 @@ namespace EduConnect_API.Repositories.Interfaces
         Task<Atividade> Criar(Atividade atividade);
         Task<Atividade?> ObterPorId(int id);
         Task<IEnumerable<Atividade>> ListarPorTurmaDisciplina(int turmaDisciplinaId);
+        Task<Atividade> Atualizar(Atividade atividade);
         Task<IEnumerable<Atividade>> ListarPorTurma(int turmaId);
 
     }

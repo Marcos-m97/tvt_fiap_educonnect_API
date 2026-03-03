@@ -10,7 +10,7 @@ namespace EduConnect_API.Controllers
     public class AtividadeController : ControllerBase
     {
         private readonly IAtividadeService _service;
-
+         
         public AtividadeController(IAtividadeService service)
         {
             _service = service;
@@ -41,6 +41,13 @@ namespace EduConnect_API.Controllers
         public async Task<IActionResult> ObterPorId(int id)
         {
             return Ok(await _service.ObterPorId(id));
+        }
+        [Authorize(Roles = "0,1,2")] // sysADM, ADM, Professor
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Atualizar(int id, AtualizarAtividadeDTO dto)
+        {
+            var atividade = await _service.Atualizar(id, dto);
+            return Ok(atividade);
         }
 
     }

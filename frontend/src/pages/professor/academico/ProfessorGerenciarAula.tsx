@@ -3,11 +3,15 @@ import {
   Box,
   Button,
   Divider,
-  CircularProgress
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import UploadIcon from "@mui/icons-material/Upload";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useNavigate, useParams } from "react-router-dom";
@@ -33,6 +37,13 @@ export default function ProfessorGerenciarAula() {
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
+  // 🔹 Modal state
+  const [openModal, setOpenModal] = useState(false);
+  const [editTitulo, setEditTitulo] = useState("");
+  const [editDescricao, setEditDescricao] = useState("");
+  const [editUrlVideo, setEditUrlVideo] = useState("");
+  const [editObservacoes, setEditObservacoes] = useState("");
+
   async function carregarAula() {
     try {
       const response = await api.get(`/aulas/${aulaId}`);
@@ -48,7 +59,7 @@ export default function ProfessorGerenciarAula() {
     if (!arquivo) return;
 
     const formData = new FormData();
-    formData.append("arquivo", arquivo); // IMPORTANTE: key correta
+    formData.append("arquivo", arquivo);
 
     try {
       setUploading(true);
@@ -58,7 +69,7 @@ export default function ProfessorGerenciarAula() {
       });
 
       setArquivo(null);
-      carregarAula(); // Atualiza dados da aula após upload
+      carregarAula();
 
     } catch (error) {
       console.error("Erro ao enviar material:", error);
@@ -66,13 +77,31 @@ export default function ProfessorGerenciarAula() {
       setUploading(false);
     }
   }
+  // 🔹 Abrir modal preenchendo dados atuais
+  function abrirModal() {
+    if (!aula) return;
 
-  async function excluirAula() {
+    setEditTitulo(aula.titulo);
+    setEditDescricao(aula.descricao);
+    setEditUrlVideo(aula.urlVideo || "");
+    setEditObservacoes(aula.observacoes || "");
+    setOpenModal(true);
+  }
+
+  async function atualizarAula() {
     try {
-      await api.delete(`/aulas/${aulaId}`);
-      navigate(`/professor/turma/${turmaDisciplinaId}`);
+      await api.put(`/aulas/${aulaId}`, {
+        titulo: editTitulo,
+        descricao: editDescricao,
+        urlVideo: editUrlVideo,
+        observacoes: editObservacoes
+      });
+
+      setOpenModal(false);
+      carregarAula();
+
     } catch (error) {
-      console.error("Erro ao excluir aula:", error);
+      console.error("Erro ao atualizar aula:", error);
     }
   }
 
@@ -96,17 +125,18 @@ export default function ProfessorGerenciarAula() {
           <Button
             startIcon={<EditIcon />}
             variant="outlined"
+            onClick={abrirModal}
           >
             Editar
           </Button>
 
-          <Button
+          {/* <Button
             startIcon={<DeleteIcon />}
             color="error"
             onClick={excluirAula}
           >
             Excluir
-          </Button>
+          </Button> */}
         </Box>
 
         <Button
@@ -130,7 +160,6 @@ export default function ProfessorGerenciarAula() {
 
       {!loading && aula && (
         <>
-          {/* DETALHES */}
           <Box mb={5}>
             <Typography variant="h5" fontWeight={600}>
               {aula.titulo}
@@ -167,7 +196,6 @@ export default function ProfessorGerenciarAula() {
 
           <Divider sx={{ mb: 4 }} />
 
-          {/* MATERIAL DE APOIO */}
           <Typography variant="h6" fontWeight={600} mb={2}>
             Material de Apoio
           </Typography>
@@ -194,7 +222,6 @@ export default function ProfessorGerenciarAula() {
             </Box>
           )}
 
-          {/* UPLOAD */}
           <Box mt={3} display="flex" alignItems="center" gap={2}>
             <input
               type="file"
@@ -216,6 +243,62 @@ export default function ProfessorGerenciarAula() {
           </Box>
         </>
       )}
+
+      {/* 🔹 MODAL EDITAR AULA */}
+      <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Editar Aula</DialogTitle>
+
+        <DialogContent sx={{ mt: 1 }}>
+          <TextField
+            label="Título"
+            fullWidth
+            margin="normal"
+            value={editTitulo}
+            onChange={(e) => setEditTitulo(e.target.value)}
+          />
+
+          <TextField
+            label="Descrição"
+            fullWidth
+            multiline
+            rows={4}
+            margin="normal"
+            value={editDescricao}
+            onChange={(e) => setEditDescricao(e.target.value)}
+          />
+
+          <TextField
+            label="URL do Vídeo"
+            fullWidth
+            margin="normal"
+            value={editUrlVideo}
+            onChange={(e) => setEditUrlVideo(e.target.value)}
+          />
+
+          <TextField
+            label="Observações"
+            fullWidth
+            multiline
+            rows={3}
+            margin="normal"
+            value={editObservacoes}
+            onChange={(e) => setEditObservacoes(e.target.value)}
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setOpenModal(false)}>
+            Cancelar
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={atualizarAula}
+          >
+            Salvar Alterações
+          </Button>
+        </DialogActions>
+      </Dialog>
 
     </AppLayout>
   );

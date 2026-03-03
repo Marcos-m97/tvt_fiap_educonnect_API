@@ -8,7 +8,7 @@ namespace EduConnect_API.Services
     public class AtividadeService : IAtividadeService
     {
         private readonly IAtividadeRepository _atividadeRepo;
-        private readonly ITurmaDisciplinaRepository _tdRepo;
+        private readonly ITurmaDisciplinaRepository _tdRepo; 
         private readonly IAlunoRepository _alunoRepo;
         private readonly IMatriculaRepository _matriculaRepo;
 
@@ -108,6 +108,31 @@ namespace EduConnect_API.Services
         {
             var atividade = await _atividadeRepo.ObterPorId(id)
                 ?? throw new Exception("Atividade não encontrada.");
+
+            return new AtividadeDTO
+            {
+                Id = atividade.Id,
+                Titulo = atividade.Titulo,
+                Descricao = atividade.Descricao,
+                DataEntrega = atividade.DataEntrega,
+                Tipo = atividade.Tipo,
+                TurmaDisciplinaId = atividade.TurmaDisciplinaId,
+                TurmaNome = atividade.TurmaDisciplina.Turma.Nome,
+                DisciplinaNome = atividade.TurmaDisciplina.Disciplina.Nome,
+                ProfessorNome = atividade.TurmaDisciplina.Professor.Usuario.Nome
+            };
+        }
+        public async Task<AtividadeDTO> Atualizar(int id, AtualizarAtividadeDTO dto)
+        {
+            var atividade = await _atividadeRepo.ObterPorId(id)
+                ?? throw new Exception("Atividade não encontrada.");
+
+            atividade.Titulo = dto.Titulo;
+            atividade.Descricao = dto.Descricao;
+            atividade.DataEntrega = dto.DataEntrega;
+            atividade.Tipo = dto.Tipo;
+
+            atividade = await _atividadeRepo.Atualizar(atividade);
 
             return new AtividadeDTO
             {
