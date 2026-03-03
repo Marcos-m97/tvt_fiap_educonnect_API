@@ -9,11 +9,13 @@ import {
   Divider,
   Accordion,
   AccordionSummary,
-  AccordionDetails
+  AccordionDetails,
+  Avatar
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import PersonIcon from "@mui/icons-material/Person";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -43,12 +45,23 @@ interface AtividadeBoletim {
   entregue: boolean;
 }
 
+interface UsuarioLogado {
+  id: number;
+  nome: string;
+  email: string;
+  tipo: number;
+  fotoPerfilUrl?: string;
+}
+
 export default function AlunoBoletim() {
   const navigate = useNavigate();
 
   const [boletins, setBoletins] = useState<Boletim[]>([]);
   const [preview, setPreview] = useState<Boletim | null>(null);
   const [loading, setLoading] = useState(true);
+  const [usuario, setUsuario] = useState<UsuarioLogado | null>(null);
+
+  const baseUrl = api.defaults.baseURL?.replace("/api", "");
 
   async function carregarBoletins(alunoId: number) {
     const response = await api.get(`/boletins/aluno/${alunoId}`);
@@ -72,6 +85,10 @@ export default function AlunoBoletim() {
   useEffect(() => {
     async function init() {
       try {
+        // 🔥 Buscar usuário logado (já traz fotoPerfilUrl)
+        const me = await api.get("/account/me");
+        setUsuario(me.data.usuario);
+
         // 🔹 Buscar contexto do aluno logado
         const contexto = await api.get("/account/me/contexto");
         const alunoId = contexto.data.alunoId;
@@ -108,16 +125,36 @@ export default function AlunoBoletim() {
 
   return (
     <AppLayout>
-      {/* HEADER */}
+
+      {/* HEADER COM FOTO PADRÃO */}
       <Box
-        mb={2}
+        mb={4}
         display="flex"
         justifyContent="space-between"
         alignItems="center"
       >
-        <Typography variant="h4" fontWeight={700}>
-          Meu Boletim
-        </Typography>
+        <Box display="flex" alignItems="center" gap={3}>
+          <Avatar
+            src={
+              usuario?.fotoPerfilUrl
+                ? `${baseUrl}${usuario.fotoPerfilUrl}`
+                : undefined
+            }
+            sx={{ width: 80, height: 80 }}
+          >
+            <PersonIcon sx={{ fontSize: 40 }} />
+          </Avatar>
+
+          <Box>
+            <Typography variant="h4" fontWeight={700}>
+              {usuario?.nome}
+            </Typography>
+
+            <Typography color="text.secondary">
+              Meu Boletim
+            </Typography>
+          </Box>
+        </Box>
 
         <Button
           variant="outlined"
@@ -130,7 +167,7 @@ export default function AlunoBoletim() {
 
       <Divider sx={{ mb: 4 }} />
 
-      {/* PREVIEW (Notas Parciais) */}
+      {/* PREVIEW */}
       {preview && boletins.length === 0 && (
         <Card sx={{ mb: 4 }}>
           <CardContent>
@@ -183,7 +220,7 @@ export default function AlunoBoletim() {
         </Card>
       )}
 
-      {/* BOLETIM GERADO */}
+      {/* BOLETIM FINAL */}
       {boletins.map((boletim) => (
         <Card key={boletim.id} sx={{ mb: 4 }}>
           <CardContent>
@@ -266,6 +303,7 @@ export default function AlunoBoletim() {
           </CardContent>
         </Card>
       ))}
+
     </AppLayout>
   );
 }
