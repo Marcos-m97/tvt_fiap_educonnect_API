@@ -9,10 +9,12 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Button
+  Button,
+  Avatar
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PersonIcon from "@mui/icons-material/Person";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -34,6 +36,14 @@ interface AtividadeBoletim {
   entregue: boolean;
 }
 
+interface MatriculaAtiva {
+  alunoId: number;
+  usuarioId: number;
+  alunoNome: string;
+  turmaId: number;
+  turmaNome: string;
+}
+
 export default function ProfessorAlunoDetalhe() {
   const { turmaDisciplinaId, alunoId } = useParams();
   const location = useLocation();
@@ -43,12 +53,24 @@ export default function ProfessorAlunoDetalhe() {
 
   const [preview, setPreview] = useState<DisciplinaBoletim | null>(null);
   const [loading, setLoading] = useState(true);
+  const [matriculaAtiva, setMatriculaAtiva] = useState<MatriculaAtiva | null>(null);
+
+  const baseUrl = api.defaults.baseURL?.replace("/api", "");
 
   async function carregarDados() {
     try {
       if (!alunoId || !turmaDisciplinaId) return;
 
-      // 🔹 1 - Buscar dados da TurmaDisciplina
+      // 🔹 Buscar matrícula ativa (para pegar usuarioId)
+      const matriculaResponse = await api.get(
+        `/matricula/aluno/${alunoId}/ativa`
+      );
+
+      setMatriculaAtiva(matriculaResponse.data);
+
+      const turmaId = matriculaResponse.data.turmaId;
+
+      // 🔹 Buscar dados da TurmaDisciplina
       const turmaDisciplinaResponse = await api.get(
         `/turmadisciplina/${turmaDisciplinaId}`
       );
@@ -56,14 +78,7 @@ export default function ProfessorAlunoDetalhe() {
       const disciplinaNome =
         turmaDisciplinaResponse.data.disciplinaNome;
 
-      // 🔹 2 - Buscar matrícula ativa do aluno
-      const matriculaResponse = await api.get(
-        `/matricula/aluno/${alunoId}/ativa`
-      );
-
-      const turmaId = matriculaResponse.data.turmaId;
-
-      // 🔹 3 - Buscar preview completo (todas disciplinas)
+      // 🔹 Buscar preview completo
       const previewResponse = await api.get(
         `/boletins/preview/${alunoId}/${turmaId}`
       );
@@ -71,7 +86,6 @@ export default function ProfessorAlunoDetalhe() {
       const todasDisciplinas: DisciplinaBoletim[] =
         previewResponse.data.disciplinas;
 
-      // 🔹 4 - Filtrar apenas disciplina atual
       const disciplinaFiltrada = todasDisciplinas.find(
         (d) => d.nomeDisciplina === disciplinaNome
       );
@@ -102,16 +116,35 @@ export default function ProfessorAlunoDetalhe() {
   return (
     <AppLayout>
 
-      {/* HEADER */}
+      {/* HEADER COM FOTO IGUAL ADMIN */}
       <Box
-        mb={3}
+        mb={4}
         display="flex"
         justifyContent="space-between"
         alignItems="center"
       >
-        <Typography variant="h4">
-          {nomeAluno}
-        </Typography>
+        <Box display="flex" alignItems="center" gap={3}>
+          <Avatar
+            src={
+              matriculaAtiva?.usuarioId
+                ? `${baseUrl}/api/usuario/${matriculaAtiva.usuarioId}/foto`
+                : undefined
+            }
+            sx={{ width: 80, height: 80 }}
+          >
+            <PersonIcon sx={{ fontSize: 40 }} />
+          </Avatar>
+
+          <Box>
+            <Typography variant="h4" fontWeight={700}>
+              {matriculaAtiva?.alunoNome || nomeAluno}
+            </Typography>
+
+            <Typography color="text.secondary">
+              Turma: {matriculaAtiva?.turmaNome}
+            </Typography>
+          </Box>
+        </Box>
 
         <Button
           variant="outlined"

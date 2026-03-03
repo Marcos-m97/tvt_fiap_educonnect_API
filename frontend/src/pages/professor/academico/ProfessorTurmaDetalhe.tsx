@@ -9,10 +9,12 @@ import {
   Tabs,
   Tab,
   TextField,
-  Pagination
+  Pagination,
+  Avatar
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
+import PersonIcon from "@mui/icons-material/Person";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
@@ -37,6 +39,7 @@ interface Aula {
 
 interface AlunoDisciplina {
   alunoId: number;
+  usuarioId: number; // 🔥 necessário para buscar foto
   nome: string;
   email: string;
 }
@@ -51,11 +54,12 @@ export default function ProfessorTurmaDetalhe() {
   const [alunos, setAlunos] = useState<AlunoDisciplina[]>([]);
   const [tab, setTab] = useState(0);
 
-  // Alunos
   const [searchAluno, setSearchAluno] = useState("");
   const [pageAluno, setPageAluno] = useState(1);
   const [totalAlunos, setTotalAlunos] = useState(0);
   const pageSizeAluno = 5;
+
+  const baseUrl = api.defaults.baseURL?.replace("/api", "");
 
   async function carregarAtividades() {
     try {
@@ -136,48 +140,48 @@ export default function ProfessorTurmaDetalhe() {
         </Typography>
       </Box>
 
-<Box
-  display="flex"
-  justifyContent={tab === 2 ? "flex-end" : "space-between"}
-  alignItems="center"
-  mb={3}
->
-  {tab === 0 && (
-    <Button
-      variant="contained"
-      startIcon={<AddIcon />}
-      onClick={() =>
-        navigate(
-          `/professor/academico/${turmaDisciplinaId}/nova-atividade`
-        )
-      }
-    >
-      Criar Atividade
-    </Button>
-  )}
+      <Box
+        display="flex"
+        justifyContent={tab === 2 ? "flex-end" : "space-between"}
+        alignItems="center"
+        mb={3}
+      >
+        {tab === 0 && (
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() =>
+              navigate(
+                `/professor/academico/${turmaDisciplinaId}/nova-atividade`
+              )
+            }
+          >
+            Criar Atividade
+          </Button>
+        )}
 
-  {tab === 1 && (
-    <Button
-      variant="contained"
-      startIcon={<AddIcon />}
-      onClick={() =>
-        navigate(
-          `/professor/academico/${turmaDisciplinaId}/nova-aula`
-        )
-      }
-    >
-      Criar Aula
-    </Button>
-  )}
+        {tab === 1 && (
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() =>
+              navigate(
+                `/professor/academico/${turmaDisciplinaId}/nova-aula`
+              )
+            }
+          >
+            Criar Aula
+          </Button>
+        )}
 
-  <Button
-    variant="outlined"
-    startIcon={<ArrowBackIcon />}
-    onClick={() => navigate("/professor/academico")}
-  >
-    Voltar
-  </Button>
-</Box>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/professor/academico")}
+        >
+          Voltar
+        </Button>
+      </Box>
 
       <Divider sx={{ mb: 3 }} />
 
@@ -314,12 +318,6 @@ export default function ProfessorTurmaDetalhe() {
               </Box>
             )}
 
-            {!loading && alunos.length === 0 && (
-              <Typography variant="body2" color="text.secondary">
-                Nenhum aluno encontrado.
-              </Typography>
-            )}
-
             {!loading &&
               alunos.map((aluno) => (
                 <Box
@@ -330,13 +328,23 @@ export default function ProfessorTurmaDetalhe() {
                   alignItems="center"
                   borderBottom="1px solid #eee"
                 >
-                  <Box>
-                    <Typography fontWeight={600}>
-                      {aluno.nome}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {aluno.email}
-                    </Typography>
+                  <Box display="flex" alignItems="center" gap={2}>
+
+                    <Avatar
+                      src={`${baseUrl}/api/usuario/${aluno.usuarioId}/foto`}
+                      sx={{ width: 48, height: 48 }}
+                    >
+                      <PersonIcon />
+                    </Avatar>
+
+                    <Box>
+                      <Typography fontWeight={600}>
+                        {aluno.nome}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {aluno.email}
+                      </Typography>
+                    </Box>
                   </Box>
 
                   <Button
