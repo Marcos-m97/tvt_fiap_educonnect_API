@@ -1,4 +1,5 @@
-﻿using EduConnect_API.Models;
+﻿using EduConnect_API.Exceptions;
+using EduConnect_API.Models;
 using EduConnect_API.Models.DTOs;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
@@ -248,6 +249,48 @@ namespace EduConnect_API.Services
             );
 
             return true;
+        }
+
+        public async Task<string?> AtualizarFotoPerfil(int id, IFormFile file)
+        {
+            var usuario = await _repo.ObterPorId(id);
+
+            if (usuario == null || !usuario.Ativo)
+                return null;
+
+            // 🔒 Validação tipo
+            var extensao = Path.GetExtension(file.FileName).ToLower();
+
+            var extensoesPermitidas = new[] { ".jpg", ".jpeg", ".png" };
+
+            if (!extensoesPermitidas.Contains(extensao))
+                throw new AppException("Apenas JPG ou PNG são permitidos.", 400);
+
+            // 🔒 Validação tamanho (2MB)
+            if (file.Length > 2 * 1024 * 1024)
+                throw new AppException("Arquivo deve ter no máximo 2MB.", 400);
+
+            var nomeArquivo = $"perfil_{id}_{Guid.NewGuid()}{extensao}";
+
+            var caminhoPasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "perfis");
+
+            if (!Directory.Exists(caminhoPasta))
+                Directory.CreateDirectory(caminhoPasta);
+
+            var caminhoCompleto = Path.Combine(caminhoPasta, nomeArquivo);
+
+            using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var url = $"/uploads/perfis/{nomeArquivo}";
+
+            usuario.FotoPerfilUrl = url;
+
+            await _repo.Atualizar(usuario);
+
+            return url;
         }
     }
 }

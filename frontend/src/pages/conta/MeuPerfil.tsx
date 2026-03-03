@@ -6,10 +6,12 @@ import {
   TextField,
   Button,
   CircularProgress,
-  Divider
+  Divider,
+  Avatar
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PersonIcon from "@mui/icons-material/Person";
 import AppLayout from "../../components/layout/AppLayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +22,7 @@ interface Usuario {
   nome: string;
   email: string;
   tipo: number;
+  fotoPerfilUrl?: string | null;
 }
 
 export default function MeuPerfil() {
@@ -29,8 +32,14 @@ export default function MeuPerfil() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [perfil, setPerfil] = useState<any>(null);
 
+  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+  const [fotoFile, setFotoFile] = useState<File | null>(null);
+
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [erro, setErro] = useState(false);
+
+  // 🔥 Extrai baseURL automaticamente do axios
+  const baseUrl = api.defaults.baseURL?.replace("/api", "");
 
   async function carregar() {
     try {
@@ -51,6 +60,14 @@ export default function MeuPerfil() {
     carregar();
   }, []);
 
+  function handleFotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFotoFile(file);
+    setFotoPreview(URL.createObjectURL(file));
+  }
+
   async function handleSubmit() {
     if (!usuario || !perfil) return;
 
@@ -58,14 +75,30 @@ export default function MeuPerfil() {
       setLoading(true);
       setMensagem(null);
 
-      // Atualiza dados do usuário
       await api.put(`/usuario/${usuario.id}`, {
         nome: usuario.nome,
         email: usuario.email,
         tipo: usuario.tipo
       });
 
-      // Atualiza dados do perfil conforme tipo
+      if (fotoFile) {
+        const formData = new FormData();
+        formData.append("file", fotoFile);
+
+        const response = await api.put(
+          `/usuario/${usuario.id}/foto`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" }
+          }
+        );
+
+        setUsuario({
+          ...usuario,
+          fotoPerfilUrl: response.data.fotoUrl
+        });
+      }
+
       if (usuario.tipo === 1) {
         await api.put(`/admin/${perfil.id}`, {
           usuarioId: usuario.id,
@@ -143,6 +176,44 @@ export default function MeuPerfil() {
           >
             <CardContent sx={{ p: 0 }}>
               <Box display="flex" flexDirection="column" gap={4}>
+
+                {/* FOTO PERFIL */}
+                <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+                  <Avatar
+                    src={
+                      fotoPreview ||
+                      (usuario.fotoPerfilUrl
+                        ? `${baseUrl}${usuario.fotoPerfilUrl}`
+                        : undefined)
+                    }
+                    sx={{
+                      width: 120,
+                      height: 120,
+                      fontSize: 40,
+                      bgcolor: "grey.300"
+                    }}
+                  >
+                    {!usuario.fotoPerfilUrl && !fotoPreview && (
+                      <PersonIcon sx={{ fontSize: 50 }} />
+                    )}
+                  </Avatar>
+
+                  <Button
+                    variant="outlined"
+                    component="label"
+                    sx={{ borderRadius: 3 }}
+                  >
+                    Alterar Foto
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/png, image/jpeg"
+                      onChange={handleFotoChange}
+                    />
+                  </Button>
+                </Box>
+
+                <Divider sx={{ my: 2 }} />
 
                 <Typography fontWeight={600} variant="h6" textAlign="center">
                   Dados do Usuário

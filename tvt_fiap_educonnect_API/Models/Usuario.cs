@@ -9,6 +9,7 @@ namespace EduConnect_API.Models
         public int Tipo { get; set; } // 0=superAdmin, 1=Admin, 2=Professor, 3=Aluno
         public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
         public bool Ativo { get; set; } = true;
+        public string? FotoPerfilUrl { get; set; } // NOVO
 
     }
 }

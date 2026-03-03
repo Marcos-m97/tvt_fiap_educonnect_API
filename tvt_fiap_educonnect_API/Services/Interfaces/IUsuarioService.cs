@@ -15,6 +15,7 @@ namespace EduConnect_API.Services.Interfaces
         Task SolicitarResetSenha(string email);
         Task<bool> ResetarSenha(string email, string codigo, string novaSenha);
         Task<(IEnumerable<Usuario>, int)> ListarPaginado(int page, int pageSize, string? search);
+        Task<string?> AtualizarFotoPerfil(int id, IFormFile file);
 
 
     }

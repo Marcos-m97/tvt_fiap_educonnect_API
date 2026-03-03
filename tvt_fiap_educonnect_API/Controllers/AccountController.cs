@@ -13,14 +13,14 @@ namespace EduConnect_API.Controllers
         private readonly IAdminService _adminService;
         private readonly IProfessorService _professorService;
         private readonly IAlunoService _alunoService;
-        private readonly IAccountService _accountService;  
+        private readonly IAccountService _accountService;
 
         public AccountController(
             IUsuarioService usuarioService,
             IAdminService adminService,
             IProfessorService professorService,
             IAlunoService alunoService,
-            IAccountService accountService)  
+            IAccountService accountService)
         {
             _usuarioService = usuarioService;
             _adminService = adminService;
@@ -30,7 +30,7 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // GET /api/account/me  (Qualquer usuário logado)
+        // GET /api/account/me
         // ============================================================
         [Authorize]
         [HttpGet("me")]
@@ -39,12 +39,11 @@ namespace EduConnect_API.Controllers
             var userId = int.Parse(User.FindFirst("id")!.Value);
             var tipo = int.Parse(User.FindFirst(ClaimTypes.Role)!.Value);
 
-            // Buscar dados básicos do usuário
             var usuario = await _usuarioService.ObterPorId(userId);
+
             if (usuario == null)
                 return NotFound("Usuário não encontrado.");
 
-            // Busca automática do perfil específico
             var perfilTask = tipo switch
             {
                 0 => _adminService.ObterPorUsuario(userId).ContinueWith(t => (object?)t.Result),
@@ -63,14 +62,15 @@ namespace EduConnect_API.Controllers
                     usuario.Id,
                     usuario.Nome,
                     usuario.Email,
-                    usuario.Tipo
+                    usuario.Tipo,
+                    usuario.FotoPerfilUrl   // 🔥 ADICIONADO
                 },
                 perfil
             });
         }
 
         // ============================================================
-        // GET /api/account/me/contexto  (Para aluno e professor)
+        // GET /api/account/me/contexto
         // ============================================================
         [Authorize]
         [HttpGet("me/contexto")]
@@ -79,7 +79,6 @@ namespace EduConnect_API.Controllers
             var userId = int.Parse(User.FindFirst("id")!.Value);
             var tipo = User.FindFirst(ClaimTypes.Role)!.Value;
 
-            // Recupera o contexto do aluno ou professor
             var contexto = await _accountService.ObterContexto(userId, tipo);
 
             if (contexto == null)

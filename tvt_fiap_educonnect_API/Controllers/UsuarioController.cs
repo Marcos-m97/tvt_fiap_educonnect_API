@@ -5,7 +5,6 @@ using EduConnect_API.Services;
 using EduConnect_API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-//using tvt_fiap_educonnect_API.Models.DTOs;
 
 namespace EduConnect_API.Controllers
 {
@@ -42,11 +41,15 @@ namespace EduConnect_API.Controllers
                 {
                     user.Id,
                     user.Nome,
-                    user.Tipo
+                    user.Tipo,
+                    user.FotoPerfilUrl
                 }
             });
         }
 
+        // ============================================================
+        // 2. CRIAR USUÁRIO
+        // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpPost]
         public async Task<IActionResult> Criar([FromBody] CriarUsuarioDTO dto)
@@ -58,7 +61,6 @@ namespace EduConnect_API.Controllers
 
             int tipoLogado = int.Parse(tipoLogadoClaim);
 
-            // ADMIN (1) não pode criar SUPERADMIN (0) e nem ADMIN (1)
             if (tipoLogado == 1 && (dto.Tipo == 0 || dto.Tipo == 1))
                 throw new AppException("Admins só podem criar professores (2) e alunos (3).", 403);
 
@@ -73,13 +75,14 @@ namespace EduConnect_API.Controllers
                     novo.Nome,
                     novo.Email,
                     novo.Tipo,
-                    novo.CriadoEm
+                    novo.CriadoEm,
+                    novo.FotoPerfilUrl
                 }
             });
         }
 
         // ============================================================
-        // 4. REGISTRAR USUÁRIO (PÚBLICO)
+        // 3. REGISTRAR USUÁRIO (PÚBLICO)
         // ============================================================
         [AllowAnonymous]
         [HttpPost("register")]
@@ -90,7 +93,7 @@ namespace EduConnect_API.Controllers
                 Nome = dto.Nome,
                 Email = dto.Email,
                 Senha = dto.Senha,
-                Tipo = 3 // aluno
+                Tipo = 3
             };
 
             var usuario = await _service.Criar(novo);
@@ -103,14 +106,14 @@ namespace EduConnect_API.Controllers
                     usuario.Id,
                     usuario.Nome,
                     usuario.Email,
-                    usuario.Tipo
+                    usuario.Tipo,
+                    usuario.FotoPerfilUrl
                 }
             });
         }
 
-
         // ============================================================
-        // 5. LISTAR PAGINADO (SUPERADMIN = 0 | ADMIN = 1)
+        // 4. LISTAR PAGINADO
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpGet]
@@ -130,9 +133,8 @@ namespace EduConnect_API.Controllers
             });
         }
 
-
         // ============================================================
-        // 6. OBTER POR ID (SUPERADMIN = 0 | ADMIN = 1)
+        // 5. OBTER POR ID
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpGet("{id}")]
@@ -147,7 +149,7 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // 7. ATUALIZAR (SUPERADMIN = 0 | ADMIN = 1)
+        // 6. ATUALIZAR
         // ============================================================
         [Authorize(Roles = "0,1,2,3")]
         [HttpPut("{id}")]
@@ -160,7 +162,6 @@ namespace EduConnect_API.Controllers
 
             int tipoLogado = int.Parse(tipoLogadoClaim);
 
-            // Admin não pode promover usuários acima dele
             if (tipoLogado == 1 && (dto.Tipo == 0 || dto.Tipo == 1))
                 throw new AppException("Admins só podem editar professores (2) e alunos (3).", 403);
 
@@ -173,7 +174,7 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // 8. SOFT DELETE (SUPERADMIN = 0 | ADMIN = 1)
+        // 7. SOFT DELETE
         // ============================================================
         [Authorize(Roles = "0,1")]
         [HttpDelete("{id}")]
@@ -186,11 +187,11 @@ namespace EduConnect_API.Controllers
 
             return NoContent();
         }
- 
+
         // ============================================================
-        // 9. REATIVAR USUARIOS (SUPERADMIN = 0 | ADMIN = 1)
+        // 8. REATIVAR
         // ============================================================
-        [Authorize(Roles = "0,1")] // SuperAdmin(0) ou Admin(1)
+        [Authorize(Roles = "0,1")]
         [HttpPut("{id}/reativar")]
         public async Task<IActionResult> Reativar(int id)
         {
@@ -203,7 +204,7 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // 10. SOLICITAR REDEFINIÇÃO DE SENHA
+        // 9. FORGOT PASSWORD
         // ============================================================
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO dto)
@@ -213,7 +214,7 @@ namespace EduConnect_API.Controllers
         }
 
         // ============================================================
-        // 11. REDEFINIR DE SENHA
+        // 10. RESET PASSWORD
         // ============================================================
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDTO dto)
@@ -226,5 +227,22 @@ namespace EduConnect_API.Controllers
             return Ok(new { message = "Senha redefinida com sucesso!" });
         }
 
+        // ============================================================
+        // 11. ATUALIZAR FOTO
+        // ============================================================
+        [Authorize(Roles = "0,1,2,3")]
+        [HttpPut("{id}/foto")]
+        public async Task<IActionResult> AtualizarFoto(int id, IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                throw new AppException("Arquivo inválido", 400);
+
+            var url = await _service.AtualizarFotoPerfil(id, file);
+
+            if (url == null)
+                throw new AppException("Usuário não encontrado", 404);
+
+            return Ok(new { fotoUrl = url });
+        }
     }
 }
