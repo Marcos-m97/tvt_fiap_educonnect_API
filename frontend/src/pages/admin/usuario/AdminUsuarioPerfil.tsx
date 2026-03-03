@@ -6,10 +6,12 @@ import {
   Chip,
   Button,
   Divider,
-  CircularProgress
+  CircularProgress,
+  Avatar
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
+import PersonIcon from "@mui/icons-material/Person";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -22,6 +24,7 @@ interface Usuario {
   tipo: number;
   ativo: boolean;
   criadoEm: string;
+  fotoPerfilUrl?: string | null;
 }
 
 export default function AdminUsuarioPerfil() {
@@ -32,6 +35,8 @@ export default function AdminUsuarioPerfil() {
   const [perfil, setPerfil] = useState<any>(null);
   const [contexto, setContexto] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  const baseUrl = api.defaults.baseURL?.replace("/api", "");
 
   function traduzirTipo(tipo: number) {
     switch (tipo) {
@@ -96,7 +101,6 @@ export default function AdminUsuarioPerfil() {
           Perfil do Usuário
         </Typography>
 
-        {/* BOTÕES DIREITA */}
         <Box position="absolute" right={0} top={0} display="flex" gap={1}>
           <Button
             variant="outlined"
@@ -125,16 +129,35 @@ export default function AdminUsuarioPerfil() {
       {!loading && usuario && (
         <Card
           sx={{
-            borderRadius: 3,
+            borderRadius: 4,
             boxShadow: 3,
-            p: 2
+            p: 3
           }}
         >
           <CardContent>
 
-            {/* BLOCO SUPERIOR CENTRALIZADO */}
-            <Box textAlign="center" mb={3}>
-              <Typography variant="h5" fontWeight={600}>
+            {/* FOTO + NOME */}
+            <Box textAlign="center" mb={4}>
+
+              <Avatar
+                src={
+                  usuario.fotoPerfilUrl
+                    ? `${baseUrl}${usuario.fotoPerfilUrl}`
+                    : undefined
+                }
+                sx={{
+                  width: 120,
+                  height: 120,
+                  mx: "auto",
+                  mb: 2,
+                  fontSize: 48,
+                  bgcolor: "grey.400"
+                }}
+              >
+                {!usuario.fotoPerfilUrl && <PersonIcon fontSize="large" />}
+              </Avatar>
+
+              <Typography variant="h5" fontWeight={700}>
                 {usuario.nome}
               </Typography>
 
@@ -206,7 +229,6 @@ export default function AdminUsuarioPerfil() {
                   Contexto Acadêmico
                 </Typography>
 
-                {/* PROFESSOR */}
                 {usuario.tipo === 2 && contexto.turmasDisciplinas && (
                   <Box display="grid" gap={2}>
                     {contexto.turmasDisciplinas.map((item: any) => (
@@ -234,7 +256,6 @@ export default function AdminUsuarioPerfil() {
                   </Box>
                 )}
 
-                {/* ALUNO */}
                 {usuario.tipo === 3 && (
                   <Box display="grid" gap={2}>
 

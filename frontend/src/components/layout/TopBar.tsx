@@ -4,23 +4,27 @@ import {
   Typography,
   IconButton,
   Box,
-  Tooltip
+  Tooltip,
+  Avatar
 } from "@mui/material";
 import SchoolIcon from "@mui/icons-material/School";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import HomeIcon from "@mui/icons-material/Home";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import PersonIcon from "@mui/icons-material/Person";
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useThemeApp } from "../../contexts/ThemeContext";
+import { api } from "../../services/api";
 
 export default function TopBar() {
   const { user, logout } = useAuth();
   const { mode, toggle } = useThemeApp();
   const navigate = useNavigate();
+
+  const baseUrl = api.defaults.baseURL?.replace("/api", "");
 
   function handleLogout() {
     logout();
@@ -53,7 +57,7 @@ export default function TopBar() {
   return (
     <AppBar position="static">
       <Toolbar sx={{ justifyContent: "space-between" }}>
-       <Typography
+        <Typography
           variant="h6"
           sx={{
             display: "flex",
@@ -86,7 +90,21 @@ export default function TopBar() {
               sx={{ cursor: "pointer" }}
               onClick={handlePerfil}
             >
-              <AccountCircleIcon />
+              <Avatar
+                src={
+                  user?.fotoPerfilUrl
+                    ? `${baseUrl}${user.fotoPerfilUrl}`
+                    : undefined
+                }
+                sx={{
+                  width: 32,
+                  height: 32,
+                  bgcolor: "grey.300"
+                }}
+              >
+                {!user?.fotoPerfilUrl && <PersonIcon />}
+              </Avatar>
+
               <Typography variant="body2">
                 {user?.email}
               </Typography>

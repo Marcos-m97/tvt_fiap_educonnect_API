@@ -14,7 +14,8 @@ export type Usuario = {
   id: number;
   nome: string;
   email: string;
-  tipo: number; // 0=Admin | 1=Professor | 2=Aluno
+  tipo: number;
+  fotoPerfilUrl?: string | null; // 🔥 ADICIONADO
 };
 
 type Perfil = {
@@ -24,6 +25,7 @@ type Perfil = {
 
 type LoginResponse = {
   token: string;
+  usuario: Usuario; // 🔥 login agora já pode retornar usuário completo
 };
 
 type MeResponse = {
@@ -42,7 +44,7 @@ type AuthContextType = {
 };
 
 /* =========================
-   CONTEXT (EXPORTADO)
+   CONTEXT
 ========================= */
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -62,7 +64,7 @@ export function AuthProvider({
   const [loading, setLoading] = useState(true);
 
   /* =========================
-     BOOTSTRAP (carrega /me)
+     BOOTSTRAP
   ========================= */
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -94,15 +96,13 @@ export function AuthProvider({
   async function login(email: string, senha: string) {
     const { data } = await api.post<LoginResponse>(
       "/usuario/login",
-      {
-        email,
-        senha
-      }
+      { email, senha }
     );
 
     localStorage.setItem("token", data.token);
     setToken(data.token);
 
+    // 🔥 Sempre buscar /me para garantir foto atualizada
     const me = await api.get<MeResponse>("/account/me");
 
     setUser(me.data.usuario);
@@ -140,7 +140,7 @@ export function AuthProvider({
 }
 
 /* =========================
-   HOOK PERSONALIZADO
+   HOOK
 ========================= */
 
 export function useAuth() {

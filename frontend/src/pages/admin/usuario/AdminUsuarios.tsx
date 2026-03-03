@@ -9,10 +9,12 @@ import {
   Divider,
   TextField,
   Pagination,
-  CircularProgress
+  CircularProgress,
+  Avatar
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PersonIcon from "@mui/icons-material/Person";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
@@ -24,6 +26,7 @@ interface Usuario {
   email: string;
   tipo: number;
   ativo: boolean;
+  fotoPerfilUrl?: string | null;
 }
 
 function traduzirTipo(tipo: number) {
@@ -52,6 +55,8 @@ export default function AdminUsuarios() {
   const pageSize = 5;
 
   const [search, setSearch] = useState("");
+
+  const baseUrl = api.defaults.baseURL?.replace("/api", "");
 
   async function carregarUsuarios() {
     try {
@@ -97,9 +102,13 @@ export default function AdminUsuarios() {
   return (
     <AppLayout>
 
-      {/* HEADER CENTRALIZADO */}
-      <Box textAlign="center" mb={4}>
-        <Typography variant="h4" gutterBottom>
+      {/* HEADER MELHORADO */}
+      <Box textAlign="center" mb={5}>
+        <Typography
+          variant="h3"
+          fontWeight={700}
+          gutterBottom
+        >
           Gestão de Usuários
         </Typography>
 
@@ -108,7 +117,7 @@ export default function AdminUsuarios() {
         </Typography>
       </Box>
 
-      {/* LINHA DE AÇÕES */}
+      {/* AÇÕES */}
       <Box
         display="flex"
         justifyContent="center"
@@ -118,11 +127,11 @@ export default function AdminUsuarios() {
         flexWrap="wrap"
       >
         <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => navigate("/admin/usuarios/novo")}
-            >
-            Criar Usuário
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => navigate("/admin/usuarios/novo")}
+        >
+          Criar Usuário
         </Button>
 
         <TextField
@@ -152,14 +161,7 @@ export default function AdminUsuarios() {
       </Box>
 
       {/* LISTA */}
-      <Card
-        sx={{
-          transition: "0.2s",
-          "&:hover": {
-            boxShadow: 6
-          }
-        }}
-      >
+      <Card sx={{ borderRadius: 4 }}>
         <CardContent>
 
           {loading && (
@@ -181,32 +183,52 @@ export default function AdminUsuarios() {
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
-                  py={2}
+                  py={3}
                   sx={{ opacity: usuario.ativo ? 1 : 0.5 }}
                 >
-                  <Box>
-                    <Typography fontWeight={600}>
-                      {usuario.nome}
-                    </Typography>
+                  {/* LADO ESQUERDO */}
+                  <Box display="flex" alignItems="center" gap={3}>
 
-                    <Typography variant="body2" color="text.secondary">
-                      {usuario.email}
-                    </Typography>
+                    <Avatar
+                      src={
+                        usuario.fotoPerfilUrl
+                          ? `${baseUrl}${usuario.fotoPerfilUrl}`
+                          : undefined
+                      }
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        bgcolor: "grey.400"
+                      }}
+                    >
+                      {!usuario.fotoPerfilUrl && <PersonIcon />}
+                    </Avatar>
 
-                    <Box mt={1} display="flex" gap={1}>
-                      <Chip
-                        label={traduzirTipo(usuario.tipo)}
-                        size="small"
-                      />
+                    <Box>
+                      <Typography fontWeight={600} fontSize={16}>
+                        {usuario.nome}
+                      </Typography>
 
-                      <Chip
-                        label={usuario.ativo ? "Ativo" : "Inativo"}
-                        color={usuario.ativo ? "success" : "default"}
-                        size="small"
-                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {usuario.email}
+                      </Typography>
+
+                      <Box mt={1} display="flex" gap={1}>
+                        <Chip
+                          label={traduzirTipo(usuario.tipo)}
+                          size="small"
+                        />
+
+                        <Chip
+                          label={usuario.ativo ? "Ativo" : "Inativo"}
+                          color={usuario.ativo ? "success" : "default"}
+                          size="small"
+                        />
+                      </Box>
                     </Box>
                   </Box>
 
+                  {/* BOTÕES */}
                   <Box display="flex" gap={1}>
                     <Button
                       size="small"
@@ -232,6 +254,7 @@ export default function AdminUsuarios() {
                 {index !== usuarios.length - 1 && <Divider />}
               </Box>
             ))}
+
         </CardContent>
 
         <CardActions sx={{ justifyContent: "center", py: 2 }}>

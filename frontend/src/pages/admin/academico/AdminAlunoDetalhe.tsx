@@ -9,14 +9,16 @@ import {
   Divider,
   Accordion,
   AccordionSummary,
-  AccordionDetails
+  AccordionDetails,
+  Avatar
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
+import PersonIcon from "@mui/icons-material/Person";
 import AppLayout from "../../../components/layout/AppLayout";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
 
@@ -44,17 +46,37 @@ interface AtividadeBoletim {
   entregue: boolean;
 }
 
+interface MatriculaAtiva {
+  alunoId: number;
+  usuarioId: number;
+  alunoNome: string;
+  turmaId: number;
+  turmaNome: string;
+}
+
 export default function AdminAlunoDetalhe() {
   const { id } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
-
-  const nomeAluno = location.state?.nome || "";
 
   const [boletins, setBoletins] = useState<Boletim[]>([]);
   const [preview, setPreview] = useState<Boletim | null>(null);
   const [loading, setLoading] = useState(true);
   const [gerando, setGerando] = useState(false);
+
+  const [matriculaAtiva, setMatriculaAtiva] = useState<MatriculaAtiva | null>(null);
+
+  const baseUrl = api.defaults.baseURL?.replace("/api", "");
+
+  async function carregarMatriculaAtiva() {
+    try {
+      if (!id) return;
+
+      const response = await api.get(`/matricula/aluno/${id}/ativa`);
+      setMatriculaAtiva(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar matrícula ativa:", error);
+    }
+  }
 
   async function carregarBoletins() {
     try {
@@ -67,7 +89,6 @@ export default function AdminAlunoDetalhe() {
     }
   }
 
-  // ✅ CORREÇÃO AQUI
   async function carregarPreview() {
     try {
       if (!id) return;
@@ -78,7 +99,6 @@ export default function AdminAlunoDetalhe() {
 
       const turmaId = matriculaResponse.data.turmaId;
 
-      // 🔥 AGORA USA GET /preview
       const response = await api.get(
         `/boletins/preview/${id}/${turmaId}`
       );
@@ -126,9 +146,9 @@ export default function AdminAlunoDetalhe() {
 
   useEffect(() => {
     async function init() {
+      await carregarMatriculaAtiva();
       await carregarBoletins();
 
-      // 🔥 pequena melhoria para evitar dependência stale
       const lista = await api.get(`/boletins/aluno/${id}`);
       if (lista.data.length === 0) {
         await carregarPreview();
@@ -152,16 +172,36 @@ export default function AdminAlunoDetalhe() {
 
   return (
     <AppLayout>
-      {/* HEADER */}
+
+      {/* HEADER MELHORADO COM FOTO */}
       <Box
-        mb={2}
+        mb={4}
         display="flex"
         justifyContent="space-between"
         alignItems="center"
       >
-        <Typography variant="h4">
-          {nomeAluno}
-        </Typography>
+        <Box display="flex" alignItems="center" gap={3}>
+          <Avatar
+            src={
+              matriculaAtiva?.usuarioId
+                ? `${baseUrl}/api/usuario/${matriculaAtiva.usuarioId}/foto`
+                : undefined
+            }
+            sx={{ width: 80, height: 80 }}
+          >
+            <PersonIcon sx={{ fontSize: 40 }} />
+          </Avatar>
+
+          <Box>
+            <Typography variant="h4" fontWeight={700}>
+              {matriculaAtiva?.alunoNome}
+            </Typography>
+
+            <Typography color="text.secondary">
+              Turma: {matriculaAtiva?.turmaNome}
+            </Typography>
+          </Box>
+        </Box>
 
         <Button
           variant="outlined"
@@ -253,7 +293,7 @@ export default function AdminAlunoDetalhe() {
             >
               <Box>
                 <Typography fontWeight={600}>
-                  Boletim {nomeAluno}
+                  Boletim {matriculaAtiva?.alunoNome}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Gerado em {new Date(boletim.geradoEm).toLocaleString()}

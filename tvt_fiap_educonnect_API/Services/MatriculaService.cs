@@ -29,7 +29,7 @@ namespace EduConnect_API.Services
         }
 
         // ==============================================================
-        // CRIAR MATRÍCULA (INSCRIÇÃO)
+        // CRIAR MATRÍCULA
         // ==============================================================
         public async Task<MatriculaDTO> Criar(int usuarioId, CriarMatriculaDTO dto)
         {
@@ -52,7 +52,7 @@ namespace EduConnect_API.Services
         }
 
         // ==============================================================
-        // UPLOAD COMPROVANTE DE PAGAMENTO
+        // UPLOAD COMPROVANTE
         // ==============================================================
         public async Task<MatriculaDTO?> UploadComprovantePagamento(int id, IFormFile arquivo)
         {
@@ -71,9 +71,6 @@ namespace EduConnect_API.Services
             return MapToDTO(m, m.Aluno.Usuario.Nome, m.Turma.Nome);
         }
 
-        // ==============================================================
-        // UPLOAD DOCUMENTOS PESSOAIS
-        // ==============================================================
         public async Task<MatriculaDTO?> UploadDocumentosPessoais(int id, IFormFile arquivo)
         {
             var m = await _repo.ObterPorId(id);
@@ -91,9 +88,6 @@ namespace EduConnect_API.Services
             return MapToDTO(m, m.Aluno.Usuario.Nome, m.Turma.Nome);
         }
 
-        // ==============================================================
-        // UPLOAD DOCUMENTOS DE ESCOLARIDADE
-        // ==============================================================
         public async Task<MatriculaDTO?> UploadDocumentosEscolaridade(int id, IFormFile arquivo)
         {
             var m = await _repo.ObterPorId(id);
@@ -118,7 +112,6 @@ namespace EduConnect_API.Services
         {
             var m = await _repo.ObterPorId(id);
             if (m?.ComprovantePagamento == null) return null;
-
             return await _storage.BaixarAsync(m.ComprovantePagamento);
         }
 
@@ -126,7 +119,6 @@ namespace EduConnect_API.Services
         {
             var m = await _repo.ObterPorId(id);
             if (m?.DocumentosPessoais == null) return null;
-
             return await _storage.BaixarAsync(m.DocumentosPessoais);
         }
 
@@ -134,7 +126,6 @@ namespace EduConnect_API.Services
         {
             var m = await _repo.ObterPorId(id);
             if (m?.DocumentosEscolaridade == null) return null;
-
             return await _storage.BaixarAsync(m.DocumentosEscolaridade);
         }
 
@@ -166,7 +157,7 @@ namespace EduConnect_API.Services
         }
 
         // ==============================================================
-        // ATUALIZAR STATUS (EMAIL AUTOMÁTICO NA EFETIVAÇÃO)
+        // ATUALIZAR STATUS
         // ==============================================================
         public async Task<MatriculaDTO?> AtualizarStatus(int id, MatriculaStatus novoStatus)
         {
@@ -180,7 +171,6 @@ namespace EduConnect_API.Services
 
             await _repo.Atualizar(m);
 
-            // 🔔 EMAIL SOMENTE NA TRANSIÇÃO PARA EFETIVADA
             if (statusAnterior != MatriculaStatus.Efetivada &&
                 novoStatus == MatriculaStatus.Efetivada)
             {
@@ -193,19 +183,10 @@ namespace EduConnect_API.Services
                 var corpo = $@"
 Olá {nomeAluno},
 
-Temos uma ótima notícia! 🎓
+Sua matrícula na turma {nomeTurma} foi efetivada com sucesso.
 
-Sua matrícula na turma **{nomeTurma}** foi **efetivada com sucesso**.
-
-A partir de agora, você já pode:
-- Acessar o portal do aluno
-- Visualizar suas disciplinas
-- Acompanhar atividades e boletins
-
-👉 Acesse o portal:
+Acesse o portal:
 https://educonnect.com/login
-
-Se precisar de ajuda, nossa equipe administrativa está à disposição.
 
 Bem-vindo(a) à EduConnect!
 ";
@@ -216,13 +197,10 @@ Bem-vindo(a) à EduConnect!
             return MapToDTO(m, m.Aluno.Usuario.Nome, m.Turma.Nome);
         }
 
-        // ==============================================================
-        // EXCLUIR MATRÍCULA
-        // ==============================================================
         public Task<bool> Deletar(int id) => _repo.Deletar(id);
 
         // ==============================================================
-        // MAPEAMENTO DTO
+        // 🔥 MAP CORRIGIDO COM USUARIOID
         // ==============================================================
         private MatriculaDTO MapToDTO(Matricula m, string alunoNome, string turmaNome)
         {
@@ -230,6 +208,7 @@ Bem-vindo(a) à EduConnect!
             {
                 Id = m.Id,
                 AlunoId = m.AlunoId,
+                UsuarioId = m.Aluno.UsuarioId, // 🔥 ESSENCIAL PARA FOTO
                 AlunoNome = alunoNome,
                 TurmaId = m.TurmaId,
                 TurmaNome = turmaNome,
@@ -238,8 +217,9 @@ Bem-vindo(a) à EduConnect!
                 AtualizadoEm = m.AtualizadoEm
             };
         }
+
         // ==============================================================
-        // LISTAR ALUNOS DA TURMA (PROFESSOR / ADM)
+        // LISTAR ALUNOS DA TURMA
         // ==============================================================
         public async Task<object> ListarAlunosPorTurma(
             int turmaId,
@@ -254,6 +234,7 @@ Bem-vindo(a) à EduConnect!
             var result = items.Select(m => new AlunoTurmaDTO
             {
                 AlunoId = m.AlunoId,
+                UsuarioId = m.Aluno.UsuarioId,
                 Nome = m.Aluno.Usuario.Nome,
                 Email = m.Aluno.Usuario.Email,
                 Status = m.Status
@@ -267,9 +248,7 @@ Bem-vindo(a) à EduConnect!
                 pageSize
             };
         }
-        // ==============================================================
-        // LISTAR MATRICULAS ATIVAS (PROFESSOR / ADM)
-        // ==============================================================
+
         public async Task<MatriculaDTO?> ObterAtivaPorAlunoId(int alunoId)
         {
             var m = await _repo.ObterAtivaPorAlunoId(alunoId);
@@ -277,14 +256,12 @@ Bem-vindo(a) à EduConnect!
 
             return MapToDTO(m, m.Aluno.Usuario.Nome, m.Turma.Nome);
         }
-        // ==============================================================
-        // LISTAR PAGINADO (PROFESSOR / ADM)
-        // ==============================================================
+
         public async Task<PagedResultCommonDTO<MatriculaDTO>> ListarPaginado(
-      int page,
-      int pageSize,
-      string? search,
-      MatriculaStatus? status)
+            int page,
+            int pageSize,
+            string? search,
+            MatriculaStatus? status)
         {
             var (items, totalCount) =
                 await _repo.ListarPaginado(page, pageSize, search, status);
@@ -300,6 +277,5 @@ Bem-vindo(a) à EduConnect!
                 PageSize = pageSize
             };
         }
-
     }
 }

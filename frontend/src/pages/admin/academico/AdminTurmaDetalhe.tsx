@@ -13,12 +13,14 @@ import {
   TextField,
   MenuItem,
   Chip,
-  Pagination
+  Pagination,
+  Avatar
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import PersonIcon from "@mui/icons-material/Person";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -53,6 +55,7 @@ interface Professor {
 
 interface AlunoTurma {
   alunoId: number;
+  usuarioId: number; // 🔥 AGORA VEM DO BACKEND
   nome: string;
   email: string;
   status: number;
@@ -79,6 +82,8 @@ export default function AdminTurmaDetalhe() {
   const [disciplinaId, setDisciplinaId] = useState<number | "">("");
   const [professorId, setProfessorId] = useState<number | "">("");
 
+  const baseUrl = api.defaults.baseURL?.replace("/api", "");
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -88,18 +93,12 @@ export default function AdminTurmaDetalhe() {
 
   function getStatusLabel(status: number) {
     switch (status) {
-      case 0:
-        return { label: "Inativa", color: "default" };
-      case 1:
-        return { label: "Inscrição", color: "info" };
-      case 2:
-        return { label: "Pagamento", color: "warning" };
-      case 3:
-        return { label: "Documentos", color: "warning" };
-      case 4:
-        return { label: "Efetivada", color: "success" };
-      default:
-        return { label: "Desconhecido", color: "default" };
+      case 0: return { label: "Inativa", color: "default" };
+      case 1: return { label: "Inscrição", color: "info" };
+      case 2: return { label: "Pagamento", color: "warning" };
+      case 3: return { label: "Documentos", color: "warning" };
+      case 4: return { label: "Efetivada", color: "success" };
+      default: return { label: "Desconhecido", color: "default" };
     }
   }
 
@@ -113,11 +112,7 @@ export default function AdminTurmaDetalhe() {
       const alunosResponse = await api.get(
         `/matricula/turma/${id}/alunos`,
         {
-          params: {
-            page,
-            pageSize,
-            search: debouncedSearch
-          }
+          params: { page, pageSize, search: debouncedSearch }
         }
       );
 
@@ -136,47 +131,33 @@ export default function AdminTurmaDetalhe() {
   async function carregarSelects() {
     if (!turma) return;
 
-    try {
-      const disciplinasResponse = await api.get(
-        `/disciplina/curso/${turma.cursoId}`
-      );
+    const disciplinasResponse = await api.get(
+      `/disciplina/curso/${turma.cursoId}`
+    );
 
-      const professoresResponse = await api.get(`/professor`);
+    const professoresResponse = await api.get(`/professor`);
 
-      setDisciplinas(disciplinasResponse.data);
-      setProfessores(professoresResponse.data);
-
-    } catch (error) {
-      console.error("Erro ao carregar selects:", error);
-    }
+    setDisciplinas(disciplinasResponse.data);
+    setProfessores(professoresResponse.data);
   }
 
   async function vincularDisciplina() {
-    try {
-      await api.post(`/turmadisciplina`, {
-        turmaId: Number(id),
-        disciplinaId: Number(disciplinaId),
-        professorId: Number(professorId)
-      });
+    await api.post(`/turmadisciplina`, {
+      turmaId: Number(id),
+      disciplinaId: Number(disciplinaId),
+      professorId: Number(professorId)
+    });
 
-      setOpenModal(false);
-      setDisciplinaId("");
-      setProfessorId("");
-      carregarDados();
-    } catch (error) {
-      console.error("Erro ao vincular disciplina:", error);
-    }
+    setOpenModal(false);
+    setDisciplinaId("");
+    setProfessorId("");
+    carregarDados();
   }
 
   async function removerVinculo(vinculoId: number) {
     if (!confirm("Deseja remover esta disciplina da turma?")) return;
-
-    try {
-      await api.delete(`/turmadisciplina/${vinculoId}`);
-      carregarDados();
-    } catch (error) {
-      console.error("Erro ao remover vínculo:", error);
-    }
+    await api.delete(`/turmadisciplina/${vinculoId}`);
+    carregarDados();
   }
 
   async function desativarTurma() {
@@ -195,9 +176,7 @@ export default function AdminTurmaDetalhe() {
   }, [id, page, debouncedSearch]);
 
   useEffect(() => {
-    if (openModal) {
-      carregarSelects();
-    }
+    if (openModal) carregarSelects();
   }, [openModal]);
 
   if (!turma) {
@@ -348,11 +327,21 @@ export default function AdminTurmaDetalhe() {
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Box>
-                  <Typography fontWeight={600}>{aluno.nome}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {aluno.email}
-                  </Typography>
+                <Box display="flex" alignItems="center" gap={2}>
+
+                  <Avatar
+                    src={`${baseUrl}/api/usuario/${aluno.usuarioId}/foto`}
+                    sx={{ width: 48, height: 48 }}
+                  >
+                    <PersonIcon />
+                  </Avatar>
+
+                  <Box>
+                    <Typography fontWeight={600}>{aluno.nome}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {aluno.email}
+                    </Typography>
+                  </Box>
                 </Box>
 
                 <Box display="flex" gap={2} alignItems="center">

@@ -5,6 +5,10 @@
         public int Id { get; set; }
 
         public int AlunoId { get; set; }
+
+        // 🔥 ESSENCIAL PARA FOTO DO USUÁRIO
+        public int UsuarioId { get; set; }
+
         public string AlunoNome { get; set; } = string.Empty;
 
         public int TurmaId { get; set; }

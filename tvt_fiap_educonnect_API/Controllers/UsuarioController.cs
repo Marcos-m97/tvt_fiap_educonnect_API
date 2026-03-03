@@ -244,5 +244,20 @@ namespace EduConnect_API.Controllers
 
             return Ok(new { fotoUrl = url });
         }
+        // ============================================================
+        // 12. OBTER FOTO PERFIL (NOVO ENDPOINT ÚNICO)
+        // ============================================================
+        [AllowAnonymous]
+        [HttpGet("{id}/foto")]
+        public async Task<IActionResult> ObterFoto(int id)
+        {
+            var result = await _service.ObterFotoPerfil(id);
+
+            if (result == null)
+                return NotFound();
+
+            return File(result.Value.bytes, result.Value.contentType);
+        }
+
     }
 }

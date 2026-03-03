@@ -3,6 +3,7 @@ using EduConnect_API.Models;
 using EduConnect_API.Models.DTOs;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduConnect_API.Services
 {
@@ -291,6 +292,36 @@ namespace EduConnect_API.Services
             await _repo.Atualizar(usuario);
 
             return url;
+        }
+        public async Task<(byte[] bytes, string contentType)?> ObterFotoPerfil(int id)
+        {
+            var usuario = await _repo.ObterPorId(id);
+
+            if (usuario == null || string.IsNullOrEmpty(usuario.FotoPerfilUrl))
+                return null;
+
+            var caminhoCompleto = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                usuario.FotoPerfilUrl.TrimStart('/')
+            );
+
+            if (!System.IO.File.Exists(caminhoCompleto))
+                return null;
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(caminhoCompleto);
+
+            var extensao = Path.GetExtension(caminhoCompleto).ToLower();
+
+            var contentType = extensao switch
+            {
+                ".png" => "image/png",
+                ".jpg" => "image/jpeg",
+                ".jpeg" => "image/jpeg",
+                _ => "application/octet-stream"
+            };
+
+            return (bytes, contentType);
         }
     }
 }
