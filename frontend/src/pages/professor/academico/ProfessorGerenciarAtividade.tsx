@@ -37,6 +37,7 @@ interface AtividadeDetalhe {
   descricao: string;
   dataEntrega?: string;
   tipo?: number;
+  urlMaterial?: string;
 }
 
 export default function ProfessorGerenciarAtividade() {
@@ -58,6 +59,22 @@ export default function ProfessorGerenciarAtividade() {
   const [editDescricao, setEditDescricao] = useState("");
   const [editDataEntrega, setEditDataEntrega] = useState("");
   const [editTipo, setEditTipo] = useState<number>(1);
+  const [editUrlMaterial, setEditUrlMaterial] = useState("");
+
+  function formatarData(data?: string) {
+    if (!data) return "";
+
+    const d = new Date(data);
+
+    const dia = String(d.getDate()).padStart(2, "0");
+    const mes = String(d.getMonth() + 1).padStart(2, "0");
+    const ano = d.getFullYear();
+
+    const hora = String(d.getHours()).padStart(2, "0");
+    const minuto = String(d.getMinutes()).padStart(2, "0");
+
+    return `${dia}/${mes}/${ano} ${hora}:${minuto}`;
+  }
 
   async function carregarAtividade() {
     try {
@@ -98,6 +115,7 @@ export default function ProfessorGerenciarAtividade() {
     );
 
     setEditTipo(atividade.tipo ?? 1);
+    setEditUrlMaterial(atividade.urlMaterial ?? "");
 
     setEditModalOpen(true);
   }
@@ -108,6 +126,7 @@ export default function ProfessorGerenciarAtividade() {
         titulo: editTitulo,
         descricao: editDescricao,
         dataEntrega: editDataEntrega,
+        urlMaterial: editUrlMaterial,
         tipo: editTipo
       });
 
@@ -205,7 +224,7 @@ export default function ProfessorGerenciarAtividade() {
 
             {atividade.dataEntrega && (
               <Typography variant="body2" color="text.secondary" mt={1}>
-                Entrega até: {atividade.dataEntrega}
+                Entrega até: {formatarData(atividade.dataEntrega)}
               </Typography>
             )}
 
@@ -220,6 +239,19 @@ export default function ProfessorGerenciarAtividade() {
             >
               {atividade.descricao}
             </Typography>
+
+            {atividade.urlMaterial && (
+              <Box mt={2}>
+                <Button
+                  variant="outlined"
+                  href={atividade.urlMaterial}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Abrir Enunciado / Material
+                </Button>
+              </Box>
+            )}
 
           </CardContent>
         </Card>
@@ -329,6 +361,13 @@ export default function ProfessorGerenciarAtividade() {
           />
 
           <TextField
+            label="URL do Material / Enunciado"
+            value={editUrlMaterial}
+            onChange={(e) => setEditUrlMaterial(e.target.value)}
+            fullWidth
+          />
+
+          <TextField
             label="Data de Entrega"
             type="datetime-local"
             value={editDataEntrega}
@@ -337,7 +376,6 @@ export default function ProfessorGerenciarAtividade() {
             fullWidth
           />
 
-          {/* NOVO CAMPO TIPO */}
           <TextField
             label="Tipo de Atividade"
             select

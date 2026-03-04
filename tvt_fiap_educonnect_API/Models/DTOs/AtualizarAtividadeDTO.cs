@@ -4,6 +4,7 @@
     {
         public string Titulo { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
+        public string? UrlMaterial { get; set; }
         public DateTime DataEntrega { get; set; }
         public TipoAtividade Tipo { get; set; }
     }

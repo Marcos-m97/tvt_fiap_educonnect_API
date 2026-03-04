@@ -8,7 +8,7 @@ namespace EduConnect_API.Services
     public class AtividadeService : IAtividadeService
     {
         private readonly IAtividadeRepository _atividadeRepo;
-        private readonly ITurmaDisciplinaRepository _tdRepo; 
+        private readonly ITurmaDisciplinaRepository _tdRepo;
         private readonly IAlunoRepository _alunoRepo;
         private readonly IMatriculaRepository _matriculaRepo;
 
@@ -34,6 +34,7 @@ namespace EduConnect_API.Services
             {
                 Titulo = dto.Titulo,
                 Descricao = dto.Descricao,
+                UrlMaterial = dto.UrlMaterial,
                 DataEntrega = dto.DataEntrega,
                 Tipo = dto.Tipo,
                 TurmaDisciplinaId = dto.TurmaDisciplinaId
@@ -46,6 +47,7 @@ namespace EduConnect_API.Services
                 Id = atividade.Id,
                 Titulo = atividade.Titulo,
                 Descricao = atividade.Descricao,
+                UrlMaterial = atividade.UrlMaterial,
                 DataEntrega = atividade.DataEntrega,
                 Tipo = atividade.Tipo,
                 TurmaDisciplinaId = atividade.TurmaDisciplinaId,
@@ -64,6 +66,7 @@ namespace EduConnect_API.Services
                 Id = a.Id,
                 Titulo = a.Titulo,
                 Descricao = a.Descricao,
+                UrlMaterial = a.UrlMaterial,
                 DataEntrega = a.DataEntrega,
                 Tipo = a.Tipo,
                 TurmaDisciplinaId = a.TurmaDisciplinaId,
@@ -72,6 +75,7 @@ namespace EduConnect_API.Services
                 ProfessorNome = a.TurmaDisciplina.Professor.Usuario.Nome
             });
         }
+
         public async Task<IEnumerable<AtividadeAlunoDTO>> ListarMinhasAtividades(int usuarioId)
         {
             var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
@@ -104,6 +108,7 @@ namespace EduConnect_API.Services
                 };
             });
         }
+
         public async Task<AtividadeDTO> ObterPorId(int id)
         {
             var atividade = await _atividadeRepo.ObterPorId(id)
@@ -114,6 +119,7 @@ namespace EduConnect_API.Services
                 Id = atividade.Id,
                 Titulo = atividade.Titulo,
                 Descricao = atividade.Descricao,
+                UrlMaterial = atividade.UrlMaterial,
                 DataEntrega = atividade.DataEntrega,
                 Tipo = atividade.Tipo,
                 TurmaDisciplinaId = atividade.TurmaDisciplinaId,
@@ -122,6 +128,7 @@ namespace EduConnect_API.Services
                 ProfessorNome = atividade.TurmaDisciplina.Professor.Usuario.Nome
             };
         }
+
         public async Task<AtividadeDTO> Atualizar(int id, AtualizarAtividadeDTO dto)
         {
             var atividade = await _atividadeRepo.ObterPorId(id)
@@ -129,6 +136,7 @@ namespace EduConnect_API.Services
 
             atividade.Titulo = dto.Titulo;
             atividade.Descricao = dto.Descricao;
+            atividade.UrlMaterial = dto.UrlMaterial;
             atividade.DataEntrega = dto.DataEntrega;
             atividade.Tipo = dto.Tipo;
 
@@ -139,6 +147,7 @@ namespace EduConnect_API.Services
                 Id = atividade.Id,
                 Titulo = atividade.Titulo,
                 Descricao = atividade.Descricao,
+                UrlMaterial = atividade.UrlMaterial,
                 DataEntrega = atividade.DataEntrega,
                 Tipo = atividade.Tipo,
                 TurmaDisciplinaId = atividade.TurmaDisciplinaId,
@@ -147,7 +156,6 @@ namespace EduConnect_API.Services
                 ProfessorNome = atividade.TurmaDisciplina.Professor.Usuario.Nome
             };
         }
-
 
     }
 }

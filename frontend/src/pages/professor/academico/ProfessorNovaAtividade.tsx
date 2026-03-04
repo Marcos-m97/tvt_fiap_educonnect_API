@@ -25,6 +25,7 @@ export default function ProfessorNovaAtividade() {
     titulo: "",
     descricao: "",
     dataEntrega: "",
+    urlMaterial: "",
     tipo: 1
   });
 
@@ -118,6 +119,15 @@ export default function ProfessorNovaAtividade() {
                 />
 
                 <TextField
+                  label="URL do Material / Enunciado"
+                  name="urlMaterial"
+                  placeholder="Ex: PDF, Google Forms, Drive..."
+                  value={form.urlMaterial}
+                  onChange={handleChange}
+                  fullWidth
+                />
+
+                <TextField
                   label="Data de Entrega"
                   name="dataEntrega"
                   type="datetime-local"
@@ -129,7 +139,7 @@ export default function ProfessorNovaAtividade() {
 
                 <TextField
                   select
-                  label="Tipo"
+                  label="Tipo da Atividade"
                   name="tipo"
                   value={form.tipo}
                   onChange={(e) =>
@@ -140,9 +150,10 @@ export default function ProfessorNovaAtividade() {
                   }
                   fullWidth
                 >
-                  <MenuItem value={1}>Trabalho</MenuItem>
-                  <MenuItem value={2}>Prova</MenuItem>
-                  <MenuItem value={3}>Lista de Exercícios</MenuItem>
+                  <MenuItem value={1}>Exercício</MenuItem>
+                  <MenuItem value={2}>Trabalho</MenuItem>
+                  <MenuItem value={3}>Prova</MenuItem>
+                  <MenuItem value={4}>Seminário</MenuItem>
                 </TextField>
 
                 <Divider sx={{ my: 2 }} />

@@ -4,10 +4,12 @@ import {
   Card,
   CardContent,
   Button,
-  Divider,
-  CircularProgress
+  CircularProgress,
+  Chip
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import LaunchIcon from "@mui/icons-material/Launch";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
@@ -19,6 +21,7 @@ interface AtividadeDetalhe {
   descricao: string;
   dataEntrega: string;
   disciplinaNome: string;
+  urlMaterial?: string;
 }
 
 interface Entrega {
@@ -40,19 +43,30 @@ export default function AlunoAtividadeDetalhe() {
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [enviando, setEnviando] = useState(false);
 
+  function formatarData(data: string) {
+    const d = new Date(data);
+
+    const dia = String(d.getDate()).padStart(2, "0");
+    const mes = String(d.getMonth() + 1).padStart(2, "0");
+    const ano = d.getFullYear();
+
+    const hora = String(d.getHours()).padStart(2, "0");
+    const minuto = String(d.getMinutes()).padStart(2, "0");
+
+    return `${dia}/${mes}/${ano} ${hora}:${minuto}`;
+  }
+
   useEffect(() => {
     async function carregarDados() {
       try {
         if (!atividadeId) return;
 
-        // 🔹 Buscar detalhes da atividade
         const atividadeRes = await api.get<AtividadeDetalhe>(
           `/atividade/${atividadeId}`
         );
 
         setAtividade(atividadeRes.data);
 
-        // 🔹 Buscar entrega do aluno para essa atividade
         const entregaRes = await api.get<Entrega[]>(
           `/entrega/minhas?atividadeId=${atividadeId}`
         );
@@ -115,133 +129,169 @@ export default function AlunoAtividadeDetalhe() {
 
   return (
     <AppLayout>
-      <Box maxWidth="1000px" mx="auto">
+
+      <Box maxWidth="900px" mx="auto">
 
         {/* HEADER */}
-        <Box textAlign="center" mb={4}>
-          <Typography variant="h4" fontWeight={800} sx={{ mb: 1 }}>
+        <Box mb={4}>
+          <Typography variant="h4" fontWeight={700}>
             {atividade.titulo}
           </Typography>
 
-          <Typography variant="body1" color="text.secondary">
+          <Typography color="text.secondary">
             {atividade.disciplinaNome}
           </Typography>
         </Box>
 
         {/* VOLTAR */}
-        <Box display="flex" justifyContent="flex-end" mb={3}>
+        <Box mb={3}>
           <Button
-            variant="outlined"
             startIcon={<ArrowBackIcon />}
+            variant="outlined"
             onClick={() => navigate(-1)}
-            sx={{ textTransform: "none" }}
           >
             Voltar
           </Button>
         </Box>
 
+        {/* INFORMAÇÕES DA ATIVIDADE */}
         <Card
           sx={{
-            borderRadius: 4,
+            borderRadius: 2,
             border: "1px solid",
             borderColor: "divider",
-            p: 3
+            mb: 3
           }}
         >
-          <CardContent sx={{ p: 0 }}>
+          <CardContent>
 
-            {/* STATUS RETANGULAR */}
             <Box
-              sx={{
-                display: "inline-block",
-                px: 2,
-                py: 0.8,
-                fontSize: 13,
-                fontWeight: 700,
-                borderRadius: "6px",
-                backgroundColor: entregue
-                  ? "success.main"
-                  : "warning.main",
-                color: "white",
-                mb: 3
-              }}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              flexWrap="wrap"
             >
-              {entregue ? "ENTREGUE" : "PENDENTE"}
+
+              <Box display="flex" gap={2} alignItems="center">
+
+                <Chip
+                  label={entregue ? "ENTREGUE" : "PENDENTE"}
+                  color={entregue ? "success" : "warning"}
+                  size="small"
+                />
+
+                <Typography fontWeight={500}>
+                  Entrega até: {formatarData(atividade.dataEntrega)}
+                </Typography>
+
+              </Box>
+
+              {atividade.urlMaterial && (
+                <Button
+                  startIcon={<LaunchIcon />}
+                  href={atividade.urlMaterial}
+                  target="_blank"
+                  variant="contained"
+                >
+                  Abrir material
+                </Button>
+              )}
+
             </Box>
 
-            <Typography mb={3}>
-              <strong>Data de entrega:</strong>{" "}
-              {new Date(atividade.dataEntrega).toLocaleDateString()}
+          </CardContent>
+        </Card>
+
+        {/* ENUNCIADO */}
+        <Card
+          sx={{
+            borderRadius: 2,
+            border: "1px solid",
+            borderColor: "divider",
+            mb: 3
+          }}
+        >
+          <CardContent>
+
+            <Typography variant="h6" fontWeight={600} mb={2}>
+              Enunciado
             </Typography>
 
-            <Divider sx={{ mb: 3 }} />
+            <Typography
+              color="text.secondary"
+              sx={{ lineHeight: 1.8 }}
+            >
+              {atividade.descricao}
+            </Typography>
 
-            {/* ENUNCIADO */}
-            <Box mb={4}>
-              <Typography variant="h6" fontWeight={700} sx={{ mb: 1 }}>
-                Enunciado
+          </CardContent>
+        </Card>
+
+        {/* ENTREGA */}
+        {entrega && (
+          <Card
+            sx={{
+              borderRadius: 2,
+              border: "1px solid",
+              borderColor: "divider"
+            }}
+          >
+            <CardContent>
+
+              <Typography variant="h6" fontWeight={600} mb={2}>
+                Sua entrega
               </Typography>
 
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                sx={{ lineHeight: 1.7 }}
-              >
-                {atividade.descricao}
+              <Typography mb={2}>
+                <strong>Nota:</strong> {entrega.nota ?? "Ainda não corrigido"}
               </Typography>
-            </Box>
 
-            {/* SE TIVER ENTREGA */}
-            {entrega && (
-              <>
-                <Divider sx={{ mb: 3 }} />
+              {entrega.feedbackProfessor && (
+                <Box mb={2}>
+                  <Typography fontWeight={600}>
+                    Feedback do professor
+                  </Typography>
 
-                <Box mb={3}>
-                  <Typography variant="h6" fontWeight={700}>
-                    Nota: {entrega.nota ?? "Ainda não corrigido"}
+                  <Typography color="text.secondary">
+                    {entrega.feedbackProfessor}
                   </Typography>
                 </Box>
+              )}
 
-                {entrega.feedbackProfessor && (
-                  <Box mb={3}>
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight={700}
-                      sx={{ mb: 1 }}
-                    >
-                      Feedback do Professor
-                    </Typography>
+              <Button
+                variant="outlined"
+                href={`https://localhost:7286${entrega.arquivo}`}
+                target="_blank"
+              >
+                Baixar arquivo enviado
+              </Button>
 
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ lineHeight: 1.7 }}
-                    >
-                      {entrega.feedbackProfessor}
-                    </Typography>
-                  </Box>
-                )}
+            </CardContent>
+          </Card>
+        )}
 
-                <Button
-                  variant="outlined"
-                  href={`https://localhost:7286${entrega.arquivo}`}
-                  target="_blank"
-                  sx={{ textTransform: "none" }}
-                >
-                  Baixar Arquivo Enviado
-                </Button>
-              </>
-            )}
+        {!entregue && (
+          <Card
+            sx={{
+              borderRadius: 2,
+              border: "1px solid",
+              borderColor: "divider"
+            }}
+          >
+            <CardContent>
 
-            {/* SE NÃO ENTREGUE */}
-            {!entregue && (
-              <Box display="flex" gap={2} mt={3}>
+              <Typography variant="h6" fontWeight={600} mb={2}>
+                Enviar entrega
+              </Typography>
+
+              <Box display="flex" gap={2}>
+
                 <Button
                   component="label"
                   variant="outlined"
-                  sx={{ textTransform: "none" }}
+                  startIcon={<UploadFileIcon />}
                 >
-                  Selecionar Arquivo
+                  Selecionar arquivo
                   <input
                     type="file"
                     hidden
@@ -255,16 +305,18 @@ export default function AlunoAtividadeDetalhe() {
                   variant="contained"
                   disabled={!arquivo || enviando}
                   onClick={enviarEntrega}
-                  sx={{ textTransform: "none" }}
                 >
                   {enviando ? "Enviando..." : "Enviar"}
                 </Button>
-              </Box>
-            )}
 
-          </CardContent>
-        </Card>
+              </Box>
+
+            </CardContent>
+          </Card>
+        )}
+
       </Box>
+
     </AppLayout>
   );
 }

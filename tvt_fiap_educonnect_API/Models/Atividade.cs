@@ -13,6 +13,8 @@ namespace EduConnect_API.Models
         // Data limite para envio
         public DateTime DataEntrega { get; set; }
 
+        public string? UrlMaterial { get; set; }
+
         // Tipo da atividade (prova, trabalho, exercício, etc.)
         public TipoAtividade Tipo { get; set; }
 
