@@ -19,8 +19,11 @@ namespace EduConnect_API.Models
         public string Titulo { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
 
-        // Link do vídeo (YouTube, Stream, Drive, etc.)
+        // Vídeo complementar (YouTube, Stream, Drive etc.)
         public string UrlVideo { get; set; } = string.Empty;
+
+        // Vídeo principal da aula (MP4 salvo no servidor)
+        public string? VideoAula { get; set; }
 
         // Caminho do material de apoio (PDF)
         public string? MaterialApoio { get; set; }

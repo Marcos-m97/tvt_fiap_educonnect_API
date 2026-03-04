@@ -55,6 +55,7 @@ namespace EduConnect_API.Services
             };
 
             aula = await _repo.Criar(aula);
+
             return MapToDTO(aula);
         }
 
@@ -70,21 +71,53 @@ namespace EduConnect_API.Services
                 ?? throw new Exception("Aluno não possui matrícula ativa.");
 
             var aulas = await _repo.ListarPorTurma(matricula.TurmaId);
+
             return aulas.Select(MapToDTO);
         }
 
         // =========================================================
-        // UPLOAD MATERIAL DE APOIO
+        // UPLOAD MATERIAL DE APOIO (PDF)
         // =========================================================
         public async Task<AulaDTO?> UploadMaterialApoio(int aulaId, IFormFile arquivo)
         {
             var aula = await _repo.ObterPorId(aulaId);
-            if (aula == null) return null;
+
+            if (aula == null)
+                return null;
 
             var caminho = $"uploads/aulas/{aulaId}/material_apoio.pdf";
+
             var caminhoSalvo = await _storage.SalvarAsync(arquivo, caminho);
 
             aula.MaterialApoio = caminhoSalvo;
+
+            aula = await _repo.Atualizar(aula);
+
+            return MapToDTO(aula);
+        }
+
+        // =========================================================
+        // UPLOAD VIDEO AULA (MP4)
+        // =========================================================
+        public async Task<AulaDTO?> UploadVideoAula(int aulaId, IFormFile arquivo)
+        {
+            var aula = await _repo.ObterPorId(aulaId);
+
+            if (aula == null)
+                return null;
+
+            // validação simples
+            if (!arquivo.FileName.EndsWith(".mp4"))
+                throw new Exception("Apenas arquivos MP4 são permitidos.");
+
+            var nomeArquivo = $"aula_{aulaId}_{Guid.NewGuid()}.mp4";
+
+            var caminho = $"uploads/videos/{nomeArquivo}";
+
+            var caminhoSalvo = await _storage.SalvarAsync(arquivo, caminho);
+
+            aula.VideoAula = caminhoSalvo;
+
             aula = await _repo.Atualizar(aula);
 
             return MapToDTO(aula);
@@ -96,7 +129,9 @@ namespace EduConnect_API.Services
         public async Task<byte[]?> BaixarMaterialApoio(int aulaId)
         {
             var aula = await _repo.ObterPorId(aulaId);
-            if (aula?.MaterialApoio == null) return null;
+
+            if (aula?.MaterialApoio == null)
+                return null;
 
             return await _storage.BaixarAsync(aula.MaterialApoio);
         }
@@ -107,18 +142,21 @@ namespace EduConnect_API.Services
         public async Task<AulaDTO?> ObterPorId(int id)
         {
             var aula = await _repo.ObterPorId(id);
+
             return aula == null ? null : MapToDTO(aula);
         }
 
         public async Task<IEnumerable<AulaDTO>> ListarPorTurmaDisciplina(int turmaDisciplinaId)
         {
             var lista = await _repo.ListarPorTurmaDisciplina(turmaDisciplinaId);
+
             return lista.Select(MapToDTO);
         }
 
         public async Task<IEnumerable<AulaDTO>> Listar()
         {
             var lista = await _repo.Listar();
+
             return lista.Select(MapToDTO);
         }
 
@@ -128,7 +166,7 @@ namespace EduConnect_API.Services
         public Task<bool> Deletar(int id) => _repo.Deletar(id);
 
         // =========================================================
-        // ATUALIZAR AULA (ADMIN OU PROFESSOR)
+        // ATUALIZAR AULA
         // =========================================================
         public async Task<AulaDTO?> Atualizar(int aulaId, int usuarioId, AtualizarAulaDTO dto)
         {
@@ -139,6 +177,7 @@ namespace EduConnect_API.Services
                 throw new Exception("Usuário não autorizado a atualizar aulas.");
 
             var aula = await _repo.ObterPorId(aulaId);
+
             if (aula == null)
                 return null;
 
@@ -164,6 +203,7 @@ namespace EduConnect_API.Services
                 Titulo = a.Titulo,
                 Descricao = a.Descricao,
                 UrlVideo = a.UrlVideo,
+                VideoAula = a.VideoAula,
                 MaterialApoio = a.MaterialApoio,
                 Observacoes = a.Observacoes,
                 CriadoEm = a.CriadoEm,

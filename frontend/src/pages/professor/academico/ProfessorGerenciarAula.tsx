@@ -25,6 +25,7 @@ interface AulaDetalhe {
   titulo: string;
   descricao: string;
   urlVideo?: string;
+  videoAula?: string;
   materialApoio?: string;
   observacoes?: string;
   criadoEm: string;
@@ -36,8 +37,12 @@ export default function ProfessorGerenciarAula() {
 
   const [loading, setLoading] = useState(true);
   const [aula, setAula] = useState<AulaDetalhe | null>(null);
+
   const [arquivo, setArquivo] = useState<File | null>(null);
+  const [videoArquivo, setVideoArquivo] = useState<File | null>(null);
+
   const [uploading, setUploading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
 
   const [openModal, setOpenModal] = useState(false);
   const [editTitulo, setEditTitulo] = useState("");
@@ -56,6 +61,9 @@ export default function ProfessorGerenciarAula() {
     }
   }
 
+  // ===============================
+  // Upload Material PDF
+  // ===============================
   async function uploadMaterial() {
     if (!arquivo) return;
 
@@ -76,6 +84,32 @@ export default function ProfessorGerenciarAula() {
       console.error("Erro ao enviar material:", error);
     } finally {
       setUploading(false);
+    }
+  }
+
+  // ===============================
+  // Upload Video Aula
+  // ===============================
+  async function uploadVideo() {
+    if (!videoArquivo) return;
+
+    const formData = new FormData();
+    formData.append("arquivo", videoArquivo);
+
+    try {
+      setUploadingVideo(true);
+
+      await api.post(`/aulas/${aulaId}/video`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+
+      setVideoArquivo(null);
+      carregarAula();
+
+    } catch (error) {
+      console.error("Erro ao enviar vídeo:", error);
+    } finally {
+      setUploadingVideo(false);
     }
   }
 
@@ -113,8 +147,8 @@ export default function ProfessorGerenciarAula() {
   return (
     <AppLayout>
 
-      {/* HEADER PADRÃO */}
-      <Card sx={{ mb: 4 }}>
+      {/* HEADER */}
+      <Card sx={{ mb: 4, maxWidth: 860, mx: "auto" }}>
         <CardContent>
 
           <Box
@@ -164,8 +198,9 @@ export default function ProfessorGerenciarAula() {
 
       {!loading && aula && (
         <>
+
           {/* CONTEÚDO DA AULA */}
-          <Card sx={{ mb: 4 }}>
+          <Card sx={{ mb: 4, maxWidth: 860, mx: "auto" }}>
             <CardContent>
 
               <Typography variant="h5" fontWeight={600}>
@@ -176,9 +211,30 @@ export default function ProfessorGerenciarAula() {
                 {aula.descricao}
               </Typography>
 
+              {/* VIDEO AULA */}
+              {aula.videoAula && (
+                <Box mt={3}>
+                  <Typography fontWeight={600} mb={1}>
+                    Vídeo da Aula
+                  </Typography>
+
+                  <video
+                    controls
+                    width="100%"
+                    style={{ borderRadius: 8 }}
+                  >
+                    <source
+                      src={`https://localhost:7286${aula.videoAula}`}
+                      type="video/mp4"
+                    />
+                  </video>
+                </Box>
+              )}
+
+              {/* VIDEO COMPLEMENTAR */}
               {aula.urlVideo && (
-                <Typography mt={2}>
-                  Vídeo:{" "}
+                <Typography mt={3}>
+                  Vídeo complementar:{" "}
                   <a
                     href={aula.urlVideo}
                     target="_blank"
@@ -204,8 +260,43 @@ export default function ProfessorGerenciarAula() {
           </Card>
 
 
+          {/* VIDEO AULA */}
+          <Card sx={{ mb: 4, maxWidth: 860, mx: "auto" }}>
+            <CardContent>
+
+              <Typography variant="h6" fontWeight={600} mb={2}>
+                Vídeo da Aula (MP4)
+              </Typography>
+
+              <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
+
+                <input
+                  type="file"
+                  accept="video/mp4"
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      setVideoArquivo(e.target.files[0]);
+                    }
+                  }}
+                />
+
+                <Button
+                  startIcon={<UploadIcon />}
+                  variant="contained"
+                  disabled={!videoArquivo || uploadingVideo}
+                  onClick={uploadVideo}
+                >
+                  {uploadingVideo ? "Enviando..." : "Enviar Vídeo"}
+                </Button>
+
+              </Box>
+
+            </CardContent>
+          </Card>
+
+
           {/* MATERIAL DE APOIO */}
-          <Card>
+          <Card sx={{ mb: 4, maxWidth: 860, mx: "auto" }}>
             <CardContent>
 
               <Typography variant="h6" fontWeight={600} mb={2}>
@@ -253,13 +344,14 @@ export default function ProfessorGerenciarAula() {
                   disabled={!arquivo || uploading}
                   onClick={uploadMaterial}
                 >
-                  {uploading ? "Enviando..." : "Enviar"}
+                  {uploading ? "Enviando..." : "Enviar Material"}
                 </Button>
 
               </Box>
 
             </CardContent>
           </Card>
+
         </>
       )}
 
@@ -289,7 +381,7 @@ export default function ProfessorGerenciarAula() {
           />
 
           <TextField
-            label="URL do Vídeo"
+            label="URL do Vídeo Complementar"
             fullWidth
             margin="normal"
             value={editUrlVideo}

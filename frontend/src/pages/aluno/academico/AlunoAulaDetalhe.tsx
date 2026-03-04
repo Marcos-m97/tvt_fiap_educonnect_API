@@ -4,8 +4,9 @@ import {
   Card,
   CardContent,
   Button,
-  Divider,
-  CircularProgress
+  CircularProgress,
+  Stack,
+  Divider
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
@@ -20,6 +21,7 @@ interface Aula {
   titulo: string;
   descricao: string;
   urlVideo?: string;
+  videoAula?: string;
   materialApoio?: string | null;
   observacoes?: string;
   criadoEm: string;
@@ -67,110 +69,161 @@ export default function AlunoAulaDetalhe() {
 
   return (
     <AppLayout>
-      <Box maxWidth="1000px" mx="auto">
+
+      <Box maxWidth="900px" mx="auto" display="flex" flexDirection="column" gap={3}>
 
         {/* HEADER */}
-        <Box textAlign="center" mb={4}>
-          <Typography variant="h4" fontWeight={800} sx={{ mb: 1 }}>
-            {aula.titulo}
-          </Typography>
+        <Card elevation={2} sx={{ borderRadius: 2 }}>
+          <CardContent sx={{ py: 3 }}>
 
-          <Typography variant="body2" color="text.secondary">
-            {new Date(aula.criadoEm).toLocaleDateString()}
-          </Typography>
-        </Box>
+            <Typography
+              variant="h4"
+              fontWeight={700}
+              textAlign="center"
+              mb={2}
+            >
+              {aula.titulo}
+            </Typography>
 
-        {/* VOLTAR */}
-        <Box display="flex" justifyContent="flex-end" mb={3}>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate(-1)}
-            sx={{ textTransform: "none" }}
-          >
-            Voltar
-          </Button>
-        </Box>
-
-        <Card
-          sx={{
-            borderRadius: 4,
-            border: "1px solid",
-            borderColor: "divider",
-            p: 3
-          }}
-        >
-          <CardContent sx={{ p: 0 }}>
-
-            {/* DESCRIÇÃO */}
-            <Box mb={4}>
-              <Typography variant="h6" fontWeight={700} sx={{ mb: 1 }}>
-                Conteúdo da Aula
-              </Typography>
-
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                sx={{ lineHeight: 1.7 }}
+            <Box display="flex" justifyContent="center">
+              <Button
+                variant="outlined"
+                startIcon={<ArrowBackIcon />}
+                onClick={() => navigate(-1)}
+                sx={{ textTransform: "none" }}
               >
-                {aula.descricao}
-              </Typography>
-            </Box>
-
-            {/* OBSERVAÇÕES */}
-            {aula.observacoes && (
-              <>
-                <Divider sx={{ mb: 3 }} />
-                <Box mb={4}>
-                  <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1 }}>
-                    Observações
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ lineHeight: 1.7 }}
-                  >
-                    {aula.observacoes}
-                  </Typography>
-                </Box>
-              </>
-            )}
-
-            <Divider sx={{ mb: 3 }} />
-
-            {/* AÇÕES */}
-            <Box display="flex" gap={2} flexWrap="wrap">
-
-              {aula.urlVideo && (
-                <Button
-                  variant="contained"
-                  startIcon={<PlayCircleOutlineIcon />}
-                  href={aula.urlVideo}
-                  target="_blank"
-                  sx={{ textTransform: "none" }}
-                >
-                  Assistir Aula
-                </Button>
-              )}
-
-              {aula.materialApoio && (
-                <Button
-                  variant="outlined"
-                  startIcon={<DownloadIcon />}
-                  href={`https://localhost:7286${aula.materialApoio}`}
-                  target="_blank"
-                  sx={{ textTransform: "none" }}
-                >
-                  Baixar Material
-                </Button>
-              )}
-
+                Voltar
+              </Button>
             </Box>
 
           </CardContent>
         </Card>
+
+
+        {/* CARD PRINCIPAL DA AULA */}
+        <Card elevation={2} sx={{ borderRadius: 2 }}>
+          <CardContent sx={{ p: 4 }}>
+
+            {/* DESCRIÇÃO */}
+            <Typography variant="h6" fontWeight={700} mb={2}>
+              Conteúdo da Aula
+            </Typography>
+
+            <Divider sx={{ mb: 3 }} />
+
+            <Typography
+              color="text.secondary"
+              sx={{
+                lineHeight: 1.8,
+                mb: 4
+              }}
+            >
+              {aula.descricao}
+            </Typography>
+
+
+            {/* VIDEO */}
+            {aula.videoAula && (
+              <>
+                <Typography variant="h6" fontWeight={700} mb={2}>
+                  Vídeo da Aula
+                </Typography>
+
+                <video
+                  controls
+                  width="100%"
+                  style={{
+                    borderRadius: 8,
+                    marginBottom: 30,
+                    background: "#000"
+                  }}
+                >
+                  <source
+                    src={`https://localhost:7286${aula.videoAula}`}
+                    type="video/mp4"
+                  />
+                </video>
+              </>
+            )}
+
+
+            {/* OBSERVAÇÕES */}
+            {aula.observacoes && (
+              <>
+                <Typography variant="h6" fontWeight={700} mb={2}>
+                  Observações
+                </Typography>
+
+                <Divider sx={{ mb: 2 }} />
+
+                <Typography
+                  color="text.secondary"
+                  sx={{
+                    lineHeight: 1.7,
+                    mb: 4
+                  }}
+                >
+                  {aula.observacoes}
+                </Typography>
+              </>
+            )}
+
+
+            {/* MATERIAIS */}
+            {(aula.urlVideo || aula.materialApoio) && (
+              <>
+                <Typography variant="h6" fontWeight={700} mb={2}>
+                  Materiais da Aula
+                </Typography>
+
+                <Divider sx={{ mb: 3 }} />
+
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  flexWrap="wrap"
+                  justifyContent="center"
+                >
+
+                  {aula.urlVideo && (
+                    <Button
+                      variant="contained"
+                      startIcon={<PlayCircleOutlineIcon />}
+                      href={aula.urlVideo}
+                      target="_blank"
+                      sx={{
+                        textTransform: "none",
+                        px: 3
+                      }}
+                    >
+                      Vídeo Complementar
+                    </Button>
+                  )}
+
+                  {aula.materialApoio && (
+                    <Button
+                      variant="outlined"
+                      startIcon={<DownloadIcon />}
+                      href={`https://localhost:7286${aula.materialApoio}`}
+                      target="_blank"
+                      sx={{
+                        textTransform: "none",
+                        px: 3
+                      }}
+                    >
+                      Baixar Material
+                    </Button>
+                  )}
+
+                </Stack>
+              </>
+            )}
+
+          </CardContent>
+        </Card>
+
       </Box>
+
     </AppLayout>
   );
 }

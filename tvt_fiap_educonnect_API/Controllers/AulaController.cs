@@ -40,6 +40,7 @@ namespace EduConnect_API.Controllers
             var usuarioId = ObterUsuarioId();
 
             var aula = await _service.Criar(usuarioId, dto);
+
             return Ok(aula);
         }
 
@@ -47,13 +48,38 @@ namespace EduConnect_API.Controllers
         // UPLOAD MATERIAL DE APOIO (PDF)
         // =========================================================
         [HttpPost("{id}/material")]
+        [Consumes("multipart/form-data")]
         [Authorize(Roles = "0,1,2")]
-        public async Task<IActionResult> UploadMaterial(int id, IFormFile arquivo)
+        public async Task<IActionResult> UploadMaterial(int id, [FromForm] UploadArquivoDTO dto)
         {
+            var arquivo = dto.Arquivo;
+
             if (arquivo == null || arquivo.Length == 0)
                 return BadRequest("Arquivo inválido.");
 
             var aula = await _service.UploadMaterialApoio(id, arquivo);
+
+            return aula == null ? NotFound() : Ok(aula);
+        }
+
+        // =========================================================
+        // UPLOAD VIDEO AULA (MP4)
+        // =========================================================
+        [HttpPost("{id}/video")]
+        [Consumes("multipart/form-data")]
+        [Authorize(Roles = "0,1,2")]
+        public async Task<IActionResult> UploadVideo(int id, [FromForm] UploadArquivoDTO dto)
+        {
+            var arquivo = dto.Arquivo;
+
+            if (arquivo == null || arquivo.Length == 0)
+                return BadRequest("Arquivo inválido.");
+
+            if (!arquivo.FileName.EndsWith(".mp4"))
+                return BadRequest("Apenas arquivos MP4 são permitidos.");
+
+            var aula = await _service.UploadVideoAula(id, arquivo);
+
             return aula == null ? NotFound() : Ok(aula);
         }
 
@@ -65,7 +91,9 @@ namespace EduConnect_API.Controllers
         public async Task<IActionResult> BaixarMaterial(int id)
         {
             var bytes = await _service.BaixarMaterialApoio(id);
-            if (bytes == null) return NotFound();
+
+            if (bytes == null)
+                return NotFound();
 
             return File(bytes, "application/pdf", "material_apoio.pdf");
         }
@@ -78,6 +106,7 @@ namespace EduConnect_API.Controllers
         public async Task<IActionResult> Obter(int id)
         {
             var aula = await _service.ObterPorId(id);
+
             return aula == null ? NotFound() : Ok(aula);
         }
 
@@ -89,6 +118,7 @@ namespace EduConnect_API.Controllers
         public async Task<IActionResult> ListarPorTurmaDisciplina(int turmaDisciplinaId)
         {
             var lista = await _service.ListarPorTurmaDisciplina(turmaDisciplinaId);
+
             return Ok(lista);
         }
 
@@ -100,6 +130,7 @@ namespace EduConnect_API.Controllers
         public async Task<IActionResult> Listar()
         {
             var lista = await _service.Listar();
+
             return Ok(lista);
         }
 
@@ -111,11 +142,15 @@ namespace EduConnect_API.Controllers
         public async Task<IActionResult> Deletar(int id)
         {
             var ok = await _service.Deletar(id);
+
             return ok ? NoContent() : NotFound();
         }
 
-        [Authorize(Roles = "0,1,2")] // sysADM, ADM, Professor
+        // =========================================================
+        // ATUALIZAR AULA
+        // =========================================================
         [HttpPut("{id}")]
+        [Authorize(Roles = "0,1,2")]
         public async Task<IActionResult> Atualizar(int id, AtualizarAulaDTO dto)
         {
             var usuarioId = int.Parse(User.FindFirst("id")!.Value);
@@ -128,14 +163,16 @@ namespace EduConnect_API.Controllers
             return Ok(aula);
         }
 
-        // Minhas Aulas
+        // =========================================================
+        // MINHAS AULAS (ALUNO)
+        // =========================================================
         [HttpGet("minhas")]
-        [Authorize(Roles = "3")] // aluno
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> ListarMinhasAulas()
         {
             var usuarioId = int.Parse(User.FindFirst("id")!.Value);
+
             return Ok(await _service.ListarMinhasAulas(usuarioId));
         }
-
     }
 }

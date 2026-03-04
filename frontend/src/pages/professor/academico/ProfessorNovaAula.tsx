@@ -6,7 +6,8 @@ import {
   TextField,
   Button,
   CircularProgress,
-  Divider
+  Divider,
+  Alert
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveIcon from "@mui/icons-material/Save";
@@ -59,7 +60,7 @@ export default function ProfessorNovaAula() {
 
       {/* HEADER */}
       <Box mb={6} textAlign="center">
-        <Typography variant="h4" fontWeight={600} gutterBottom>
+        <Typography variant="h3" fontWeight={600} gutterBottom>
           Criar Nova Aula
         </Typography>
 
@@ -117,7 +118,7 @@ export default function ProfessorNovaAula() {
                 />
 
                 <TextField
-                  label="URL do Vídeo (opcional)"
+                  label="Vídeo complementar (opcional)"
                   name="urlVideo"
                   value={form.urlVideo}
                   onChange={handleChange}
@@ -133,6 +134,12 @@ export default function ProfessorNovaAula() {
                   onChange={handleChange}
                   fullWidth
                 />
+
+                {/* INSTRUÇÃO SOBRE UPLOAD */}
+                <Alert severity="info">
+                  Após criar a aula você poderá enviar o <b>vídeo da aula (MP4)</b> 
+                  e o <b>material de apoio</b> na tela de gerenciamento da aula.
+                </Alert>
 
                 <Divider sx={{ my: 2 }} />
 
