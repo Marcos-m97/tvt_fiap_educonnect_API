@@ -162,8 +162,8 @@ namespace EduConnect_API.Controllers
 
             int tipoLogado = int.Parse(tipoLogadoClaim);
 
-            if (tipoLogado == 1 && (dto.Tipo == 0 || dto.Tipo == 1))
-                throw new AppException("Admins só podem editar professores (2) e alunos (3).", 403);
+            //if (tipoLogado == 1 && (dto.Tipo == 0 || dto.Tipo == 1))
+            //    throw new AppException("Admins só podem editar professores (2) e alunos (3).", 403);
 
             var atualizado = await _service.Atualizar(id, dto);
 

@@ -38,7 +38,7 @@ namespace EduConnect_API.Controllers
             return Ok(await _service.ListarPorCurso(cursoId));
         }
 
-        [Authorize(Roles = "0,1,2")]
+        [Authorize(Roles = "0,1,2,3")]
         [HttpGet("{id}")]
         public async Task<IActionResult> Obter(int id)
         {

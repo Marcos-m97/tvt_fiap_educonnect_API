@@ -8,7 +8,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField
+  TextField,
+  Card,
+  CardContent
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
@@ -37,7 +39,6 @@ export default function ProfessorGerenciarAula() {
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  // 🔹 Modal state
   const [openModal, setOpenModal] = useState(false);
   const [editTitulo, setEditTitulo] = useState("");
   const [editDescricao, setEditDescricao] = useState("");
@@ -77,7 +78,7 @@ export default function ProfessorGerenciarAula() {
       setUploading(false);
     }
   }
-  // 🔹 Abrir modal preenchendo dados atuais
+
   function abrirModal() {
     if (!aula) return;
 
@@ -112,143 +113,163 @@ export default function ProfessorGerenciarAula() {
   return (
     <AppLayout>
 
-      {/* HEADER */}
-      <Box textAlign="center" mb={5}>
-        <Typography variant="h4" fontWeight={700}>
-          Gerenciar Aula
-        </Typography>
-      </Box>
+      {/* HEADER PADRÃO */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
 
-      {/* BOTÕES SUPERIORES */}
-      <Box display="flex" justifyContent="space-between" mb={4}>
-        <Box display="flex" gap={2}>
-          <Button
-            startIcon={<EditIcon />}
-            variant="outlined"
-            onClick={abrirModal}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            flexWrap="wrap"
+            gap={2}
           >
-            Editar
-          </Button>
 
-          {/* <Button
-            startIcon={<DeleteIcon />}
-            color="error"
-            onClick={excluirAula}
-          >
-            Excluir
-          </Button> */}
-        </Box>
+            <Typography variant="h4" fontWeight={700}>
+              Gerenciar Aula
+            </Typography>
 
-        <Button
-          startIcon={<ArrowBackIcon />}
-          variant="outlined"
-          onClick={() =>
-            navigate(`/professor/turma/${turmaDisciplinaId}`)
-          }
-        >
-          Voltar
-        </Button>
-      </Box>
+            <Box display="flex" gap={2}>
 
-      <Divider sx={{ mb: 4 }} />
+              <Button
+                startIcon={<EditIcon />}
+                variant="outlined"
+                onClick={abrirModal}
+              >
+                Editar
+              </Button>
+
+              <Button
+                startIcon={<ArrowBackIcon />}
+                variant="outlined"
+                onClick={() =>
+                  navigate(`/professor/turma/${turmaDisciplinaId}`)
+                }
+              >
+                Voltar
+              </Button>
+
+            </Box>
+
+          </Box>
+
+        </CardContent>
+      </Card>
 
       {loading && (
-        <Box display="flex" justifyContent="center">
+        <Box display="flex" justifyContent="center" py={5}>
           <CircularProgress />
         </Box>
       )}
 
       {!loading && aula && (
         <>
-          <Box mb={5}>
-            <Typography variant="h5" fontWeight={600}>
-              {aula.titulo}
-            </Typography>
+          {/* CONTEÚDO DA AULA */}
+          <Card sx={{ mb: 4 }}>
+            <CardContent>
 
-            <Typography mt={2}>
-              {aula.descricao}
-            </Typography>
+              <Typography variant="h5" fontWeight={600}>
+                {aula.titulo}
+              </Typography>
 
-            {aula.urlVideo && (
               <Typography mt={2}>
-                Vídeo:{" "}
-                <a
-                  href={aula.urlVideo}
-                  target="_blank"
-                  rel="noreferrer"
+                {aula.descricao}
+              </Typography>
+
+              {aula.urlVideo && (
+                <Typography mt={2}>
+                  Vídeo:{" "}
+                  <a
+                    href={aula.urlVideo}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {aula.urlVideo}
+                  </a>
+                </Typography>
+              )}
+
+              {aula.observacoes && (
+                <Typography mt={2} color="text.secondary">
+                  {aula.observacoes}
+                </Typography>
+              )}
+
+              <Typography mt={2} variant="caption">
+                Criado em:{" "}
+                {new Date(aula.criadoEm).toLocaleDateString()}
+              </Typography>
+
+            </CardContent>
+          </Card>
+
+
+          {/* MATERIAL DE APOIO */}
+          <Card>
+            <CardContent>
+
+              <Typography variant="h6" fontWeight={600} mb={2}>
+                Material de Apoio
+              </Typography>
+
+              {!aula.materialApoio && (
+                <Typography color="text.secondary" mb={2}>
+                  Nenhum material enviado.
+                </Typography>
+              )}
+
+              {aula.materialApoio && (
+                <Box mb={3}>
+                  <Button
+                    variant="outlined"
+                    onClick={() =>
+                      window.open(
+                        `https://localhost:7286${aula.materialApoio}`,
+                        "_blank"
+                      )
+                    }
+                  >
+                    Baixar Material
+                  </Button>
+                </Box>
+              )}
+
+              <Divider sx={{ my: 3 }} />
+
+              <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
+
+                <input
+                  type="file"
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      setArquivo(e.target.files[0]);
+                    }
+                  }}
+                />
+
+                <Button
+                  startIcon={<UploadIcon />}
+                  variant="contained"
+                  disabled={!arquivo || uploading}
+                  onClick={uploadMaterial}
                 >
-                  {aula.urlVideo}
-                </a>
-              </Typography>
-            )}
+                  {uploading ? "Enviando..." : "Enviar"}
+                </Button>
 
-            {aula.observacoes && (
-              <Typography mt={2} color="text.secondary">
-                {aula.observacoes}
-              </Typography>
-            )}
+              </Box>
 
-            <Typography mt={2} variant="caption">
-              Criado em:{" "}
-              {new Date(aula.criadoEm).toLocaleDateString()}
-            </Typography>
-          </Box>
-
-          <Divider sx={{ mb: 4 }} />
-
-          <Typography variant="h6" fontWeight={600} mb={2}>
-            Material de Apoio
-          </Typography>
-
-          {!aula.materialApoio && (
-            <Typography color="text.secondary" mb={2}>
-              Nenhum material enviado.
-            </Typography>
-          )}
-
-          {aula.materialApoio && (
-            <Box mb={3}>
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  window.open(
-                    `https://localhost:7286${aula.materialApoio}`,
-                    "_blank"
-                  )
-                }
-              >
-                Baixar Material
-              </Button>
-            </Box>
-          )}
-
-          <Box mt={3} display="flex" alignItems="center" gap={2}>
-            <input
-              type="file"
-              onChange={(e) => {
-                if (e.target.files) {
-                  setArquivo(e.target.files[0]);
-                }
-              }}
-            />
-
-            <Button
-              startIcon={<UploadIcon />}
-              variant="contained"
-              disabled={!arquivo || uploading}
-              onClick={uploadMaterial}
-            >
-              {uploading ? "Enviando..." : "Enviar"}
-            </Button>
-          </Box>
+            </CardContent>
+          </Card>
         </>
       )}
 
-      {/* 🔹 MODAL EDITAR AULA */}
+      {/* MODAL EDITAR AULA */}
       <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="sm">
+
         <DialogTitle>Editar Aula</DialogTitle>
 
         <DialogContent sx={{ mt: 1 }}>
+
           <TextField
             label="Título"
             fullWidth
@@ -284,9 +305,11 @@ export default function ProfessorGerenciarAula() {
             value={editObservacoes}
             onChange={(e) => setEditObservacoes(e.target.value)}
           />
+
         </DialogContent>
 
         <DialogActions>
+
           <Button onClick={() => setOpenModal(false)}>
             Cancelar
           </Button>
@@ -297,7 +320,9 @@ export default function ProfessorGerenciarAula() {
           >
             Salvar Alterações
           </Button>
+
         </DialogActions>
+
       </Dialog>
 
     </AppLayout>

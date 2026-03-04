@@ -53,38 +53,54 @@ export default function AlunoAcademico() {
 
   return (
     <AppLayout>
-      {/* HEADER */}
-      <Box textAlign="center" mb={3}>
-        <Typography variant="h3" fontWeight={700} gutterBottom>
-          Área Acadêmica
-        </Typography>
 
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          sx={{ fontSize: 16 }}
-        >
-          Visualize suas disciplinas, aulas e atividades.
-        </Typography>
-      </Box>
+      {/* HEADER PADRÃO */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
 
-      {/* BOTÃO VOLTAR */}
-      <Box display="flex" justifyContent="flex-end" mb={3}>
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/aluno")}
-          sx={{ textTransform: "none" }}
-        >
-          Voltar
-        </Button>
-      </Box>
+          <Box textAlign="center" maxWidth={650} mx="auto">
 
-      <Divider sx={{ mb: 4 }} />
+            <Typography
+              variant="h4"
+              fontWeight={700}
+              gutterBottom
+            >
+              Área Acadêmica
+            </Typography>
+
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ lineHeight: 1.7 }}
+            >
+              Visualize suas disciplinas, aulas e atividades.
+            </Typography>
+
+          </Box>
+
+          {/* AÇÃO */}
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            mt={3}
+          >
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate("/aluno")}
+            >
+              Voltar
+            </Button>
+          </Box>
+
+        </CardContent>
+      </Card>
+
 
       {/* LISTA DE DISCIPLINAS */}
-      <Card sx={{ borderRadius: 4 }}>
-        <CardContent sx={{ px: 4 }}>
+      <Card>
+        <CardContent>
 
           {loading && (
             <Box display="flex" justifyContent="center" py={4}>
@@ -101,13 +117,25 @@ export default function AlunoAcademico() {
           {!loading &&
             disciplinas.map((disciplina, index) => (
               <Box key={disciplina.disciplinaId}>
+
                 <Box
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
-                  py={3}
+                  py={2}
+                  sx={{
+                    transition: "0.25s",
+                    "&:hover": {
+                      background: "rgba(0,0,0,0.03)",
+                      borderRadius: 2,
+                      px: 1
+                    }
+                  }}
                 >
-                  <Typography variant="h6" fontWeight={700}>
+
+                  <Typography
+                    fontWeight={600}
+                  >
                     {disciplina.nome}
                   </Typography>
 
@@ -122,14 +150,17 @@ export default function AlunoAcademico() {
                   >
                     Acessar
                   </Button>
+
                 </Box>
 
                 {index !== disciplinas.length - 1 && <Divider />}
+
               </Box>
             ))}
 
         </CardContent>
       </Card>
+
     </AppLayout>
   );
 }

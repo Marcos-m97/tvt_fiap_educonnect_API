@@ -5,7 +5,8 @@ import {
   CardContent,
   Button,
   Divider,
-  CircularProgress
+  CircularProgress,
+  Chip
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AppLayout from "../../../components/layout/AppLayout";
@@ -44,38 +45,53 @@ export default function ProfessorAcademico() {
   return (
     <AppLayout>
 
-      {/* HEADER CENTRALIZADO */}
-      <Box textAlign="center" mb={3}>
-        <Typography variant="h3" fontWeight={700} gutterBottom>
-          Gestão Acadêmica
-        </Typography>
+      {/* HEADER PADRÃO */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
 
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          sx={{ fontSize: 16 }}
-        >
-          Gerencie suas disciplinas vinculadas às turmas.
-        </Typography>
-      </Box>
+          <Box textAlign="center" maxWidth={650} mx="auto">
 
-      {/* BOTÃO VOLTAR */}
-      <Box display="flex" justifyContent="flex-end" mb={3}>
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/professor")}
-          sx={{ textTransform: "none" }}
-        >
-          Voltar
-        </Button>
-      </Box>
+            <Typography
+              variant="h4"
+              fontWeight={700}
+              gutterBottom
+            >
+              Gestão Acadêmica
+            </Typography>
 
-      <Divider sx={{ mb: 4 }} />
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ lineHeight: 1.7 }}
+            >
+              Gerencie suas disciplinas vinculadas às turmas.
+            </Typography>
+
+          </Box>
+
+          {/* AÇÃO */}
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            mt={3}
+          >
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate("/professor")}
+            >
+              Voltar
+            </Button>
+          </Box>
+
+        </CardContent>
+      </Card>
+
 
       {/* LISTA */}
-      <Card sx={{ borderRadius: 4 }}>
-        <CardContent sx={{ px: 4 }}>
+      <Card>
+        <CardContent>
 
           {loading && (
             <Box display="flex" justifyContent="center" py={4}>
@@ -92,36 +108,42 @@ export default function ProfessorAcademico() {
           {!loading &&
             turmasDisciplinas.map((td, index) => (
               <Box key={td.turmaDisciplinaId}>
+
                 <Box
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
-                  py={3}
+                  py={2}
+                  sx={{
+                    transition: "0.25s",
+                    "&:hover": {
+                      background: "rgba(0,0,0,0.03)",
+                      borderRadius: 2,
+                      px: 1
+                    }
+                  }}
                 >
-                  <Box display="flex" alignItems="center" gap={2}>
+
+                  {/* INFO */}
+                  <Box>
+
                     <Typography
-                      variant="h6"
-                      fontWeight={700}
+                      fontWeight={600}
+                      sx={{ mb: 0.5 }}
                     >
                       {td.disciplinaNome}
                     </Typography>
 
-                    {/* Turma estilo retangular */}
-                    <Box
-                      sx={{
-                        px: 1.5,
-                        py: 0.5,
-                        fontSize: 12,
-                        fontWeight: 600,
-                        borderRadius: "4px",
-                        backgroundColor: "primary.main",
-                        color: "white"
-                      }}
-                    >
-                      {td.turmaNome}
-                    </Box>
+                    <Chip
+                      label={td.turmaNome}
+                      size="small"
+                      color="primary"
+                      variant="outlined"
+                    />
+
                   </Box>
 
+                  {/* BOTÃO */}
                   <Button
                     size="small"
                     variant="outlined"
@@ -131,9 +153,11 @@ export default function ProfessorAcademico() {
                   >
                     Gerenciar
                   </Button>
+
                 </Box>
 
                 {index !== turmasDisciplinas.length - 1 && <Divider />}
+
               </Box>
             ))}
 

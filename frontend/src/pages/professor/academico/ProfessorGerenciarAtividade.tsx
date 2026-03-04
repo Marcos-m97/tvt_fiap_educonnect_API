@@ -8,7 +8,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField
+  TextField,
+  Card,
+  CardContent,
+  MenuItem
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
@@ -50,12 +53,11 @@ export default function ProfessorGerenciarAtividade() {
   const [nota, setNota] = useState("");
   const [feedback, setFeedback] = useState("");
 
-  // 🔹 Modal edição atividade
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editTitulo, setEditTitulo] = useState("");
   const [editDescricao, setEditDescricao] = useState("");
   const [editDataEntrega, setEditDataEntrega] = useState("");
-  const [editTipo, setEditTipo] = useState<number>(0);
+  const [editTipo, setEditTipo] = useState<number>(1);
 
   async function carregarAtividade() {
     try {
@@ -69,9 +71,7 @@ export default function ProfessorGerenciarAtividade() {
   async function carregarEntregas() {
     try {
       setLoading(true);
-      const response = await api.get(
-        `/Entrega/atividade/${atividadeId}`
-      );
+      const response = await api.get(`/Entrega/atividade/${atividadeId}`);
       setEntregas(response.data);
     } catch (error) {
       console.error("Erro ao carregar entregas:", error);
@@ -85,18 +85,19 @@ export default function ProfessorGerenciarAtividade() {
     carregarEntregas();
   }, [atividadeId]);
 
-  // 🔹 Abrir modal edição
   function abrirEditarModal() {
     if (!atividade) return;
 
     setEditTitulo(atividade.titulo);
     setEditDescricao(atividade.descricao);
+
     setEditDataEntrega(
       atividade.dataEntrega
         ? atividade.dataEntrega.slice(0, 16)
         : ""
     );
-    setEditTipo(atividade.tipo ?? 0);
+
+    setEditTipo(atividade.tipo ?? 1);
 
     setEditModalOpen(true);
   }
@@ -152,140 +153,162 @@ export default function ProfessorGerenciarAtividade() {
   return (
     <AppLayout>
 
-      {/* HEADER */}
-      <Box textAlign="center" mb={5}>
-        <Typography variant="h3" fontWeight={700} letterSpacing={1}>
-          Gerenciar Atividade
-        </Typography>
-      </Box>
+      {/* HEADER PADRÃO */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
 
-      {/* BOTÕES SUPERIORES */}
-      <Box display="flex" justifyContent="space-between" mb={4}>
-        <Box display="flex" gap={2}>
-          <Button
-            startIcon={<EditIcon />}
-            variant="outlined"
-            sx={{ borderRadius: 3, px: 3 }}
-            onClick={abrirEditarModal}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            flexWrap="wrap"
+            gap={2}
           >
-            Editar
-          </Button>
-        </Box>
 
-        <Button
-          startIcon={<ArrowBackIcon />}
-          variant="outlined"
-          sx={{ borderRadius: 3, px: 3 }}
-          onClick={() =>
-            navigate(`/professor/turma/${turmaDisciplinaId}`)
-          }
-        >
-          Voltar
-        </Button>
-      </Box>
+            <Typography variant="h4" fontWeight={700}>
+              Gerenciar Atividade
+            </Typography>
 
-      <Divider sx={{ mb: 4 }} />
+            <Box display="flex" gap={2}>
+              <Button
+                startIcon={<EditIcon />}
+                variant="outlined"
+                onClick={abrirEditarModal}
+              >
+                Editar
+              </Button>
+
+              <Button
+                startIcon={<ArrowBackIcon />}
+                variant="outlined"
+                onClick={() =>
+                  navigate(`/professor/turma/${turmaDisciplinaId}`)
+                }
+              >
+                Voltar
+              </Button>
+            </Box>
+
+          </Box>
+
+        </CardContent>
+      </Card>
 
       {/* ENUNCIADO */}
       {atividade && (
-        <Box mb={5}>
-          <Typography variant="h5" fontWeight={700}>
-            {atividade.titulo}
-          </Typography>
+        <Card sx={{ mb: 4 }}>
+          <CardContent>
 
-          {atividade.dataEntrega && (
-            <Typography variant="body2" color="text.secondary" mt={1}>
-              Entrega até: {atividade.dataEntrega}
+            <Typography variant="h5" fontWeight={700}>
+              {atividade.titulo}
+            </Typography>
+
+            {atividade.dataEntrega && (
+              <Typography variant="body2" color="text.secondary" mt={1}>
+                Entrega até: {atividade.dataEntrega}
+              </Typography>
+            )}
+
+            <Typography
+              variant="body1"
+              mt={3}
+              sx={{
+                backgroundColor: "rgba(0,0,0,0.03)",
+                p: 3,
+                borderRadius: 2
+              }}
+            >
+              {atividade.descricao}
+            </Typography>
+
+          </CardContent>
+        </Card>
+      )}
+
+      {/* LISTA DE ENTREGAS */}
+      <Card>
+        <CardContent>
+
+          {loading && (
+            <Box display="flex" justifyContent="center" py={4}>
+              <CircularProgress />
+            </Box>
+          )}
+
+          {!loading && entregas.length === 0 && (
+            <Typography color="text.secondary">
+              Nenhuma entrega realizada.
             </Typography>
           )}
 
-          <Typography
-            variant="body1"
-            mt={2}
-            sx={{
-              backgroundColor: "#f1f5f9",
-              p: 3,
-              borderRadius: 3
-            }}
-          >
-            {atividade.descricao}
-          </Typography>
-        </Box>
-      )}
+          {!loading &&
+            entregas.map((entrega, index) => (
+              <Box key={entrega.id}>
 
-      {/* LISTA ENTREGAS */}
-      {loading && (
-        <Box display="flex" justifyContent="center" py={4}>
-          <CircularProgress />
-        </Box>
-      )}
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  py={2}
+                  sx={{
+                    transition: "0.25s",
+                    "&:hover": {
+                      background: "rgba(0,0,0,0.03)",
+                      borderRadius: 2,
+                      px: 1
+                    }
+                  }}
+                >
 
-      {!loading && entregas.length === 0 && (
-        <Typography color="text.secondary">
-          Nenhuma entrega realizada.
-        </Typography>
-      )}
+                  <Box>
+                    <Typography fontWeight={600}>
+                      {entrega.nomeAluno}
+                    </Typography>
 
-      {!loading &&
-        entregas.map((entrega) => (
-          <Box
-            key={entrega.id}
-            sx={{
-              py: 3,
-              px: 3,
-              borderRadius: 4,
-              backgroundColor: "#f8fafc",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 3
-            }}
-          >
-            <Box>
-              <Typography fontWeight={600} fontSize={18}>
-                {entrega.nomeAluno}
-              </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Enviado em: {entrega.dataEnvio}
+                    </Typography>
 
-              <Typography variant="body2" color="text.secondary" mt={0.5}>
-                Enviado em: {entrega.dataEnvio}
-              </Typography>
+                    {entrega.nota !== undefined && (
+                      <Typography mt={0.5} color="primary">
+                        Nota: {entrega.nota}
+                      </Typography>
+                    )}
+                  </Box>
 
-              {entrega.nota !== undefined && (
-                <Typography mt={1} fontWeight={600} color="primary">
-                  Nota: {entrega.nota}
-                </Typography>
-              )}
-            </Box>
+                  <Box display="flex" gap={2}>
 
-            <Box display="flex" gap={2} alignItems="center">
-              <Button
-                startIcon={<DownloadIcon />}
-                variant="outlined"
-                sx={{ borderRadius: 3, px: 3 }}
-                onClick={() => baixarArquivo(entrega.arquivo)}
-              >
-                Baixar
-              </Button>
+                    <Button
+                      startIcon={<DownloadIcon />}
+                      variant="outlined"
+                      onClick={() => baixarArquivo(entrega.arquivo)}
+                    >
+                      Baixar
+                    </Button>
 
-              <Button
-                startIcon={<CheckIcon />}
-                variant="contained"
-                sx={{
-                  borderRadius: 3,
-                  px: 4,
-                  background:
-                    "linear-gradient(90deg, #1976d2, #26c6da)"
-                }}
-                onClick={() => abrirModal(entrega)}
-              >
-                Corrigir
-              </Button>
-            </Box>
-          </Box>
-        ))}
+                    <Button
+                      startIcon={<CheckIcon />}
+                      variant="contained"
+                      onClick={() => abrirModal(entrega)}
+                    >
+                      Corrigir
+                    </Button>
+
+                  </Box>
+
+                </Box>
+
+                {index !== entregas.length - 1 && <Divider />}
+
+              </Box>
+            ))}
+
+        </CardContent>
+      </Card>
 
       {/* MODAL EDITAR ATIVIDADE */}
       <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} fullWidth maxWidth="sm">
+
         <DialogTitle>Editar Atividade</DialogTitle>
 
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 2 }}>
@@ -313,23 +336,42 @@ export default function ProfessorGerenciarAtividade() {
             InputLabelProps={{ shrink: true }}
             fullWidth
           />
+
+          {/* NOVO CAMPO TIPO */}
+          <TextField
+            label="Tipo de Atividade"
+            select
+            value={editTipo}
+            onChange={(e) => setEditTipo(Number(e.target.value))}
+            fullWidth
+          >
+            <MenuItem value={1}>Exercício</MenuItem>
+            <MenuItem value={2}>Trabalho</MenuItem>
+            <MenuItem value={3}>Prova</MenuItem>
+            <MenuItem value={4}>Seminário</MenuItem>
+          </TextField>
+
         </DialogContent>
 
         <DialogActions>
           <Button onClick={() => setEditModalOpen(false)}>
             Cancelar
           </Button>
+
           <Button variant="contained" onClick={atualizarAtividade}>
             Salvar Alterações
           </Button>
         </DialogActions>
+
       </Dialog>
 
       {/* MODAL CORREÇÃO */}
       <Dialog open={modalOpen} onClose={() => setModalOpen(false)} fullWidth maxWidth="sm">
+
         <DialogTitle>Corrigir Entrega</DialogTitle>
 
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 2 }}>
+
           <TextField
             label="Nota"
             value={nota}
@@ -346,9 +388,11 @@ export default function ProfessorGerenciarAtividade() {
             onChange={(e) => setFeedback(e.target.value)}
             fullWidth
           />
+
         </DialogContent>
 
         <DialogActions>
+
           <Button onClick={() => setModalOpen(false)}>
             Cancelar
           </Button>
@@ -356,7 +400,9 @@ export default function ProfessorGerenciarAtividade() {
           <Button variant="contained" onClick={salvarCorrecao}>
             Salvar Correção
           </Button>
+
         </DialogActions>
+
       </Dialog>
 
     </AppLayout>
