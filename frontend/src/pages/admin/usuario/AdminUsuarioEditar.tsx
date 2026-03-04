@@ -107,7 +107,7 @@ export default function AdminUsuarioEditar() {
 
       {/* HEADER */}
       <Box mb={6} textAlign="center">
-        <Typography variant="h4" fontWeight={600} gutterBottom>
+        <Typography variant="h3" fontWeight={600} gutterBottom>
           Editar Usuário
         </Typography>
 

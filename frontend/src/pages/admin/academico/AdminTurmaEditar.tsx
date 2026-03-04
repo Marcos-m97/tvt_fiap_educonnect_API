@@ -9,6 +9,7 @@ import {
   Divider
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -87,52 +88,29 @@ export default function AdminTurmaEditar() {
   return (
     <AppLayout>
 
-      <Typography variant="h4" gutterBottom>
-        Editar Turma
-      </Typography>
+      {/* HEADER MODERNO */}
+      <Box mb={5} textAlign="center">
+        <Typography variant="h3" fontWeight={700}>
+          Editar Turma
+        </Typography>
+      </Box>
 
-      <Divider sx={{ mb: 4 }} />
+      <Box maxWidth="900px" mx="auto">
 
-      <Card>
-        <CardContent>
+        <Card
+          sx={{
+            borderRadius: 4,
+            boxShadow: 4,
+            px: 5,
+            py: 5
+          }}
+        >
 
-          <Box
-            display="flex"
-            flexDirection="column"
-            gap={3}
-          >
-
-            <TextField
-              label="Nome da Turma"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              fullWidth
-            />
-
-            <TextField
-              label="Período"
-              value={periodo}
-              onChange={(e) => setPeriodo(e.target.value)}
-              fullWidth
-            />
-
-            <TextField
-              label="Semestre"
-              value={semestre}
-              onChange={(e) => setSemestre(e.target.value)}
-              fullWidth
-            />
-
-          </Box>
-
-          <Box
-            mt={4}
-            display="flex"
-            justifyContent="center"
-            gap={2}
-          >
+          {/* BOTÕES NO TOPO DO CARD */}
+          <Box display="flex" justifyContent="flex-end" gap={2} mb={4}>
             <Button
               variant="outlined"
+              startIcon={<ArrowBackIcon />}
               onClick={() => navigate(-1)}
             >
               Cancelar
@@ -144,12 +122,52 @@ export default function AdminTurmaEditar() {
               onClick={salvar}
               disabled={!nome || !periodo || !semestre || saving}
             >
-              Salvar Alterações
+              {saving ? "Salvando..." : "Salvar"}
             </Button>
           </Box>
 
-        </CardContent>
-      </Card>
+          <Divider sx={{ mb: 4 }} />
+
+          <CardContent sx={{ p: 0 }}>
+
+            <Box
+              display="grid"
+              gridTemplateColumns={{
+                xs: "1fr",
+                md: "1fr 1fr"
+              }}
+              gap={4}
+            >
+
+              <Box gridColumn="1 / -1">
+                <TextField
+                  label="Nome da Turma"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  fullWidth
+                />
+              </Box>
+
+              <TextField
+                label="Período"
+                value={periodo}
+                onChange={(e) => setPeriodo(e.target.value)}
+                fullWidth
+              />
+
+              <TextField
+                label="Semestre"
+                value={semestre}
+                onChange={(e) => setSemestre(e.target.value)}
+                fullWidth
+              />
+
+            </Box>
+
+          </CardContent>
+        </Card>
+
+      </Box>
 
     </AppLayout>
   );

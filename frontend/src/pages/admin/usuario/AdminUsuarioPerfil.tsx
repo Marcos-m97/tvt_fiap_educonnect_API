@@ -53,6 +53,35 @@ export default function AdminUsuarioPerfil() {
     }
   }
 
+  function traduzirCampo(key: string) {
+    switch (key) {
+      case "dataNascimento":
+        return "Data de Nascimento";
+      case "cpf":
+        return "CPF";
+      case "endereco":
+        return "Endereço";
+      case "email":
+        return "E-mail";
+      case "departamento":
+        return "Departamento";
+      case "cargo":
+        return "Cargo";
+      default:
+        return key;
+    }
+  }
+
+  function formatarValor(key: string, value: any) {
+    if (!value) return "-";
+
+    if (key === "dataNascimento" && typeof value === "string") {
+      return value.split("T")[0].split("-").reverse().join("/");
+    }
+
+    return value;
+  }
+
   async function carregarDados() {
     try {
       setLoading(true);
@@ -69,12 +98,17 @@ export default function AdminUsuarioPerfil() {
         setContexto(ctx.data);
       }
 
-      if (user.tipo === 3) {
+      else if (user.tipo === 3) {
         const aluno = await api.get(`/aluno/${user.id}`);
         setPerfil(aluno.data);
 
         const ctx = await api.get(`/aluno/${aluno.data.id}/contexto`);
         setContexto(ctx.data);
+      }
+
+      else if (user.tipo === 0 || user.tipo === 1) {
+        const admin = await api.get(`/admin/${user.id}`);
+        setPerfil(admin.data);
       }
 
     } catch (error) {
@@ -91,33 +125,15 @@ export default function AdminUsuarioPerfil() {
   return (
     <AppLayout>
 
-      {/* HEADER CENTRALIZADO */}
-      <Box position="relative" mb={4}>
+      {/* TÍTULO MAIOR */}
+      <Box mb={4}>
         <Typography
-          variant="h4"
+          variant="h3"
           fontWeight={600}
           textAlign="center"
         >
           Perfil do Usuário
         </Typography>
-
-        <Box position="absolute" right={0} top={0} display="flex" gap={1}>
-          <Button
-            variant="outlined"
-            startIcon={<EditIcon />}
-            onClick={() => navigate(`/admin/usuarios/${id}/editar`)}
-          >
-            Editar
-          </Button>
-
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate("/admin/usuarios")}
-          >
-            Voltar
-          </Button>
-        </Box>
       </Box>
 
       {loading && (
@@ -127,18 +143,31 @@ export default function AdminUsuarioPerfil() {
       )}
 
       {!loading && usuario && (
-        <Card
-          sx={{
-            borderRadius: 4,
-            boxShadow: 3,
-            p: 3
-          }}
-        >
+        <Card sx={{ borderRadius: 4, boxShadow: 3, p: 3 }}>
+          
+          {/* BOTÕES AGORA DENTRO DO CARD */}
+          <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
+            <Button
+              variant="outlined"
+              startIcon={<EditIcon />}
+              onClick={() => navigate(`/admin/usuarios/${id}/editar`)}
+            >
+              Editar
+            </Button>
+
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate("/admin/usuarios")}
+            >
+              Voltar
+            </Button>
+          </Box>
+
           <CardContent>
 
             {/* FOTO + NOME */}
             <Box textAlign="center" mb={4}>
-
               <Avatar
                 src={
                   usuario.fotoPerfilUrl
@@ -146,26 +175,22 @@ export default function AdminUsuarioPerfil() {
                     : undefined
                 }
                 sx={{
-                  width: 120,
-                  height: 120,
+                  width: 130,
+                  height: 130,
                   mx: "auto",
                   mb: 2,
-                  fontSize: 48,
+                  fontSize: 52,
                   bgcolor: "grey.400"
                 }}
               >
                 {!usuario.fotoPerfilUrl && <PersonIcon fontSize="large" />}
               </Avatar>
 
-              <Typography variant="h5" fontWeight={700}>
+              <Typography variant="h4" fontWeight={700}>
                 {usuario.nome}
               </Typography>
 
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                mb={2}
-              >
+              <Typography variant="body1" color="text.secondary" mb={2}>
                 {usuario.email}
               </Typography>
 
@@ -183,7 +208,7 @@ export default function AdminUsuarioPerfil() {
             {/* DADOS DE CADASTRO */}
             {perfil && (
               <>
-                <Typography variant="subtitle1" fontWeight={600} mb={2}>
+                <Typography variant="h6" fontWeight={600} mb={2}>
                   Dados de Cadastro
                 </Typography>
 
@@ -211,8 +236,9 @@ export default function AdminUsuarioPerfil() {
                           borderColor: "divider"
                         }}
                       >
-                        <Typography variant="body2">
-                          <strong>{key}:</strong> {String(value)}
+                        <Typography variant="body1">
+                          <strong>{traduzirCampo(key)}:</strong>{" "}
+                          {formatarValor(key, value)}
                         </Typography>
                       </Box>
                     ))}
@@ -222,10 +248,10 @@ export default function AdminUsuarioPerfil() {
               </>
             )}
 
-            {/* CONTEXTO */}
+            {/* CONTEXTO (mantido exatamente igual) */}
             {contexto && (
               <>
-                <Typography variant="subtitle1" fontWeight={600} mb={2}>
+                <Typography variant="h6" fontWeight={600} mb={2}>
                   Contexto Acadêmico
                 </Typography>
 
@@ -245,10 +271,7 @@ export default function AdminUsuarioPerfil() {
                         <Typography fontWeight={600}>
                           {item.disciplinaNome}
                         </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                        >
+                        <Typography variant="body2" color="text.secondary">
                           Turma: {item.turmaNome}
                         </Typography>
                       </Box>
@@ -298,8 +321,7 @@ export default function AdminUsuarioPerfil() {
                                     borderColor: "divider"
                                   }}
                                 >
-                                  {disc.nome ||
-                                    JSON.stringify(disc)}
+                                  {disc.nome || JSON.stringify(disc)}
                                 </Box>
                               )
                             )}

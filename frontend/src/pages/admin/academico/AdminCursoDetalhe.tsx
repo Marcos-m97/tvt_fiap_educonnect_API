@@ -91,65 +91,86 @@ export default function AdminCursoDetalhe() {
   return (
     <AppLayout>
 
-      {/* HEADER PADRONIZADO */}
-      <Box
-        mb={4}
-        display="flex"
-        justifyContent="space-between"
-        alignItems="flex-start"
-      >
+      {/* HEADER DO CURSO */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
 
-        <Box>
-          <Typography variant="h4" gutterBottom>
-            {curso.nome}
-          </Typography>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="flex-start"
+            flexWrap="wrap"
+            gap={2}
+          >
 
-          <Typography variant="body1" color="text.secondary">
-            {curso.descricao}
-          </Typography>
+            <Box maxWidth={700}>
 
-          <Box mt={2}>
-            <Chip
-              label={`Carga Horária: ${curso.cargaHoraria}h`}
-              color="primary"
-            />
+              <Typography
+                variant="h4"
+                fontWeight={700}
+                gutterBottom
+              >
+                {curso.nome}
+              </Typography>
+
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ lineHeight: 1.7 }}
+              >
+                {curso.descricao}
+              </Typography>
+
+              <Box mt={2}>
+                <Chip
+                  label={`Carga Horária: ${curso.cargaHoraria}h`}
+                  color="primary"
+                  sx={{ fontWeight: 600 }}
+                />
+              </Box>
+
+            </Box>
+
+            <Box display="flex" gap={2}>
+
+              <Button
+                variant="outlined"
+                startIcon={<EditIcon />}
+                onClick={() =>
+                  navigate(`/admin/academico/cursos/${curso.id}/editar`)
+                }
+              >
+                Editar
+              </Button>
+
+              <Button
+                variant="outlined"
+                startIcon={<ArrowBackIcon />}
+                onClick={() => navigate("/admin/academico/cursos")}
+              >
+                Voltar
+              </Button>
+
+            </Box>
+
           </Box>
-        </Box>
 
-        <Box display="flex" gap={2}>
-          <Button
-            variant="outlined"
-            startIcon={<EditIcon />}
-            onClick={() =>
-              navigate(`/admin/academico/cursos/${curso.id}/editar`)
-            }
-          >
-            Editar
-          </Button>
+        </CardContent>
+      </Card>
 
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate("/admin/academico/cursos")}
-          >
-            Voltar
-          </Button>
-        </Box>
-
-      </Box>
-
-      <Divider sx={{ mb: 4 }} />
 
       {/* TURMAS */}
       <Card sx={{ mb: 4 }}>
         <CardContent>
+
           <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
-            mb={2}
+            mb={3}
           >
-            <Typography variant="h6">
+
+            <Typography variant="h6" fontWeight={600}>
               Turmas
             </Typography>
 
@@ -162,6 +183,7 @@ export default function AdminCursoDetalhe() {
             >
               Adicionar Turma
             </Button>
+
           </Box>
 
           {turmas.length === 0 && (
@@ -170,77 +192,96 @@ export default function AdminCursoDetalhe() {
             </Typography>
           )}
 
-          {turmas.map((turma) => (
-            <Box
-              key={turma.id}
-              py={1.5}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{
-                opacity: turma.ativo ? 1 : 0.4,
-                transition: "0.3s"
-              }}
-            >
-              <Box>
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Typography fontWeight={600}>
-                    {turma.nome}
+          {turmas.map((turma, index) => (
+            <Box key={turma.id}>
+
+              <Box
+                py={2}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{
+                  opacity: turma.ativo ? 1 : 0.4,
+                  transition: "0.25s",
+                  "&:hover": {
+                    background: "rgba(0,0,0,0.03)",
+                    borderRadius: 2,
+                    px: 1
+                  }
+                }}
+              >
+
+                <Box>
+
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Typography fontWeight={600}>
+                      {turma.nome}
+                    </Typography>
+
+                    {!turma.ativo && (
+                      <Chip
+                        label="Inativa"
+                        size="small"
+                        color="error"
+                      />
+                    )}
+                  </Box>
+
+                  <Typography variant="body2" color="text.secondary">
+                    {turma.semestre} • {turma.periodo}
                   </Typography>
 
-                  {!turma.ativo && (
-                    <Chip
-                      label="Inativa"
-                      size="small"
-                      color="error"
-                    />
-                  )}
                 </Box>
 
-                <Typography variant="body2" color="text.secondary">
-                  {turma.semestre} • {turma.periodo}
-                </Typography>
+                <Box display="flex" gap={1}>
+
+                  {turma.ativo ? (
+                    <Button
+                      size="small"
+                      onClick={() =>
+                        navigate(`/admin/academico/turmas/${turma.id}`)
+                      }
+                    >
+                      Gerenciar
+                    </Button>
+                  ) : (
+                    <Button
+                      size="small"
+                      color="success"
+                      onClick={async () => {
+                        await api.put(`/turma/reativar/${turma.id}`);
+                        carregarDados();
+                      }}
+                    >
+                      Reativar
+                    </Button>
+                  )}
+
+                </Box>
+
               </Box>
 
-              <Box display="flex" gap={1}>
-                {turma.ativo ? (
-                  <Button
-                    size="small"
-                    onClick={() =>
-                      navigate(`/admin/academico/turmas/${turma.id}`)
-                    }
-                  >
-                    Gerenciar
-                  </Button>
-                ) : (
-                  <Button
-                    size="small"
-                    color="success"
-                    onClick={async () => {
-                      await api.put(`/turma/reativar/${turma.id}`);
-                      carregarDados();
-                    }}
-                  >
-                    Reativar
-                  </Button>
-                )}
-              </Box>
+              {index !== turmas.length - 1 && <Divider />}
+
             </Box>
           ))}
 
         </CardContent>
       </Card>
 
+
       {/* DISCIPLINAS */}
       <Card>
         <CardContent>
+
           <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
-            mb={2}
+            mb={3}
           >
-            <Typography variant="h6">
+
+            <Typography variant="h6" fontWeight={600}>
               Disciplinas
             </Typography>
 
@@ -253,6 +294,7 @@ export default function AdminCursoDetalhe() {
             >
               Adicionar Disciplina
             </Button>
+
           </Box>
 
           {disciplinas.length === 0 && (
@@ -261,61 +303,79 @@ export default function AdminCursoDetalhe() {
             </Typography>
           )}
 
-          {disciplinas.map((disciplina) => (
-            <Box
-              key={disciplina.id}
-              py={1.5}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{
-                opacity: disciplina.ativo ? 1 : 0.4,
-                transition: "0.3s"
-              }}
-            >
-              <Box>
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Typography fontWeight={600}>
-                    {disciplina.nome}
+          {disciplinas.map((disciplina, index) => (
+            <Box key={disciplina.id}>
+
+              <Box
+                py={2}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{
+                  opacity: disciplina.ativo ? 1 : 0.4,
+                  transition: "0.25s",
+                  "&:hover": {
+                    background: "rgba(0,0,0,0.03)",
+                    borderRadius: 2,
+                    px: 1
+                  }
+                }}
+              >
+
+                <Box>
+
+                  <Box display="flex" alignItems="center" gap={1}>
+
+                    <Typography fontWeight={600}>
+                      {disciplina.nome}
+                    </Typography>
+
+                    {!disciplina.ativo && (
+                      <Chip
+                        label="Inativa"
+                        size="small"
+                        color="error"
+                      />
+                    )}
+
+                  </Box>
+
+                  <Typography variant="body2" color="text.secondary">
+                    Carga Horária: {disciplina.cargaHoraria}h
                   </Typography>
 
-                  {!disciplina.ativo && (
-                    <Chip
-                      label="Inativa"
-                      size="small"
-                      color="error"
-                    />
-                  )}
                 </Box>
 
-                <Typography variant="body2" color="text.secondary">
-                  Carga Horária: {disciplina.cargaHoraria}h
-                </Typography>
+                <Box display="flex" gap={1}>
+
+                  {disciplina.ativo ? (
+                    <Button
+                      size="small"
+                      onClick={() =>
+                        navigate(`/admin/academico/disciplinas/${disciplina.id}`)
+                      }
+                    >
+                      Gerenciar
+                    </Button>
+                  ) : (
+                    <Button
+                      size="small"
+                      color="success"
+                      onClick={async () => {
+                        await api.put(`/disciplina/reativar/${disciplina.id}`);
+                        carregarDados();
+                      }}
+                    >
+                      Reativar
+                    </Button>
+                  )}
+
+                </Box>
+
               </Box>
 
-              <Box display="flex" gap={1}>
-                {disciplina.ativo ? (
-                  <Button
-                    size="small"
-                    onClick={() =>
-                      navigate(`/admin/academico/disciplinas/${disciplina.id}`)
-                    }
-                  >
-                    Gerenciar
-                  </Button>
-                ) : (
-                  <Button
-                    size="small"
-                    color="success"
-                    onClick={async () => {
-                      await api.put(`/disciplina/reativar/${disciplina.id}`);
-                      carregarDados();
-                    }}
-                  >
-                    Reativar
-                  </Button>
-                )}
-              </Box>
+              {index !== disciplinas.length - 1 && <Divider />}
+
             </Box>
           ))}
 

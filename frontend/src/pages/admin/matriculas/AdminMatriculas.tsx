@@ -68,7 +68,6 @@ export default function AdminMatriculas() {
 
   const totalPages = Math.ceil(total / pageSize);
 
-  // 🔥 Traduz número para texto
   function traduzirStatus(status: number | string): string {
     const mapa: Record<number, string> = {
       0: "Inativa",
@@ -104,70 +103,86 @@ export default function AdminMatriculas() {
     <AppLayout>
 
       {/* HEADER */}
-      <Box textAlign="center" mb={4}>
-        <Typography variant="h4" gutterBottom>
-          Gestão de Matrículas
-        </Typography>
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
 
-        <Typography variant="body1" color="text.secondary">
-          Gerencie solicitações, documentos e efetivação de matrículas.
-        </Typography>
-      </Box>
+          <Box textAlign="center" maxWidth={650} mx="auto">
 
-      {/* AÇÕES */}
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        gap={3}
-        mb={4}
-        flexWrap="wrap"
-      >
-        <TextField
-          placeholder="Pesquisar por nome do aluno"
-          value={search}
-          onChange={(e) => {
-            setPage(1);
-            setSearch(e.target.value);
-          }}
-          sx={{
-            width: {
-              xs: "100%",
-              sm: 350,
-              md: 450
-            }
-          }}
-        />
+            <Typography variant="h4" fontWeight={700} gutterBottom>
+              Gestão de Matrículas
+            </Typography>
 
-        <TextField
-          select
-          label="Status"
-          value={status}
-          onChange={(e) => {
-            setPage(1);
-            setStatus(e.target.value);
-          }}
-          sx={{ width: 200 }}
-        >
-          <MenuItem value="">Todos</MenuItem>
-          <MenuItem value="Inscricao">Inscrição</MenuItem>
-          <MenuItem value="Pagamento">Pagamento</MenuItem>
-          <MenuItem value="Documentos">Documentos</MenuItem>
-          <MenuItem value="Efetivada">Efetivada</MenuItem>
-          <MenuItem value="Inativa">Inativa</MenuItem>
-        </TextField>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ lineHeight: 1.7 }}
+            >
+              Gerencie solicitações, documentos e efetivação de matrículas.
+            </Typography>
 
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/admin")}
-          sx={{ textTransform: "none" }}
-        >
-          Voltar
-        </Button>
-      </Box>
+          </Box>
 
-      {/* LISTA */}
+          {/* FILTROS */}
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            gap={2}
+            mt={3}
+            flexWrap="wrap"
+          >
+
+            <TextField
+              placeholder="Pesquisar aluno..."
+              value={search}
+              size="small"
+              onChange={(e) => {
+                setPage(1);
+                setSearch(e.target.value);
+              }}
+              sx={{
+                width: {
+                  xs: "100%",
+                  sm: 320,
+                  md: 420
+                }
+              }}
+            />
+
+            <TextField
+              select
+              label="Status"
+              size="small"
+              value={status}
+              onChange={(e) => {
+                setPage(1);
+                setStatus(e.target.value);
+              }}
+              sx={{ width: 200 }}
+            >
+              <MenuItem value="">Todos</MenuItem>
+              <MenuItem value="Inscricao">Inscrição</MenuItem>
+              <MenuItem value="Pagamento">Pagamento</MenuItem>
+              <MenuItem value="Documentos">Documentos</MenuItem>
+              <MenuItem value="Efetivada">Efetivada</MenuItem>
+              <MenuItem value="Inativa">Inativa</MenuItem>
+            </TextField>
+
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate("/admin")}
+            >
+              Voltar
+            </Button>
+
+          </Box>
+
+        </CardContent>
+      </Card>
+
+
+      {/* LISTA DE MATRÍCULAS */}
       <Card>
         <CardContent>
 
@@ -189,19 +204,29 @@ export default function AdminMatriculas() {
 
               return (
                 <Box key={m.id}>
+
                   <Box
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
                     py={2}
+                    sx={{
+                      transition: "0.25s",
+                      "&:hover": {
+                        background: "rgba(0,0,0,0.03)",
+                        borderRadius: 2,
+                        px: 1
+                      }
+                    }}
                   >
-                    {/* LADO ESQUERDO */}
+
+                    {/* INFORMAÇÕES */}
                     <Box>
+
                       <Typography fontWeight={600}>
                         {m.alunoNome}
                       </Typography>
 
-                      {/* 🔥 Linha horizontal aproveitando espaço */}
                       <Box
                         mt={1}
                         display="flex"
@@ -209,6 +234,7 @@ export default function AdminMatriculas() {
                         gap={3}
                         flexWrap="wrap"
                       >
+
                         <Typography variant="body2" color="text.secondary">
                           Turma: {m.turmaNome}
                         </Typography>
@@ -229,11 +255,11 @@ export default function AdminMatriculas() {
                           />
                         </Box>
 
-
                       </Box>
+
                     </Box>
 
-                    {/* LADO DIREITO */}
+                    {/* BOTÃO */}
                     <Button
                       size="small"
                       variant="outlined"
@@ -243,9 +269,11 @@ export default function AdminMatriculas() {
                     >
                       Gerenciar
                     </Button>
+
                   </Box>
 
                   {index !== matriculas.length - 1 && <Divider />}
+
                 </Box>
               );
             })}

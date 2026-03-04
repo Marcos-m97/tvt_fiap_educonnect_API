@@ -102,66 +102,77 @@ export default function AdminUsuarios() {
   return (
     <AppLayout>
 
-      {/* HEADER MELHORADO */}
-      <Box textAlign="center" mb={5}>
-        <Typography
-          variant="h3"
-          fontWeight={700}
-          gutterBottom
-        >
-          Gestão de Usuários
-        </Typography>
+      {/* HEADER PADRONIZADO */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
 
-        <Typography variant="body1" color="text.secondary">
-          Crie, edite e gerencie administradores, professores e alunos.
-        </Typography>
-      </Box>
+          <Box textAlign="center" maxWidth={650} mx="auto">
 
-      {/* AÇÕES */}
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        gap={3}
-        mb={4}
-        flexWrap="wrap"
-      >
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => navigate("/admin/usuarios/novo")}
-        >
-          Criar Usuário
-        </Button>
+            <Typography variant="h4" fontWeight={700} gutterBottom>
+              Gestão de Usuários
+            </Typography>
 
-        <TextField
-          placeholder="Pesquisar por nome, email ou ID"
-          value={search}
-          onChange={(e) => {
-            setPage(1);
-            setSearch(e.target.value);
-          }}
-          sx={{
-            width: {
-              xs: "100%",
-              sm: 350,
-              md: 450
-            }
-          }}
-        />
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ lineHeight: 1.7 }}
+            >
+              Crie, edite e gerencie administradores, professores e alunos.
+            </Typography>
 
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/admin")}
-          sx={{ textTransform: "none" }}
-        >
-          Voltar
-        </Button>
-      </Box>
+          </Box>
 
-      {/* LISTA */}
-      <Card sx={{ borderRadius: 4 }}>
+          {/* AÇÕES */}
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            gap={2}
+            mt={3}
+            flexWrap="wrap"
+          >
+
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => navigate("/admin/usuarios/novo")}
+            >
+              Criar Usuário
+            </Button>
+
+            <TextField
+              placeholder="Pesquisar por nome, email ou ID"
+              size="small"
+              value={search}
+              onChange={(e) => {
+                setPage(1);
+                setSearch(e.target.value);
+              }}
+              sx={{
+                width: {
+                  xs: "100%",
+                  sm: 320,
+                  md: 420
+                }
+              }}
+            />
+
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate("/admin")}
+            >
+              Voltar
+            </Button>
+
+          </Box>
+
+        </CardContent>
+      </Card>
+
+
+      {/* LISTA DE USUÁRIOS */}
+      <Card>
         <CardContent>
 
           {loading && (
@@ -179,13 +190,23 @@ export default function AdminUsuarios() {
           {!loading &&
             usuarios.map((usuario, index) => (
               <Box key={usuario.id}>
+
                 <Box
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
-                  py={3}
-                  sx={{ opacity: usuario.ativo ? 1 : 0.5 }}
+                  py={2}
+                  sx={{
+                    opacity: usuario.ativo ? 1 : 0.45,
+                    transition: "0.25s",
+                    "&:hover": {
+                      background: "rgba(0,0,0,0.03)",
+                      borderRadius: 2,
+                      px: 1
+                    }
+                  }}
                 >
+
                   {/* LADO ESQUERDO */}
                   <Box display="flex" alignItems="center" gap={3}>
 
@@ -196,8 +217,8 @@ export default function AdminUsuarios() {
                           : undefined
                       }
                       sx={{
-                        width: 56,
-                        height: 56,
+                        width: 52,
+                        height: 52,
                         bgcolor: "grey.400"
                       }}
                     >
@@ -205,7 +226,8 @@ export default function AdminUsuarios() {
                     </Avatar>
 
                     <Box>
-                      <Typography fontWeight={600} fontSize={16}>
+
+                      <Typography fontWeight={600}>
                         {usuario.nome}
                       </Typography>
 
@@ -213,7 +235,8 @@ export default function AdminUsuarios() {
                         {usuario.email}
                       </Typography>
 
-                      <Box mt={1} display="flex" gap={1}>
+                      <Box mt={1} display="flex" gap={1} flexWrap="wrap">
+
                         <Chip
                           label={traduzirTipo(usuario.tipo)}
                           size="small"
@@ -221,22 +244,25 @@ export default function AdminUsuarios() {
 
                         <Chip
                           label={usuario.ativo ? "Ativo" : "Inativo"}
-                          color={usuario.ativo ? "success" : "default"}
                           size="small"
+                          color={usuario.ativo ? "success" : "default"}
                         />
+
                       </Box>
+
                     </Box>
+
                   </Box>
 
                   {/* BOTÕES */}
                   <Box display="flex" gap={1}>
+
                     <Button
                       size="small"
                       variant="outlined"
                       onClick={() =>
                         navigate(`/admin/usuarios/${usuario.id}`)
                       }
-                      sx={{ textTransform: "none" }}
                     >
                       Ver Perfil
                     </Button>
@@ -244,14 +270,16 @@ export default function AdminUsuarios() {
                     <Button
                       size="small"
                       onClick={() => toggleStatus(usuario)}
-                      sx={{ textTransform: "none" }}
                     >
                       {usuario.ativo ? "Desativar" : "Reativar"}
                     </Button>
+
                   </Box>
+
                 </Box>
 
                 {index !== usuarios.length - 1 && <Divider />}
+
               </Box>
             ))}
 
@@ -268,6 +296,7 @@ export default function AdminUsuarios() {
           )}
         </CardActions>
       </Card>
+
     </AppLayout>
   );
 }

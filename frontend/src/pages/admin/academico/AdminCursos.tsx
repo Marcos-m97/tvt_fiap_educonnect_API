@@ -82,60 +82,75 @@ export default function AdminCursos() {
     <AppLayout>
 
       {/* HEADER */}
-      <Box textAlign="center" mb={4}>
-        <Typography variant="h4" gutterBottom>
-          Gestão Acadêmica
-        </Typography>
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
 
-        <Typography variant="body1" color="text.secondary">
-          Busque um curso para gerenciar turmas, disciplinas e vínculos acadêmicos.
-        </Typography>
-      </Box>
+          <Box textAlign="center" maxWidth={650} mx="auto">
 
-      {/* AÇÕES */}
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        gap={3}
-        mb={4}
-        flexWrap="wrap"
-      >
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => navigate("/admin/academico/cursos/novo")}
-        >
-          Criar Curso
-        </Button>
+            <Typography variant="h4" fontWeight={700} gutterBottom>
+              Gestão Acadêmica
+            </Typography>
 
-        <TextField
-          placeholder="Pesquisar por nome do curso"
-          value={search}
-          onChange={(e) => {
-            setPage(1);
-            setSearch(e.target.value);
-          }}
-          sx={{
-            width: {
-              xs: "100%",
-              sm: 350,
-              md: 450
-            }
-          }}
-        />
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ lineHeight: 1.7 }}
+            >
+              Busque um curso para gerenciar turmas, disciplinas e vínculos acadêmicos.
+            </Typography>
 
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/admin")}
-          sx={{ textTransform: "none" }}
-        >
-          Voltar
-        </Button>
-      </Box>
+          </Box>
 
-      {/* LISTA */}
+          {/* AÇÕES */}
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            gap={2}
+            mt={3}
+            flexWrap="wrap"
+          >
+
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => navigate("/admin/academico/cursos/novo")}
+            >
+              Criar Curso
+            </Button>
+
+            <TextField
+              placeholder="Pesquisar curso..."
+              value={search}
+              size="small"
+              onChange={(e) => {
+                setPage(1);
+                setSearch(e.target.value);
+              }}
+              sx={{
+                width: {
+                  xs: "100%",
+                  sm: 320,
+                  md: 420
+                }
+              }}
+            />
+
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate("/admin")}
+            >
+              Voltar
+            </Button>
+
+          </Box>
+
+        </CardContent>
+      </Card>
+
+
+      {/* LISTA DE CURSOS */}
       <Card>
         <CardContent>
 
@@ -154,18 +169,27 @@ export default function AdminCursos() {
           {!loading &&
             cursos.map((curso, index) => (
               <Box key={curso.id}>
+
                 <Box
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
                   py={2}
                   sx={{
-                    opacity: curso.ativo ? 1 : 0.4,
-                    transition: "0.3s"
+                    opacity: curso.ativo ? 1 : 0.45,
+                    transition: "0.25s",
+                    "&:hover": {
+                      background: "rgba(0,0,0,0.03)",
+                      borderRadius: 2,
+                      px: 1
+                    }
                   }}
                 >
-                  <Box>
+
+                  <Box maxWidth={600}>
+
                     <Box display="flex" alignItems="center" gap={1}>
+
                       <Typography fontWeight={600}>
                         {curso.nome}
                       </Typography>
@@ -177,18 +201,28 @@ export default function AdminCursos() {
                           color="error"
                         />
                       )}
+
+                      <Chip
+                        label={`${curso.cargaHoraria}h`}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                      />
+
                     </Box>
 
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mt: 0.5 }}
+                    >
                       {curso.descricao}
                     </Typography>
 
-                    <Typography mt={1} variant="caption">
-                      Carga Horária: {curso.cargaHoraria}h
-                    </Typography>
                   </Box>
 
                   <Box display="flex" gap={1}>
+
                     {curso.ativo ? (
                       <>
                         <Button
@@ -218,10 +252,13 @@ export default function AdminCursos() {
                         Reativar
                       </Button>
                     )}
+
                   </Box>
+
                 </Box>
 
                 {index !== cursos.length - 1 && <Divider />}
+
               </Box>
             ))}
 
