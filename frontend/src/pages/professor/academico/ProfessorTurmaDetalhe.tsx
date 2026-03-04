@@ -47,6 +47,7 @@ interface AlunoDisciplina {
 interface Disciplina {
   id: number;
   nome: string;
+  descricao?: string;
   cursoNome: string;
 }
 
@@ -177,13 +178,27 @@ export default function ProfessorTurmaDetalhe() {
             gap={2}
           >
 
-            <Box>
+            <Box maxWidth={700}>
               <Typography variant="h4" fontWeight={700}>
                 {disciplina?.nome || "Disciplina"}
               </Typography>
 
+              {disciplina?.descricao && (
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ mt: 0.5 }}
+                >
+                  {disciplina.descricao}
+                </Typography>
+              )}
+
               {disciplina?.cursoNome && (
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
+                >
                   {disciplina.cursoNome}
                 </Typography>
               )}

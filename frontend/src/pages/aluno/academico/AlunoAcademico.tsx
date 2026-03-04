@@ -4,10 +4,10 @@ import {
   Card,
   CardContent,
   Button,
-  Divider,
   CircularProgress
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
@@ -54,11 +54,20 @@ export default function AlunoAcademico() {
   return (
     <AppLayout>
 
-      {/* HEADER PADRÃO */}
+      {/* HEADER */}
       <Card sx={{ mb: 4 }}>
         <CardContent>
 
           <Box textAlign="center" maxWidth={650} mx="auto">
+
+            {/* ÍCONE GRANDE */}
+            <MenuBookIcon
+              sx={{
+                fontSize: 60,
+                color: "primary.main",
+                mb: 1
+              }}
+            />
 
             <Typography
               variant="h4"
@@ -78,7 +87,7 @@ export default function AlunoAcademico() {
 
           </Box>
 
-          {/* AÇÃO */}
+          {/* BOTÃO VOLTAR */}
           <Box
             display="flex"
             justifyContent="center"
@@ -97,8 +106,7 @@ export default function AlunoAcademico() {
         </CardContent>
       </Card>
 
-
-      {/* LISTA DE DISCIPLINAS */}
+      {/* DISCIPLINAS */}
       <Card>
         <CardContent>
 
@@ -115,47 +123,59 @@ export default function AlunoAcademico() {
           )}
 
           {!loading &&
-            disciplinas.map((disciplina, index) => (
-              <Box key={disciplina.disciplinaId}>
+            disciplinas.map((disciplina) => (
+              <Card
+                key={disciplina.disciplinaId}
+                sx={{
+                  mb: 2,
+                  transition: "0.25s",
+                  cursor: "pointer",
+                  "&:hover": {
+                    transform: "translateY(-2px)",
+                    boxShadow: 3
+                  }
+                }}
+              >
+                <CardContent>
 
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  py={2}
-                  sx={{
-                    transition: "0.25s",
-                    "&:hover": {
-                      background: "rgba(0,0,0,0.03)",
-                      borderRadius: 2,
-                      px: 1
-                    }
-                  }}
-                >
-
-                  <Typography
-                    fontWeight={600}
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
                   >
-                    {disciplina.nome}
-                  </Typography>
 
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={() =>
-                      navigate(
-                        `/aluno/disciplina/${disciplina.disciplinaId}`
-                      )
-                    }
-                  >
-                    Acessar
-                  </Button>
+                    <Box display="flex" alignItems="center" gap={2}>
 
-                </Box>
+                      <MenuBookIcon color="primary" />
 
-                {index !== disciplinas.length - 1 && <Divider />}
+                      <Typography
+                        fontWeight={700}
+                        letterSpacing={1}
+                        sx={{
+                          textTransform: "uppercase"
+                        }}
+                      >
+                        {disciplina.nome}
+                      </Typography>
 
-              </Box>
+                    </Box>
+
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={() =>
+                        navigate(
+                          `/aluno/disciplina/${disciplina.disciplinaId}`
+                        )
+                      }
+                    >
+                      Acessar
+                    </Button>
+
+                  </Box>
+
+                </CardContent>
+              </Card>
             ))}
 
         </CardContent>

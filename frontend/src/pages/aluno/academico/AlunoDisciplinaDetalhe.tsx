@@ -135,18 +135,32 @@ export default function AlunoDisciplinaDetalhe() {
             gap={2}
           >
 
-            <Box>
-              <Typography variant="h4" fontWeight={700}>
-                {disciplina?.nome || "Disciplina"}
-              </Typography>
+        <Box maxWidth={700}>
+          <Typography variant="h4" fontWeight={700}>
+            {disciplina?.nome || "Disciplina"}
+          </Typography>
 
-              {disciplina?.cursoNome && (
-                <Typography variant="body2" color="text.secondary">
-                  {disciplina.cursoNome}
-                </Typography>
-              )}
-            </Box>
+          {/* descrição da disciplina */}
+          {disciplina?.descricao && (
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ mt: 0.5 }}
+            >
+              {disciplina.descricao}
+            </Typography>
+          )}
 
+          {disciplina?.cursoNome && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 1 }}
+            >
+              {disciplina.cursoNome}
+            </Typography>
+          )}
+        </Box>
             <Button
               variant="outlined"
               startIcon={<ArrowBackIcon />}

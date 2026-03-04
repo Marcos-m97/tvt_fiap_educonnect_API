@@ -5,7 +5,6 @@ import {
   CardContent,
   CardActions,
   Button,
-  Divider,
   TextField,
   Pagination,
   CircularProgress,
@@ -13,6 +12,8 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SchoolIcon from "@mui/icons-material/School";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
@@ -87,6 +88,14 @@ export default function AdminCursos() {
 
           <Box textAlign="center" maxWidth={650} mx="auto">
 
+            <SchoolIcon
+              sx={{
+                fontSize: 60,
+                color: "primary.main",
+                mb: 1
+              }}
+            />
+
             <Typography variant="h4" fontWeight={700} gutterBottom>
               Gestão Acadêmica
             </Typography>
@@ -96,7 +105,7 @@ export default function AdminCursos() {
               color="text.secondary"
               sx={{ lineHeight: 1.7 }}
             >
-              Busque um curso para gerenciar turmas, disciplinas e vínculos acadêmicos.
+              Busque um curso para gerenciar turmas e disciplinas.
             </Typography>
 
           </Box>
@@ -167,99 +176,100 @@ export default function AdminCursos() {
           )}
 
           {!loading &&
-            cursos.map((curso, index) => (
-              <Box key={curso.id}>
+            cursos.map((curso) => (
+              <Card
+                key={curso.id}
+                sx={{
+                  mb: 2,
+                  opacity: curso.ativo ? 1 : 0.5,
+                  transition: "0.25s",
+                  "&:hover": {
+                    transform: "translateY(-2px)",
+                    boxShadow: 3
+                  }
+                }}
+              >
+                <CardContent>
 
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  py={2}
-                  sx={{
-                    opacity: curso.ativo ? 1 : 0.45,
-                    transition: "0.25s",
-                    "&:hover": {
-                      background: "rgba(0,0,0,0.03)",
-                      borderRadius: 2,
-                      px: 1
-                    }
-                  }}
-                >
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
 
-                  <Box maxWidth={600}>
+                    <Box display="flex" alignItems="center" gap={2}>
 
-                    <Box display="flex" alignItems="center" gap={1}>
+                      <MenuBookIcon color="primary" />
 
-                      <Typography fontWeight={600}>
-                        {curso.nome}
-                      </Typography>
+                      <Box display="flex" alignItems="center" gap={1}>
 
-                      {!curso.ativo && (
+                        <Typography
+                          fontWeight={700}
+                          sx={{
+                            textTransform: "uppercase",
+                            letterSpacing: 0.5
+                          }}
+                        >
+                          {curso.nome}
+                        </Typography>
+
+                        {!curso.ativo && (
+                          <Chip
+                            label="Inativo"
+                            size="small"
+                            color="error"
+                          />
+                        )}
+
                         <Chip
-                          label="Inativo"
+                          label={`${curso.cargaHoraria}h`}
                           size="small"
-                          color="error"
+                          color="primary"
+                          variant="outlined"
                         />
-                      )}
 
-                      <Chip
-                        label={`${curso.cargaHoraria}h`}
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                      />
+                      </Box>
 
                     </Box>
 
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mt: 0.5 }}
-                    >
-                      {curso.descricao}
-                    </Typography>
+                    <Box display="flex" gap={1}>
+
+                      {curso.ativo ? (
+                        <>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            onClick={() =>
+                              navigate(`/admin/academico/cursos/${curso.id}`)
+                            }
+                          >
+                            Gerenciar
+                          </Button>
+
+                          <Button
+                            size="small"
+                            color="error"
+                            onClick={() => desativarCurso(curso.id)}
+                          >
+                            Desativar
+                          </Button>
+                        </>
+                      ) : (
+                        <Button
+                          size="small"
+                          color="success"
+                          onClick={() => reativarCurso(curso.id)}
+                        >
+                          Reativar
+                        </Button>
+                      )}
+
+                    </Box>
 
                   </Box>
 
-                  <Box display="flex" gap={1}>
-
-                    {curso.ativo ? (
-                      <>
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          onClick={() =>
-                            navigate(`/admin/academico/cursos/${curso.id}`)
-                          }
-                        >
-                          Gerenciar
-                        </Button>
-
-                        <Button
-                          size="small"
-                          color="error"
-                          onClick={() => desativarCurso(curso.id)}
-                        >
-                          Desativar
-                        </Button>
-                      </>
-                    ) : (
-                      <Button
-                        size="small"
-                        color="success"
-                        onClick={() => reativarCurso(curso.id)}
-                      >
-                        Reativar
-                      </Button>
-                    )}
-
-                  </Box>
-
-                </Box>
-
-                {index !== cursos.length - 1 && <Divider />}
-
-              </Box>
+                </CardContent>
+              </Card>
             ))}
 
         </CardContent>

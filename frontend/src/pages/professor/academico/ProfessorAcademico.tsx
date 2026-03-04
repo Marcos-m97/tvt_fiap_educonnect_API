@@ -9,6 +9,7 @@ import {
   Chip
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SchoolIcon from "@mui/icons-material/School";
 import AppLayout from "../../../components/layout/AppLayout";
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
@@ -125,23 +126,25 @@ export default function ProfessorAcademico() {
                 >
 
                   {/* INFO */}
-                  <Box>
+               <Box display="flex" alignItems="center" gap={1.5}>
 
-                    <Typography
-                      fontWeight={600}
-                      sx={{ mb: 0.5 }}
-                    >
-                      {td.disciplinaNome}
-                    </Typography>
+  <SchoolIcon
+    fontSize="small"
+    color="primary"
+  />
 
-                    <Chip
-                      label={td.turmaNome}
-                      size="small"
-                      color="primary"
-                      variant="outlined"
-                    />
+  <Typography fontWeight={600}>
+    {td.disciplinaNome}
+  </Typography>
 
-                  </Box>
+  <Chip
+    label={td.turmaNome}
+    size="small"
+    color="primary"
+    variant="outlined"
+  />
+
+</Box>
 
                   {/* BOTÃO */}
                   <Button
