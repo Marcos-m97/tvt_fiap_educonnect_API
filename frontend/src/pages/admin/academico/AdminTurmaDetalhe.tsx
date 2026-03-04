@@ -55,7 +55,7 @@ interface Professor {
 
 interface AlunoTurma {
   alunoId: number;
-  usuarioId: number; // 🔥 AGORA VEM DO BACKEND
+  usuarioId: number;
   nome: string;
   email: string;
   status: number;
@@ -190,58 +190,74 @@ export default function AdminTurmaDetalhe() {
   return (
     <AppLayout>
 
-      {/* HEADER */}
-      <Box mb={4} display="flex" justifyContent="space-between" alignItems="flex-start">
-        <Box>
-          <Typography variant="h4">{turma.nome}</Typography>
-          <Typography color="text.secondary">
-            {turma.semestre} • {turma.periodo}
-          </Typography>
-          {!turma.ativo && (
-            <Chip label="Inativa" color="error" sx={{ mt: 1 }} />
-          )}
-        </Box>
+      {/* HEADER PADRÃO */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
 
-        <Box display="flex" gap={2}>
-          <Button
-            variant="outlined"
-            startIcon={<EditIcon />}
-            onClick={() =>
-              navigate(`/admin/academico/turmas/${turma.id}/editar`)
-            }
-          >
-            Editar
-          </Button>
+          <Box display="flex" justifyContent="space-between" alignItems="flex-start" flexWrap="wrap" gap={2}>
 
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate(-1)}
-          >
-            Voltar
-          </Button>
-        </Box>
-      </Box>
+            <Box>
 
-      <Box mb={4}>
-        {turma.ativo ? (
-          <Button variant="contained" color="error" onClick={desativarTurma}>
-            Desativar Turma
-          </Button>
-        ) : (
-          <Button variant="contained" color="success" onClick={reativarTurma}>
-            Reativar Turma
-          </Button>
-        )}
-      </Box>
+              <Typography variant="h4" fontWeight={700}>
+                {turma.nome}
+              </Typography>
 
-      <Divider sx={{ mb: 4 }} />
+              <Typography color="text.secondary">
+                {turma.semestre} • {turma.periodo}
+              </Typography>
+
+              {!turma.ativo && (
+                <Chip label="Inativa" color="error" sx={{ mt: 1 }} />
+              )}
+
+            </Box>
+
+            <Box display="flex" gap={2}>
+
+              <Button
+                variant="outlined"
+                startIcon={<EditIcon />}
+                onClick={() =>
+                  navigate(`/admin/academico/turmas/${turma.id}/editar`)
+                }
+              >
+                Editar
+              </Button>
+
+              <Button
+                variant="outlined"
+                startIcon={<ArrowBackIcon />}
+                onClick={() => navigate(-1)}
+              >
+                Voltar
+              </Button>
+
+            </Box>
+
+          </Box>
+
+          <Box mt={3}>
+            {turma.ativo ? (
+              <Button variant="contained" color="error" onClick={desativarTurma}>
+                Desativar Turma
+              </Button>
+            ) : (
+              <Button variant="contained" color="success" onClick={reativarTurma}>
+                Reativar Turma
+              </Button>
+            )}
+          </Box>
+
+        </CardContent>
+      </Card>
+
 
       {/* DISCIPLINAS */}
       <Card>
         <CardContent>
+
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-            <Typography variant="h6">
+            <Typography variant="h6" fontWeight={600}>
               Disciplinas da Turma
             </Typography>
 
@@ -261,35 +277,61 @@ export default function AdminTurmaDetalhe() {
             </Typography>
           )}
 
-          {vinculos.map((v) => (
-            <Box key={v.id} py={1.5} display="flex" justifyContent="space-between" alignItems="center">
-              <Box>
-                <Typography fontWeight={600}>{v.disciplinaNome}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Professor: {v.professorNome}
-                </Typography>
+          {vinculos.map((v, index) => (
+            <Box key={v.id}>
+
+              <Box
+                py={2}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{
+                  "&:hover": {
+                    background: "rgba(0,0,0,0.03)",
+                    borderRadius: 2,
+                    px: 1
+                  }
+                }}
+              >
+
+                <Box>
+                  <Typography fontWeight={600}>
+                    {v.disciplinaNome}
+                  </Typography>
+
+                  <Typography variant="body2" color="text.secondary">
+                    Professor: {v.professorNome}
+                  </Typography>
+                </Box>
+
+                <Button
+                  size="small"
+                  color="error"
+                  startIcon={<DeleteIcon />}
+                  disabled={!turma.ativo}
+                  onClick={() => removerVinculo(v.id)}
+                >
+                  Remover
+                </Button>
+
               </Box>
 
-              <Button
-                size="small"
-                color="error"
-                startIcon={<DeleteIcon />}
-                disabled={!turma.ativo}
-                onClick={() => removerVinculo(v.id)}
-              >
-                Remover
-              </Button>
+              {index !== vinculos.length - 1 && <Divider />}
+
             </Box>
           ))}
+
         </CardContent>
       </Card>
+
 
       {/* ALUNOS */}
       <Card sx={{ mt: 4 }}>
         <CardContent>
 
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-            <Typography variant="h6">
+
+            <Typography variant="h6" fontWeight={600}>
               Alunos da Turma
             </Typography>
 
@@ -302,6 +344,7 @@ export default function AdminTurmaDetalhe() {
                 setPage(1);
               }}
             />
+
           </Box>
 
           {loading && (
@@ -322,11 +365,19 @@ export default function AdminTurmaDetalhe() {
             return (
               <Box
                 key={aluno.alunoId}
-                py={1.5}
+                py={2}
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
+                sx={{
+                  "&:hover": {
+                    background: "rgba(0,0,0,0.03)",
+                    borderRadius: 2,
+                    px: 1
+                  }
+                }}
               >
+
                 <Box display="flex" alignItems="center" gap={2}>
 
                   <Avatar
@@ -337,14 +388,19 @@ export default function AdminTurmaDetalhe() {
                   </Avatar>
 
                   <Box>
-                    <Typography fontWeight={600}>{aluno.nome}</Typography>
+                    <Typography fontWeight={600}>
+                      {aluno.nome}
+                    </Typography>
+
                     <Typography variant="body2" color="text.secondary">
                       {aluno.email}
                     </Typography>
                   </Box>
+
                 </Box>
 
                 <Box display="flex" gap={2} alignItems="center">
+
                   <Chip
                     label={statusInfo.label}
                     color={statusInfo.color as any}
@@ -362,7 +418,9 @@ export default function AdminTurmaDetalhe() {
                   >
                     Ver Detalhes
                   </Button>
+
                 </Box>
+
               </Box>
             );
           })}
@@ -381,10 +439,14 @@ export default function AdminTurmaDetalhe() {
         </CardContent>
       </Card>
 
+
       {/* MODAL */}
       <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth>
+
         <DialogTitle>Vincular Disciplina</DialogTitle>
+
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 2 }}>
+
           <TextField
             select
             label="Disciplina"
@@ -412,9 +474,11 @@ export default function AdminTurmaDetalhe() {
               </MenuItem>
             ))}
           </TextField>
+
         </DialogContent>
 
         <DialogActions>
+
           <Button onClick={() => setOpenModal(false)}>
             Cancelar
           </Button>
@@ -426,7 +490,9 @@ export default function AdminTurmaDetalhe() {
           >
             Vincular
           </Button>
+
         </DialogActions>
+
       </Dialog>
 
     </AppLayout>

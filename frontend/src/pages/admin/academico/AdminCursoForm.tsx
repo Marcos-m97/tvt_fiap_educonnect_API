@@ -45,7 +45,7 @@ export default function AdminCursoForm() {
 
       {/* HEADER MODERNO */}
       <Box mb={5} textAlign="center">
-        <Typography variant="h3" fontWeight={700}>
+        <Typography variant="h3" fontWeight={600}>
           Criar Curso
         </Typography>
 
