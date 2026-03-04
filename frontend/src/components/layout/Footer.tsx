@@ -9,7 +9,7 @@ export default function Footer() {
       bgcolor="background.paper"
     >
       <Typography variant="body2">
-        © EduConnect 2026 · @educonnect · contato@educonnect.com
+        © EduConnect 2026 · @educonnect · educonnect.plataform@gmail.com
       </Typography>
     </Box>
   );

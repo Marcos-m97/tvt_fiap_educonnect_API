@@ -9,12 +9,25 @@ export default function Login() {
       display="flex"
       alignItems="center"
       justifyContent="center"
+      sx={{
+        backgroundColor: "primary.main",
+        px: 2,
+        py: 6
+      }}
     >
       <Paper
-        elevation={10}
-        sx={{ width: 420, minHeight: 380, p: 4 }}
+        elevation={12}
+        sx={{
+          width: 420,
+          minHeight: 380,
+          p: 4,
+          borderRadius: 3
+        }}
       >
-        <AuthHeader subtitle="Conectando você à educação" />
+        <AuthHeader
+          subtitle="Conectando você à educação"
+          showThemeToggle={false}
+        />
 
         <LoginForm />
       </Paper>

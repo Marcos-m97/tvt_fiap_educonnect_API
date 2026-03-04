@@ -26,9 +26,30 @@ export default function ForgotPassword() {
   }
 
   return (
-    <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center">
-      <Paper sx={{ width: 420, p: 4 }}>
-        <AuthHeader subtitle="Redefinir senha" />
+    <Box
+      minHeight="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      sx={{
+        backgroundColor: "primary.main",
+        px: 2,
+        py: 6
+      }}
+    >
+      <Paper
+        elevation={12}
+        sx={{
+          width: 420,
+          minHeight: 320,
+          p: 4,
+          borderRadius: 3
+        }}
+      >
+        <AuthHeader
+          subtitle="Redefinir senha"
+          showThemeToggle={false}
+        />
 
         <form onSubmit={handleSubmit}>
           <Stack spacing={2}>
@@ -41,10 +62,24 @@ export default function ForgotPassword() {
               fullWidth
             />
 
-            {message && <Typography color="success.main">{message}</Typography>}
-            {error && <Typography color="error">{error}</Typography>}
+            {message && (
+              <Typography color="success.main">
+                {message}
+              </Typography>
+            )}
 
-            <Button type="submit" variant="contained" disabled={loading}>
+            {error && (
+              <Typography color="error">
+                {error}
+              </Typography>
+            )}
+
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              disabled={loading}
+            >
               {loading ? "Enviando..." : "Enviar código"}
             </Button>
           </Stack>

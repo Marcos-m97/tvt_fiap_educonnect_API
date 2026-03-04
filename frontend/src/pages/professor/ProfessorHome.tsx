@@ -2,9 +2,7 @@ import {
   Typography,
   Box,
   Card,
-  CardContent,
-  CardActions,
-  Button
+  CardContent
 } from "@mui/material";
 import AppLayout from "../../components/layout/AppLayout";
 import SchoolIcon from "@mui/icons-material/School";
@@ -19,14 +17,14 @@ export default function ProfessorHome() {
       title: "Acadêmico",
       description:
         "Acesse suas turmas, gerencie aulas, atividades, alunos e notas.",
-      icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+      icon: <SchoolIcon sx={{ fontSize: 48 }} />,
       route: "/professor/academico"
     },
     {
       title: "Eventos",
       description:
         "Criar e gerenciar eventos acadêmicos e comunicados.",
-      icon: <EventIcon sx={{ fontSize: 40 }} />,
+      icon: <EventIcon sx={{ fontSize: 48 }} />,
       route: "/professor/eventos"
     }
   ];
@@ -64,7 +62,7 @@ export default function ProfessorHome() {
           </Typography>
         </Box>
 
-        {/* GRID PADRONIZADO */}
+        {/* GRID */}
         <Box
           display="grid"
           gridTemplateColumns={{
@@ -76,40 +74,51 @@ export default function ProfessorHome() {
           {cards.map((card, index) => (
             <Card
               key={index}
+              onClick={() => navigate(card.route)}
               sx={{
-                p: 2,
-                borderRadius: 3,
+                p: 4,
+                borderRadius: 4,
                 border: "1px solid",
                 borderColor: "divider",
-                transition: "all 0.2s ease",
+                cursor: "pointer",
+                transition: "all 0.25s ease",
+                textAlign: "center",
                 "&:hover": {
-                  boxShadow: 6,
-                  transform: "translateY(-4px)"
+                  boxShadow: 8,
+                  transform: "translateY(-6px)",
+                  borderColor: "primary.main"
                 }
               }}
             >
               <CardContent>
-                <Box display="flex" alignItems="center" gap={2} mb={2}>
+
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  mb={2}
+                  color="primary.main"
+                >
                   {card.icon}
-                  <Typography variant="h6" fontWeight={600}>
-                    {card.title}
-                  </Typography>
                 </Box>
 
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="h5"
+                  fontWeight={700}
+                  mb={1}
+                >
+                  {card.title}
+                </Typography>
+
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ maxWidth: "320px", mx: "auto" }}
+                >
                   {card.description}
                 </Typography>
-              </CardContent>
 
-              <CardActions sx={{ justifyContent: "flex-end", pr: 2 }}>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={() => navigate(card.route)}
-                >
-                  Acessar
-                </Button>
-              </CardActions>
+              </CardContent>
             </Card>
           ))}
         </Box>

@@ -11,7 +11,6 @@ import SchoolIcon from "@mui/icons-material/School";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
 
 import { useNavigate } from "react-router-dom";
@@ -74,12 +73,7 @@ export default function TopBar() {
 
         <Box display="flex" alignItems="center" gap={1}>
 
-          {/* HOME */}
-          <Tooltip title="Home">
-            <IconButton color="inherit" onClick={handleHome}>
-              <HomeIcon />
-            </IconButton>
-          </Tooltip>
+
 
           {/* PERFIL + EMAIL */}
           <Tooltip title="Meu Perfil">

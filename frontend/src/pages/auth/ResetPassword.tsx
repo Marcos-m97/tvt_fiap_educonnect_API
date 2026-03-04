@@ -31,7 +31,6 @@ export default function ResetPassword() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // 🔥 Preencher automaticamente via link do e-mail
   useEffect(() => {
     const emailParam = searchParams.get("email");
     const codigoParam = searchParams.get("codigo");
@@ -40,7 +39,6 @@ export default function ResetPassword() {
     if (codigoParam) setCodigo(codigoParam);
   }, [searchParams]);
 
-  // 🔐 Regras de validação
   const validations = {
     length: novaSenha.length >= 8,
     uppercase: /[A-Z]/.test(novaSenha),
@@ -77,7 +75,6 @@ export default function ResetPassword() {
 
       setSuccess(true);
 
-      // 🔄 Redireciona após 3 segundos
       setTimeout(() => {
         navigate("/login");
       }, 5000);
@@ -113,9 +110,24 @@ export default function ResetPassword() {
       display="flex"
       alignItems="center"
       justifyContent="center"
+      sx={{
+        backgroundColor: "primary.main",
+        py: 6,
+        px: 2,
+      }}
     >
-      <Paper sx={{ width: 420, p: 4 }}>
-        <AuthHeader subtitle="Criar nova senha" />
+      <Paper
+        elevation={12}
+        sx={{
+          width: 420,
+          p: 4,
+          borderRadius: 3,
+        }}
+      >
+        <AuthHeader
+          subtitle="Criar nova senha"
+          showThemeToggle={false}
+        />
 
         <form onSubmit={handleSubmit}>
           <Stack spacing={2}>
@@ -126,6 +138,7 @@ export default function ResetPassword() {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={!!searchParams.get("email") || success}
+              fullWidth
             />
 
             <TextField
@@ -134,9 +147,9 @@ export default function ResetPassword() {
               onChange={(e) => setCodigo(e.target.value)}
               required
               disabled={!!searchParams.get("codigo") || success}
+              fullWidth
             />
 
-            {/* 🔐 Nova senha */}
             <TextField
               label="Nova senha"
               type={showPassword ? "text" : "password"}
@@ -144,6 +157,7 @@ export default function ResetPassword() {
               onChange={(e) => setNovaSenha(e.target.value)}
               required
               disabled={success}
+              fullWidth
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -158,7 +172,6 @@ export default function ResetPassword() {
               }}
             />
 
-            {/* 🔎 Checklist */}
             <Box>
               {renderItem(validations.length, "Mínimo 8 caracteres")}
               {renderItem(validations.uppercase, "1 letra maiúscula")}
@@ -167,7 +180,6 @@ export default function ResetPassword() {
               {renderItem(validations.special, "1 caractere especial")}
             </Box>
 
-            {/* 🔁 Confirmar senha */}
             <TextField
               label="Confirmar nova senha"
               type={showPassword ? "text" : "password"}
@@ -175,6 +187,7 @@ export default function ResetPassword() {
               onChange={(e) => setConfirmarSenha(e.target.value)}
               required
               disabled={success}
+              fullWidth
               error={confirmarSenha.length > 0 && !senhasIguais}
               helperText={
                 confirmarSenha.length > 0 && !senhasIguais
@@ -188,12 +201,12 @@ export default function ResetPassword() {
             <Button
               type="submit"
               variant="contained"
+              fullWidth
               disabled={!podeEnviar || loading}
             >
               {loading ? "Salvando..." : "Redefinir senha"}
             </Button>
 
-            {/* ✅ Mensagem de sucesso */}
             {success && (
               <Alert severity="success" sx={{ mt: 2 }}>
                 Senha alterada com sucesso!

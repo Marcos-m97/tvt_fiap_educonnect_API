@@ -3,8 +3,6 @@ import {
   Box,
   Card,
   CardContent,
-  CardActions,
-  Button,
   CircularProgress
 } from "@mui/material";
 import AppLayout from "../../components/layout/AppLayout";
@@ -77,28 +75,28 @@ export default function AlunoHome() {
       title: "Acadêmico",
       description:
         "Acesse suas disciplinas, aulas, atividades e visualize suas notas.",
-      icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+      icon: <SchoolIcon sx={{ fontSize: 48 }} />,
       route: "/aluno/academico"
     },
     {
       title: "Boletim",
       description:
         "Visualize seu boletim completo e acompanhe seu desempenho geral.",
-      icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
+      icon: <AssignmentIcon sx={{ fontSize: 48 }} />,
       route: "/aluno/academico/boletim"
     },
     {
       title: "Eventos",
       description:
         "Consulte eventos acadêmicos e datas importantes.",
-      icon: <EventIcon sx={{ fontSize: 40 }} />,
+      icon: <EventIcon sx={{ fontSize: 48 }} />,
       route: "/aluno/eventos"
     },
     {
       title: "Matrícula",
       description:
         "Consulte a situação da sua matrícula e documentos enviados.",
-      icon: <DescriptionIcon sx={{ fontSize: 40 }} />,
+      icon: <DescriptionIcon sx={{ fontSize: 48 }} />,
       route: "/aluno/matricula"
     }
   ];
@@ -135,7 +133,7 @@ export default function AlunoHome() {
           )}
         </Box>
 
-        {/* GRID DE CARDS */}
+        {/* GRID */}
         <Box
           display="grid"
           gridTemplateColumns={{
@@ -147,40 +145,51 @@ export default function AlunoHome() {
           {cards.map((card, index) => (
             <Card
               key={index}
+              onClick={() => navigate(card.route)}
               sx={{
-                p: 2,
-                borderRadius: 3,
+                p: 4,
+                borderRadius: 4,
                 border: "1px solid",
                 borderColor: "divider",
-                transition: "all 0.2s ease",
+                cursor: "pointer",
+                transition: "all 0.25s ease",
+                textAlign: "center",
                 "&:hover": {
-                  boxShadow: 6,
-                  transform: "translateY(-4px)"
+                  boxShadow: 8,
+                  transform: "translateY(-6px)",
+                  borderColor: "primary.main"
                 }
               }}
             >
               <CardContent>
-                <Box display="flex" alignItems="center" gap={2} mb={2}>
+
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  mb={2}
+                  color="primary.main"
+                >
                   {card.icon}
-                  <Typography variant="h6" fontWeight={600}>
-                    {card.title}
-                  </Typography>
                 </Box>
 
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="h5"
+                  fontWeight={700}
+                  mb={1}
+                >
+                  {card.title}
+                </Typography>
+
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ maxWidth: "320px", mx: "auto" }}
+                >
                   {card.description}
                 </Typography>
-              </CardContent>
 
-              <CardActions sx={{ justifyContent: "flex-end", pr: 2 }}>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={() => navigate(card.route)}
-                >
-                  Acessar
-                </Button>
-              </CardActions>
+              </CardContent>
             </Card>
           ))}
         </Box>
