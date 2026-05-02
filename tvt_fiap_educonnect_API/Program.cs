@@ -70,8 +70,6 @@ builder.Services.AddScoped<IAulaRepository, AulaRepository>();
 builder.Services.AddScoped<IAulaService, AulaService>();
 builder.Services.AddScoped<IArquivoStorageService, LocalStorageService>();
 
-
-
 // Seeder
 builder.Services.AddScoped<DatabaseSeeder>();
 
@@ -110,7 +108,7 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Insira: Bearer {token}",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
-        Scheme = "bearer",   // ← ← ← IMPORTANTE: minúsculo
+        Scheme = "bearer",
         BearerFormat = "JWT"
     };
 
@@ -183,6 +181,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.UseStaticFiles();
