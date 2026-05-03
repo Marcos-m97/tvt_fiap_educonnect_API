@@ -1,10 +1,20 @@
-﻿using EduConnect_API.Models;
+﻿using EduConnect_API.Exceptions;
+using EduConnect_API.Models;
 using EduConnect_API.Models.DTOs;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
 
 namespace EduConnect_API.Services
 {
+    /// <summary>
+    /// Serviço responsável por concentrar as regras de negócio relacionadas às atividades.
+    ///
+    /// No EduConnect, a atividade representa uma tarefa, prova, trabalho ou exercício
+    /// criado dentro de uma TurmaDisciplina.
+    ///
+    /// Essa camada coordena a criação, consulta, atualização e listagem das atividades,
+    /// além de montar a visão específica do aluno com informações de entrega e nota.
+    /// </summary>
     public class AtividadeService : IAtividadeService
     {
         private readonly IAtividadeRepository _atividadeRepo;
@@ -12,6 +22,14 @@ namespace EduConnect_API.Services
         private readonly IAlunoRepository _alunoRepo;
         private readonly IMatriculaRepository _matriculaRepo;
 
+        /// <summary>
+        /// Recebe as dependências por injeção de dependência.
+        ///
+        /// IAtividadeRepository: acesso aos dados de atividades.
+        /// ITurmaDisciplinaRepository: valida o contexto acadêmico da atividade.
+        /// IAlunoRepository: localiza o aluno a partir do usuário autenticado.
+        /// IMatriculaRepository: verifica a matrícula ativa do aluno.
+        /// </summary>
         public AtividadeService(
             IAtividadeRepository atividadeRepo,
             ITurmaDisciplinaRepository tdRepo,
@@ -24,11 +42,21 @@ namespace EduConnect_API.Services
             _matriculaRepo = matriculaRepo;
         }
 
+        // ============================================================
+        // 1. CRIAR ATIVIDADE
+        // ============================================================
 
+        /// <summary>
+        /// Cria uma nova atividade vinculada a uma TurmaDisciplina.
+        ///
+        /// Antes de criar, o sistema valida se a TurmaDisciplina informada existe.
+        /// Isso garante que a atividade seja criada dentro de um contexto acadêmico
+        /// válido, ou seja, uma disciplina ofertada em uma turma.
+        /// </summary>
         public async Task<AtividadeDTO> Criar(CriarAtividadeDTO dto)
         {
             var td = await _tdRepo.ObterPorId(dto.TurmaDisciplinaId)
-                ?? throw new Exception("TurmaDisciplina não encontrada.");
+                ?? throw new AppException("TurmaDisciplina não encontrada.", 404);
 
             var atividade = new Atividade
             {
@@ -57,6 +85,16 @@ namespace EduConnect_API.Services
             };
         }
 
+        // ============================================================
+        // 2. LISTAR ATIVIDADES POR TURMA/DISCIPLINA
+        // ============================================================
+
+        /// <summary>
+        /// Lista atividades vinculadas a uma TurmaDisciplina específica.
+        ///
+        /// Esse método é usado para exibir as atividades de uma disciplina
+        /// dentro de uma turma, normalmente na visão do professor ou do aluno.
+        /// </summary>
         public async Task<IEnumerable<AtividadeDTO>> ListarPorTurmaDisciplina(int turmaDisciplinaId)
         {
             var lista = await _atividadeRepo.ListarPorTurmaDisciplina(turmaDisciplinaId);
@@ -76,16 +114,28 @@ namespace EduConnect_API.Services
             });
         }
 
+        // ============================================================
+        // 3. LISTAR MINHAS ATIVIDADES
+        // ============================================================
+
+        /// <summary>
+        /// Lista as atividades disponíveis para o aluno logado.
+        ///
+        /// O método localiza o aluno a partir do usuário autenticado,
+        /// verifica se ele possui matrícula ativa e então busca as atividades
+        /// da turma correspondente.
+        ///
+        /// Além dos dados da atividade, o retorno informa se o aluno já entregou
+        /// e qual nota foi atribuída, quando existir uma entrega vinculada.
+        /// </summary>
         public async Task<IEnumerable<AtividadeAlunoDTO>> ListarMinhasAtividades(int usuarioId)
         {
             var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
-                ?? throw new Exception("Aluno não encontrado.");
+                ?? throw new AppException("Aluno não encontrado.", 404);
 
-            // matrícula ativa do aluno
             var matricula = await _matriculaRepo.ObterAtivaPorAlunoId(aluno.Id)
-                ?? throw new Exception("Aluno não possui matrícula ativa.");
+                ?? throw new AppException("Aluno não possui matrícula ativa.", 404);
 
-            // buscar atividades da turma do aluno
             var atividades = await _atividadeRepo.ListarPorTurma(matricula.TurmaId);
 
             return atividades.Select(a =>
@@ -109,10 +159,20 @@ namespace EduConnect_API.Services
             });
         }
 
+        // ============================================================
+        // 4. OBTER ATIVIDADE POR ID
+        // ============================================================
+
+        /// <summary>
+        /// Obtém uma atividade pelo ID.
+        ///
+        /// A consulta retorna também dados descritivos do contexto acadêmico,
+        /// como turma, disciplina e professor.
+        /// </summary>
         public async Task<AtividadeDTO> ObterPorId(int id)
         {
             var atividade = await _atividadeRepo.ObterPorId(id)
-                ?? throw new Exception("Atividade não encontrada.");
+                ?? throw new AppException("Atividade não encontrada.", 404);
 
             return new AtividadeDTO
             {
@@ -129,10 +189,20 @@ namespace EduConnect_API.Services
             };
         }
 
+        // ============================================================
+        // 5. ATUALIZAR ATIVIDADE
+        // ============================================================
+
+        /// <summary>
+        /// Atualiza os dados de uma atividade existente.
+        ///
+        /// O método busca a atividade, altera os campos editáveis e delega
+        /// a persistência ao Repository.
+        /// </summary>
         public async Task<AtividadeDTO> Atualizar(int id, AtualizarAtividadeDTO dto)
         {
             var atividade = await _atividadeRepo.ObterPorId(id)
-                ?? throw new Exception("Atividade não encontrada.");
+                ?? throw new AppException("Atividade não encontrada.", 404);
 
             atividade.Titulo = dto.Titulo;
             atividade.Descricao = dto.Descricao;
@@ -156,6 +226,5 @@ namespace EduConnect_API.Services
                 ProfessorNome = atividade.TurmaDisciplina.Professor.Usuario.Nome
             };
         }
-
     }
 }

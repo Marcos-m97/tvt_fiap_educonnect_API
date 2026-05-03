@@ -1,10 +1,20 @@
-﻿using EduConnect_API.Models;
+﻿using EduConnect_API.Exceptions;
+using EduConnect_API.Models;
 using EduConnect_API.Models.DTOs;
 using EduConnect_API.Repositories.Interfaces;
 using EduConnect_API.Services.Interfaces;
 
 namespace EduConnect_API.Services
 {
+    /// <summary>
+    /// Serviço responsável por concentrar as regras de negócio relacionadas aos eventos.
+    ///
+    /// No EduConnect, eventos representam compromissos acadêmicos ou administrativos,
+    /// como provas, atividades, aulas extras, reuniões ou avisos gerais.
+    ///
+    /// Essa camada coordena criação, consulta, listagem, atualização, exclusão
+    /// e listagem dos eventos disponíveis para o aluno conforme sua matrícula ativa.
+    /// </summary>
     public class EventoService : IEventoService
     {
         private readonly IEventoRepository _repo;
@@ -13,6 +23,15 @@ namespace EduConnect_API.Services
         private readonly IAlunoRepository _alunoRepo;
         private readonly IMatriculaRepository _matriculaRepo;
 
+        /// <summary>
+        /// Recebe as dependências por injeção de dependência.
+        ///
+        /// IEventoRepository: acesso aos dados de eventos.
+        /// ITurmaRepository: valida e consulta a turma vinculada ao evento.
+        /// ITurmaDisciplinaRepository: valida o vínculo turma/disciplina.
+        /// IAlunoRepository: localiza o aluno a partir do usuário autenticado.
+        /// IMatriculaRepository: verifica a matrícula ativa do aluno.
+        /// </summary>
         public EventoService(
             IEventoRepository repo,
             ITurmaRepository turmas,
@@ -28,22 +47,34 @@ namespace EduConnect_API.Services
         }
 
         // =========================================================
-        // CRIAR EVENTO
+        // 1. CRIAR EVENTO
         // =========================================================
+
+        /// <summary>
+        /// Cria um novo evento acadêmico ou administrativo.
+        ///
+        /// O evento pode ser geral, vinculado a uma turma ou vinculado a uma
+        /// TurmaDisciplina específica.
+        ///
+        /// Quando TurmaId ou TurmaDisciplinaId são informados, o Service valida
+        /// se esses registros existem antes de salvar o evento.
+        /// </summary>
         public async Task<EventoDTO> Criar(int criadorId, CriarEventoDTO dto)
         {
             if (dto.TurmaId != null)
             {
                 var turma = await _turmas.ObterPorId(dto.TurmaId.Value);
+
                 if (turma == null)
-                    throw new Exception("Turma não encontrada.");
+                    throw new AppException("Turma não encontrada.", 404);
             }
 
             if (dto.TurmaDisciplinaId != null)
             {
                 var td = await _tdRepo.ObterPorId(dto.TurmaDisciplinaId.Value);
+
                 if (td == null)
-                    throw new Exception("TurmaDisciplina não encontrada.");
+                    throw new AppException("TurmaDisciplina não encontrada.", 404);
             }
 
             var evento = new Evento
@@ -59,68 +90,116 @@ namespace EduConnect_API.Services
             };
 
             evento = await _repo.Criar(evento);
+
             return MapToDTO(evento);
         }
 
         // =========================================================
-        // EVENTOS DO ALUNO
+        // 2. LISTAR MEUS EVENTOS
         // =========================================================
+
+        /// <summary>
+        /// Lista os eventos disponíveis para o aluno logado.
+        ///
+        /// O método localiza o aluno a partir do usuário autenticado,
+        /// verifica sua matrícula ativa e busca os eventos relacionados à turma
+        /// dessa matrícula.
+        ///
+        /// A listagem considera eventos vinculados diretamente à turma e eventos
+        /// vinculados a disciplinas daquela turma.
+        /// </summary>
         public async Task<IEnumerable<EventoDTO>> ListarMeusEventos(int usuarioId)
         {
             var aluno = await _alunoRepo.ObterPorUsuarioId(usuarioId)
-                ?? throw new Exception("Aluno não encontrado.");
+                ?? throw new AppException("Aluno não encontrado.", 404);
 
             var matricula = await _matriculaRepo.ObterAtivaPorAlunoId(aluno.Id)
-                ?? throw new Exception("Aluno não possui matrícula ativa.");
+                ?? throw new AppException("Aluno não possui matrícula ativa.", 404);
 
             var eventos = await _repo.ListarPorTurma(matricula.TurmaId);
+
             return eventos.Select(MapToDTO);
         }
 
         // =========================================================
-        // CONSULTAS
+        // 3. CONSULTAS
         // =========================================================
+
+        /// <summary>
+        /// Obtém um evento pelo ID.
+        ///
+        /// Retorna null quando o evento não é encontrado, permitindo que o Controller
+        /// responda com NotFound.
+        /// </summary>
         public async Task<EventoDTO?> Obter(int id)
         {
             var e = await _repo.Obter(id);
+
             return e == null ? null : MapToDTO(e);
         }
 
+        /// <summary>
+        /// Lista todos os eventos cadastrados.
+        ///
+        /// Usado em visões administrativas ou gerais de calendário.
+        /// </summary>
         public async Task<IEnumerable<EventoDTO>> Listar()
         {
             return (await _repo.Listar()).Select(MapToDTO);
         }
 
+        /// <summary>
+        /// Lista eventos relacionados a uma turma específica.
+        ///
+        /// Esse método retorna tanto eventos vinculados diretamente à turma
+        /// quanto eventos de disciplinas pertencentes a essa turma.
+        /// </summary>
         public async Task<IEnumerable<EventoDTO>> ListarPorTurma(int turmaId)
         {
             return (await _repo.ListarPorTurma(turmaId)).Select(MapToDTO);
         }
 
         // =========================================================
-        // ATUALIZAR (COM VALIDAÇÃO DE PERMISSÃO)
+        // 4. ATUALIZAR EVENTO
         // =========================================================
-        public async Task<EventoDTO?> Atualizar(int id, int usuarioId, string role, CriarEventoDTO dto)
+
+        /// <summary>
+        /// Atualiza um evento existente, considerando regra de permissão.
+        ///
+        /// Administradores podem atualizar eventos de forma geral.
+        /// Professores, quando identificados pela role 2, só podem editar eventos
+        /// criados por eles mesmos.
+        ///
+        /// Também valida se a nova turma ou TurmaDisciplina informada existe.
+        /// </summary>
+        public async Task<EventoDTO?> Atualizar(
+            int id,
+            int usuarioId,
+            string role,
+            CriarEventoDTO dto)
         {
             var e = await _repo.Obter(id);
+
             if (e == null)
                 return null;
 
-            // Se for professor (role 2), só pode editar o próprio evento
             if (role == "2" && e.CriadoPorId != usuarioId)
-                throw new Exception("Você não tem permissão para editar este evento.");
+                throw new AppException("Você não tem permissão para editar este evento.", 403);
 
             if (dto.TurmaId != null)
             {
                 var turma = await _turmas.ObterPorId(dto.TurmaId.Value);
+
                 if (turma == null)
-                    throw new Exception("Turma não encontrada.");
+                    throw new AppException("Turma não encontrada.", 404);
             }
 
             if (dto.TurmaDisciplinaId != null)
             {
                 var td = await _tdRepo.ObterPorId(dto.TurmaDisciplinaId.Value);
+
                 if (td == null)
-                    throw new Exception("TurmaDisciplina não encontrada.");
+                    throw new AppException("TurmaDisciplina não encontrada.", 404);
             }
 
             e.Titulo = dto.Titulo;
@@ -132,28 +211,44 @@ namespace EduConnect_API.Services
             e.TurmaDisciplinaId = dto.TurmaDisciplinaId;
 
             e = await _repo.Atualizar(e);
+
             return MapToDTO(e);
         }
 
         // =========================================================
-        // DELETAR (COM VALIDAÇÃO DE PERMISSÃO)
+        // 5. DELETAR EVENTO
         // =========================================================
+
+        /// <summary>
+        /// Remove um evento, considerando regra de permissão.
+        ///
+        /// Administradores podem deletar eventos de forma geral.
+        /// Professores, quando identificados pela role 2, só podem excluir eventos
+        /// criados por eles mesmos.
+        /// </summary>
         public async Task<bool> Deletar(int id, int usuarioId, string role)
         {
             var e = await _repo.Obter(id);
+
             if (e == null)
                 return false;
 
-            // Professor só pode deletar o próprio
             if (role == "2" && e.CriadoPorId != usuarioId)
-                throw new Exception("Você não tem permissão para deletar este evento.");
+                throw new AppException("Você não tem permissão para deletar este evento.", 403);
 
             return await _repo.Deletar(id);
         }
 
         // =========================================================
-        // MAP
+        // 6. MAPEAMENTO PARA DTO
         // =========================================================
+
+        /// <summary>
+        /// Converte a entidade Evento em EventoDTO.
+        ///
+        /// O DTO retorna os dados principais do evento e também nomes descritivos
+        /// de turma e disciplina quando esses relacionamentos estiverem carregados.
+        /// </summary>
         private EventoDTO MapToDTO(Evento e)
         {
             return new EventoDTO
