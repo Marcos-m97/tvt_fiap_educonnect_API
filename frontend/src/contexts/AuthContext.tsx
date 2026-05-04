@@ -15,7 +15,7 @@ export type Usuario = {
   nome: string;
   email: string;
   tipo: number;
-  fotoPerfilUrl?: string | null; // 🔥 ADICIONADO
+  fotoPerfilUrl?: string | null; //ADICIONADO
 };
 
 type Perfil = {
@@ -25,7 +25,7 @@ type Perfil = {
 
 type LoginResponse = {
   token: string;
-  usuario: Usuario; // 🔥 login agora já pode retornar usuário completo
+  usuario: Usuario; // login agora já pode retornar usuário completo
 };
 
 type MeResponse = {
@@ -102,7 +102,7 @@ export function AuthProvider({
     localStorage.setItem("token", data.token);
     setToken(data.token);
 
-    // 🔥 Sempre buscar /me para garantir foto atualizada
+    // Sempre buscar /me para garantir foto atualizada
     const me = await api.get<MeResponse>("/account/me");
 
     setUser(me.data.usuario);

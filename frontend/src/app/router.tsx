@@ -44,7 +44,7 @@ import AlunoAulaDetalhe from "../pages/aluno/academico/AlunoAulaDetalhe";
 import AlunoBoletim from "../pages/aluno/academico/AlunoBoletim";
 
 import EventosPage from "../pages/eventos/EventosPage";
-import MeuPerfil from "../pages/conta/meuPerfil";
+import MeuPerfil from "../pages/conta/MeuPerfil";
 
 import RoleGuard from "../guards/RoleGuard";
 import AlunoRouteGuard from "../guards/AlunoRouteGuard";
